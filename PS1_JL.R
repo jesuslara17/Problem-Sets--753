@@ -9,9 +9,10 @@ library(data.table)
 library(ggplot2)
 library("rio")
 library("xlsx")
+library(matlib)
 
 #Set my working directory
-setwd("C:/Users/User/Documents/Fall 2020 UMass/753/Problem Sets/Problem Set 1") 
+setwd("C:/Users/User/Documents/GitHub/Problem-Sets--753") 
 
 #import the IO dataset, year 2009
 IO_1<-import("IND_NIOT_row_sep12.xlsx",sheet="2009") 
@@ -59,8 +60,11 @@ total_output <- as.vector(IO_6[-c(36:43),44])
 inv_total_output<-1/total_output
 
 
-
+### multiply each cell by the inverse of total output
 A_q<- A_1 * inv_total_output[col(A_1)]
 
+### Leontief Matrix about to come!!! <3 <3 <3 
+
+LM_1<-inv(diag(35)-A_q) # Leontief Matrix
 
 
