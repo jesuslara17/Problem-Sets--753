@@ -103,9 +103,10 @@ colnames(tdir_emp)<-names_1
 
 EM_T_2<-EM_T_1 %>% add_row(slice(tdir_emp,1))
 
-EM_T_3<-EM_T_2 %>% add_row(slice(indirect_employment,1))
+EM_T_3<-EM_T_2 %>% add_row(slice(EM_T_2,1)-slice(EM_T_2,2))
 
-indirect_employment<- EM_2 %>% slice(-1) %>% summarise_all(sum)
+
+
 
 ### Import weights
 
