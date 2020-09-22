@@ -11,6 +11,8 @@ library("rio")
 library("xlsx")
 library(matlib)
 
+### Pure replication part
+
 #Set my working directory
 setwd("C:/Users/User/Documents/Fall 2020 UMass/753/Problem Sets/Problem Set 1") 
 
@@ -91,7 +93,15 @@ colnames(EM_2)<-names_1 ## This is the employment matrix
 
 EM_T_1<-EM_2 %>% summarise_all(sum) 
 
-EM_T_2<-EM_T_1 %>% add_row(slice(EM_2,1))
+#
+dir_emp<-as.matrix(EM_2)
+dir_emp<-(diag(dir_emp))
+tdir_emp<-t(dir_emp)
+tdir_emp<-data.frame(tdir_emp)
+
+colnames(tdir_emp)<-names_1
+
+EM_T_2<-EM_T_1 %>% add_row(slice(tdir_emp,1))
 
 EM_T_3<-EM_T_2 %>% add_row(slice(indirect_employment,1))
 
@@ -99,6 +109,7 @@ indirect_employment<- EM_2 %>% slice(-1) %>% summarise_all(sum)
 
 ### Import weights
 
+### weight given to each industry within the different ENERGY sectors
 weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program") 
 
 weights_2<-weights_1 %>% slice(-c(1:9,20:42))
@@ -109,5 +120,33 @@ weights_3<-weights_2 %>% select(-c(1:3))
 
 weights_3[is.na(weights_3)]=0
 
-weights_4<-as.matrix(weights_3)
-EM
+weights_4<-as.matrix(weights_3 %>% mutate_if(is.character,as.numeric))
+
+EM_T_4<-as.matrix(EM_T_3 %>% mutate_if(is.character,as.numeric))
+
+#w4 (10x35)  ||  t(w4) (35x10)
+#EM_T_4(3x35)
+
+EBEnergy_1<-EM_T_4 %*% t(weights_4) #Employment by energy sector matrix
+ 
+####
+Sweights_1<-weights_1 %>% slice(c(28:30)) %>% select(c(4:13))
+
+Sweights_1[is.na(Sweights_1)]=0
+
+Sweights_2<-as.matrix(Sweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBSector_1<-EBEnergy_1%*%t(Sweights_2) #### Employment by Sector
+
+##############
+GFweights_1<-weights_1 %>% slice(c(36,37)) %>% select(c(4:6))
+
+GFweights_1[is.na(GFweights_1)]=0
+
+GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBgf_1<-EBSector_1%*%t(GFweights_2)
+
+                                 
+                                 
+                                 
