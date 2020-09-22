@@ -1,7 +1,7 @@
 
 # ECON 753 PS1
 # Jesús Lara
-
+#Github version
 
 library(dplyr)
 library(tidyr)
@@ -71,7 +71,43 @@ colnames(L_1)<-names_1
 
 ### Import employment data
 
+emp_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="EO Matrix") 
+emp_2<-emp_1 %>% select(`Industries (corresponding to I-O sector)`,`All workers (PS+SS)`) %>% slice(-c(1,37:77))
+
+emp_3<-emp_2 %>% rename("industry"="Industries (corresponding to I-O sector)","all_workers"="All workers (PS+SS)") %>% 
+  slice(-36)
+
+emp_4<-emp_3 %>% mutate(total_output=total_output$`Total output`) %>% 
+  mutate(all_workers=(as.numeric(all_workers))) %>% 
+  mutate(EO=all_workers/total_output)
+
+EOv<-emp_4$EO
 
 
+EM_1<-data.frame(L_1) %>% mutate_all(.funs=list(E=~.*EOv)) #How to replace old variables?
 
+EM_2<-EM_1 %>% select(36:70)
+colnames(EM_2)<-names_1 ## This is the employment matrix
 
+EM_T_1<-EM_2 %>% summarise_all(sum) 
+
+EM_T_2<-EM_T_1 %>% add_row(slice(EM_2,1))
+
+EM_T_3<-EM_T_2 %>% add_row(slice(indirect_employment,1))
+
+indirect_employment<- EM_2 %>% slice(-1) %>% summarise_all(sum)
+
+### Import weights
+
+weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program") 
+
+weights_2<-weights_1 %>% slice(-c(1:9,20:42))
+
+res<-weights_2$`(industry-by-industry)`
+
+weights_3<-weights_2 %>% select(-c(1:3))
+
+weights_3[is.na(weights_3)]=0
+
+weights_4<-as.matrix(weights_3)
+EM
