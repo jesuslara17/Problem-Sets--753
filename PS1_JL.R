@@ -12,7 +12,7 @@ library("xlsx")
 library(matlib)
 
 #Set my working directory
-setwd("C:/Users/User/Documents/GitHub/Problem-Sets--753") 
+setwd("C:/Users/User/Documents/Fall 2020 UMass/753/Problem Sets/Problem Set 1") 
 
 #import the IO dataset, year 2009
 IO_1<-import("IND_NIOT_row_sep12.xlsx",sheet="2009") 
@@ -47,7 +47,7 @@ IO_6<-IO_5 %>% mutate(industry_code=sub('.','',industry_code)) %>%
 
 
 IO_7<-IO_6 %>% 
-    select(-c(industry_code,industry,`Final consumption expenditure by households`:`Total output`) ) 
+  select(-c(industry_code,industry,`Final consumption expenditure by households`:`Total output`) ) 
 
 
 
@@ -60,11 +60,18 @@ total_output <- as.vector(IO_6[-c(36:43),44])
 inv_total_output<-1/total_output
 
 
-### multiply each cell by the inverse of total output
+
 A_q<- A_1 * inv_total_output[col(A_1)]
 
-### Leontief Matrix about to come!!! <3 <3 <3 
+L_1<-inv(diag(35)-A_q)
 
-LM_1<-inv(diag(35)-A_q) # Leontief Matrix
+names_1<-as.vector(select(names, -c(36:42)))
+
+colnames(L_1)<-names_1
+
+### Import employment data
+
+
+
 
 
