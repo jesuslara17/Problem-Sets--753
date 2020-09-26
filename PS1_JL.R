@@ -10,7 +10,7 @@ library(ggplot2)
 library("rio")
 library("xlsx")
 library(matlib)
-
+library(gdata)
 #### Problem 1
 ### Pure replication part
 
@@ -53,7 +53,7 @@ IO_7<-IO_6 %>%
   select(-c(industry_code,industry,`Final consumption expenditure by households`:`Total output`) ) 
 
 
-
+#Get Leontieff inverse
 
 
 A_1<-as.matrix(IO_7[-c(36:43),-1])
@@ -149,6 +149,64 @@ GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
 
 EBgf_1<-EBSector_1%*%t(GFweights_2)
 
-                                 
-                                 
-                                 
+
+rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
+
+
+
+
+
+### 3 main objects: EBEnergy_1 EBgf_1 EBSector_1 and weights
+### Replicate table 10
+                         
+jobs<-c("Direct + Indirect Jobs", "Direct Jobs", "Indirect Jobs" ) 
+
+
+EBEnergy_2<-t(EBEnergy_1)
+
+
+energy_names<-t(as.matrix(weights_1 %>% slice(22) %>% select(4:13)))
+
+EBEnergy_3<-data.frame(EBEnergy_2)
+
+colnames(EBEnergy_3)<-jobs
+
+EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
+  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+############# Include weighted averages
+
+EB_sector_2<-t(EBSector_1)
+
+wav<-c("Weighted Average for Renewables","Weighted Average for Efficiency", "Weighted Average for Fossil Fuels")
+  
+
+
+
+EBsector_3<-data.frame(EB_sector_2) 
+
+
+EBsector_4<-EBsector_3%>% mutate(energy_names=wav) 
+colnames(EBsector_4)<-c(jobs, "energy_names")
+
+EBsector_5<-EBsector_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+#################Table 10 final
+
+T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
+T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
+T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
+
+T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
+
+############## Table 11
+T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
+T11_2<-T11 %>% pivot_longer(1:5)
+Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
+
+T11_3<-T11_2 %>% select(-1) %>% 
+  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+
+#### PART B
+
+
