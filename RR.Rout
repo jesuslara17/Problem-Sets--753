@@ -1,0 +1,1970 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i686-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ## This code and the related data are open-source under the BSD 2-clause license.
+> ## See http://www.tldrlegal.com/l/BSD2 for details
+> ## Michael Ash, Thomas Herndon, and Robert Pollin April-May 2013
+> ## Replicate and extend Reinhart and Rogoff (2010) using data from RR working spreadsheet
+> 
+> library(plyr)
+> library(ggplot2)
+> library(car)
+Loading required package: MASS
+Loading required package: nnet
+Loading required package: survival
+Loading required package: splines
+> library(foreign)
+> library(xlsx)
+Loading required package: xlsxjars
+Loading required package: rJava
+> options(scipen=10000)
+> options(digits=4)
+> 
+> rm(list = ls())
+> 
+> ## Read the individual country data (dumped from RR.xls with Save All to CSV)
+> Australia     <- read.csv("RR - Australia.csv") 
+> Austria       <- read.csv("RR - Austria.csv")   
+> Belgium       <- read.csv("RR - Belgium.csv")   
+> Canada        <- read.csv("RR - Canada.csv")    
+> Denmark       <- read.csv("RR - Denmark.csv")   
+> Finland       <- read.csv("RR - Finland.csv")   
+> France        <- read.csv("RR - France.csv")    
+> Germany       <- read.csv("RR - Germany.csv")   
+> Greece        <- read.csv("RR - Greece.csv")    
+> Ireland       <- read.csv("RR - Ireland.csv")   
+> Italy         <- read.csv("RR - Italy.csv")     
+> Japan         <- read.csv("RR - Japan.csv")     
+> Netherlands   <- read.csv("RR - Netherlands.csv")
+> NewZealand    <- read.csv("RR - New Zealand.csv")
+> Norway        <- read.csv("RR - Norway.csv")
+> Portugal      <- read.csv("RR - Portugal.csv")
+> Spain         <- read.csv("RR - Spain.csv")
+> Sweden        <- read.csv("RR - Sweden.csv")
+> UK            <- read.csv("RR - UK.csv")
+> US            <- read.csv("RR - US.csv")
+> 
+> ## Stack the data
+> RR <- merge(Australia,Austria,all=TRUE)
+> RR <- merge(RR,Belgium    ,all=TRUE)
+> RR <- merge(RR,Canada     ,all=TRUE)
+> RR <- merge(RR,Denmark    ,all=TRUE)
+> RR <- merge(RR,Finland    ,all=TRUE)
+> RR <- merge(RR,France     ,all=TRUE)
+> RR <- merge(RR,Germany    ,all=TRUE)
+> RR <- merge(RR,Greece     ,all=TRUE)
+> RR <- merge(RR,Ireland    ,all=TRUE)
+> RR <- merge(RR,Italy      ,all=TRUE)
+> RR <- merge(RR,Japan      ,all=TRUE)
+> RR <- merge(RR,Netherlands,all=TRUE)
+> RR <- merge(RR,NewZealand ,all=TRUE)
+> RR <- merge(RR,Norway     ,all=TRUE)
+> RR <- merge(RR,Portugal   ,all=TRUE)
+> RR <- merge(RR,Spain      ,all=TRUE)
+> RR <- merge(RR,Sweden     ,all=TRUE)
+> RR <- merge(RR,UK         ,all=TRUE)
+> RR <- merge(RR,US         ,all=TRUE)
+> 
+> with(RR,table(Country))
+Country
+  Australia     Austria     Belgium      Canada     Denmark     Finland 
+        211         140         181         146         131         151 
+     France     Germany      Greece     Ireland       Italy       Japan 
+        196         161         178          90         132         139 
+Netherlands New Zealand      Norway    Portugal       Spain      Sweden 
+        204         141         181         145         161         211 
+         UK          US 
+        181         221 
+> 
+> ## Convert public debt/GDP
+> RR$debtgdp <- RR$debtgdp
+> 
+> write.dta(RR,"RR-basic.dta")
+> 
+> ## Follow rules in RR working spreadsheet for calculating public debt/GDP for each country-year
+> RR <- within(RR, debtgdp <- ifelse(Country=="Australia",ifelse(Year<=1948,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Austria",ifelse(Year<=1979,100*Debt1/GDP1,100*Debt2/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Belgium",ifelse(Year<=1979,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Canada",ifelse(Year<=1948,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Denmark",ifelse(Year<=1949,100*Debt1/GDP1,100*Debt1/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Finland",ifelse(Year<=1977,100*Debt1/GDP1,100*Debt2/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="France",ifelse(Year<=1948, 100*Debt1 / GDP1, ifelse(Year<=1978, 100*Debt1 / GDP2,100*Debt2/GDP2)),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Germany",ifelse(Year<=1950,100*Debt1/GDP1,100*Debt2/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Greece",ifelse((Year>=1884 & Year<=1913) | (Year>=1919 & Year<=1939) | (Year>=1970 & Year<=1992),100*Debt/GDP1, ifelse(Year==2009,100,debtgdp)),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Ireland",ifelse(Year<=2010,100*Debt/GDP2,debtgdp),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Italy",ifelse(Year<=1913,100*Debt/GDP1,ifelse(Year<=1946,100*Debt/GNI,ifelse(Year<=1998,100*Debt/GDP1,100*Debt/GDP2))),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Japan",ifelse(Year<=1953,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Netherlands",ifelse(Year<=1956,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="New Zealand",ifelse(Year<=1947,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Norway",ifelse(Year<=1948,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Portugal",ifelse(Year<=1999,100*Debt1/GDP1,100*Debt2/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Spain",ifelse(Year<=1957,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="Sweden",ifelse(Year<=1949,100*Debt/GDP1,100*Debt/GDP2),debtgdp))
+> RR <- within(RR, debtgdp <- ifelse(Country=="UK" , 100*Debt/GDP, debtgdp ))
+> RR <- within(RR, debtgdp <- ifelse(Country=="US" , 100*Debt/GDP, debtgdp ))
+> 
+> RR$RGDP <- as.numeric(RR$RGDP)
+> RR$RGDP1 <- as.numeric(RR$RGDP1)
+> RR$RGDP2 <- as.numeric(RR$RGDP2)
+> 
+> ## Calculate real GDP growth using rules per RR spreadsheet 
+> lg<-function(x)c(NA,x[1:(length(x)-1)])
+> RR <- ddply( RR, ~Country, transform, lRGDP=lg(RGDP), lRGDP1=lg(RGDP1), lRGDP2=lg(RGDP2)  )
+> RR <- within(RR, dRGDP <- ifelse( !is.na(dRGDP), dRGDP,
++                                    ifelse( !is.na( RGDP / lRGDP - 1 ), 100*(RGDP / lRGDP - 1) ,
++                                           ifelse( !is.na( RGDP2 / lRGDP2 - 1 ), 100*(RGDP2 / lRGDP2 - 1) ,
++                                                  ifelse( !is.na( RGDP1 / lRGDP1 - 1 ), 100*(RGDP1 / lRGDP1 - 1),dRGDP )))))
+> 
+> write.dta(RR,"RR-200-processed.dta")
+> 
+> ## Cut to postwar analysis
+> RR <- subset(RR,Year>=1946 & Year<=2009)
+> 
+> ## Italy uses another data series through 1946 and is excluded from GITD postwar until 1951
+> RR <- subset(RR, !(Year<1951 & Country=="Italy"))
+> 
+> ## Potential data years 1946-2009
+> avail.data <- ddply(RR, ~Country, summarize,
++                     count.year.GDP=sum(!is.na(dRGDP)),count.year.debt=sum(!is.na(debtgdp)), count.year.both=sum(!is.na(dRGDP) & !is.na(debtgdp)))
+> avail.data[order(avail.data[,"count.year.both"]),]
+       Country count.year.GDP count.year.debt count.year.both
+9       Greece             64              40              40
+17       Spain             42              64              42
+13 Netherlands             64              53              53
+7       France             60              55              54
+12       Japan             54              56              54
+5      Denmark             64              56              56
+16    Portugal             64              58              58
+8      Germany             64              59              59
+11       Italy             59              59              59
+2      Austria             64              62              62
+3      Belgium             63              64              63
+10     Ireland             64              63              63
+1    Australia             64              64              64
+4       Canada             64              64              64
+6      Finland             64              64              64
+14 New Zealand             64              64              64
+15      Norway             64              64              64
+18      Sweden             64              64              64
+19          UK             64              64              64
+20          US             64              64              64
+> 
+> write.dta(RR,"RR-processed.dta")
+> ## Slow
+> RR$dgcat.lm <- cut(RR$debtgdp, breaks=c(0,30,60,90,Inf))
+> RR$dgcat <- factor(RR$dgcat.lm, labels = c("0-30%","30-60%","60-90%","Above 90%"),ordered=TRUE)
+> write.xlsx2(subset(RR,TRUE,select=c(Country,Year,debtgdp,dgcat,dRGDP) ),"RR-keycolumns.xlsx",row.names=FALSE)
+> 
+> 
+> ## Limit to actually available data
+> RR <- subset(RR,  !is.na(dRGDP) & !is.na(debtgdp))
+> 
+> ## Actually available data years 1946-2009
+> avail.data <- ddply(RR, ~Country, summarize, min.year=min(Year), count.year=sum(!is.na(dRGDP) & !is.na(debtgdp)))
+> avail.data[order(avail.data[,"min.year"]),]
+       Country min.year count.year
+1    Australia     1946         64
+4       Canada     1946         64
+6      Finland     1946         64
+14 New Zealand     1946         64
+15      Norway     1946         64
+17       Spain     1946         42
+18      Sweden     1946         64
+19          UK     1946         64
+20          US     1946         64
+3      Belgium     1947         63
+10     Ireland     1947         63
+2      Austria     1948         62
+5      Denmark     1950         56
+7       France     1950         54
+16    Portugal     1950         58
+8      Germany     1951         59
+11       Italy     1951         59
+12       Japan     1956         54
+13 Netherlands     1957         53
+9       Greece     1970         40
+> 
+> with(RR,table(Year))
+Year
+1946 1947 1948 1949 1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960 1961 
+   9   11   12   12   15   16   16   17   17   17   18   19   19   18   18   18 
+1962 1963 1964 1965 1966 1967 1968 1969 1970 1971 1972 1973 1974 1975 1976 1977 
+  18   18   18   18   18   18   18   18   19   19   19   18   18   18   17   17 
+1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992 1993 
+  17   18   19   20   20   20   20   20   20   20   20   20   20   20   20   20 
+1994 1995 1996 1997 1998 1999 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 
+  20   20   20   20   20   20   20   20   20   20   20   20   20   20   20   20 
+> with(RR,table(Country))
+Country
+  Australia     Austria     Belgium      Canada     Denmark     Finland 
+         64          62          63          64          56          64 
+     France     Germany      Greece     Ireland       Italy       Japan 
+         54          59          40          63          59          54 
+Netherlands New Zealand      Norway    Portugal       Spain      Sweden 
+         53          64          64          58          42          64 
+         UK          US 
+         64          64 
+> 
+> ## Create RR public debt/GDP categories
+> RR$dgcat.lm <- cut(RR$debtgdp, breaks=c(0,30,60,90,Inf))
+> RR$dgcat <- factor(RR$dgcat.lm, labels = c("0-30%","30-60%","60-90%","Above 90%"),ordered=TRUE)
+> 
+> ## Create expanded public debt/GDP categories
+> RR$dgcat2.lm <- cut(RR$debtgdp, breaks=c(0,30,60,90,120,Inf))
+> RR$dgcat2 <- factor(RR$dgcat2.lm, labels = c("0-30%","30-60%","60-90%","90-120%","Above 120%"),ordered=TRUE)
+> 
+> ## Regression analysis of categories
+> summary(dgcat.lm <- lm(dRGDP ~ dgcat.lm, data=RR))
+
+Call:
+lm(formula = dRGDP ~ dgcat.lm, data = RR)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-13.110  -1.583  -0.046   1.523  24.237 
+
+Coefficients:
+                 Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)         4.174      0.142   29.41 < 0.0000000000000002 ***
+dgcat.lm(30,60]    -1.081      0.199   -5.43        0.00000006879 ***
+dgcat.lm(60,90]    -0.987      0.251   -3.93        0.00008938601 ***
+dgcat.lm(90,Inf]   -2.006      0.313   -6.40        0.00000000022 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.93 on 1171 degrees of freedom
+Multiple R-squared: 0.0449,	Adjusted R-squared: 0.0425 
+F-statistic: 18.4 on 3 and 1171 DF,  p-value: 0.0000000000122 
+
+> summary(dgcat2.lm <- lm(dRGDP ~ dgcat2.lm, data=RR))
+
+Call:
+lm(formula = dRGDP ~ dgcat2.lm, data = RR)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-12.504  -1.569  -0.047   1.539  24.237 
+
+Coefficients:
+                   Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)           4.174      0.142   29.42 < 0.0000000000000002 ***
+dgcat2.lm(30,60]     -1.081      0.199   -5.43          0.000000068 ***
+dgcat2.lm(60,90]     -0.987      0.251   -3.93          0.000088867 ***
+dgcat2.lm(90,120]    -1.768      0.359   -4.93          0.000000947 ***
+dgcat2.lm(120,Inf]   -2.612      0.545   -4.80          0.000001827 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.93 on 1170 degrees of freedom
+Multiple R-squared: 0.0464,	Adjusted R-squared: 0.0432 
+F-statistic: 14.2 on 4 and 1170 DF,  p-value: 0.0000000000236 
+
+> linearHypothesis(dgcat2.lm,
++                  verbose=TRUE,
++                  paste( c("dgcat2.lm(30,60]=dgcat2.lm(60,90]", "dgcat2.lm(30,60]=dgcat2.lm(90,120]", "dgcat2.lm(30,60]=dgcat2.lm(120,Inf]") ))
+
+Hypothesis matrix:
+                                    (Intercept) dgcat2.lm(30,60]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]             0                1
+dgcat2.lm(30,60]=dgcat2.lm(90,120]            0                1
+dgcat2.lm(30,60]=dgcat2.lm(120,Inf]           0                1
+                                    dgcat2.lm(60,90] dgcat2.lm(90,120]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]                 -1                 0
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                 0                -1
+dgcat2.lm(30,60]=dgcat2.lm(120,Inf]                0                 0
+                                    dgcat2.lm(120,Inf]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]                    0
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                   0
+dgcat2.lm(30,60]=dgcat2.lm(120,Inf]                 -1
+
+Right-hand-side vector:
+[1] 0 0 0
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+  dgcat2.lm(30,60]=dgcat2.lm(60,90]  dgcat2.lm(30,60]=dgcat2.lm(90,120] 
+                           -0.09443                             0.68621 
+dgcat2.lm(30,60]=dgcat2.lm(120,Inf] 
+                            1.53059 
+
+Linear hypothesis test
+
+Hypothesis:
+dgcat2.lm(30,60] - dgcat2.lm(60,90] = 0
+dgcat2.lm(30,60] - dgcat2.lm(90,120] = 0
+dgcat2.lm(30,60] - dgcat2.lm(120,Inf] = 0
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)   
+1   1173 10131                            
+2   1170 10028  3       102 3.98 0.0077 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> linearHypothesis(dgcat2.lm, verbose=TRUE, paste( c("dgcat2.lm(30,60]=dgcat2.lm(60,90]", "dgcat2.lm(30,60]=dgcat2.lm(90,120]")))
+
+Hypothesis matrix:
+                                   (Intercept) dgcat2.lm(30,60]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]            0                1
+dgcat2.lm(30,60]=dgcat2.lm(90,120]           0                1
+                                   dgcat2.lm(60,90] dgcat2.lm(90,120]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]                -1                 0
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                0                -1
+                                   dgcat2.lm(120,Inf]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]                   0
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                  0
+
+Right-hand-side vector:
+[1] 0 0
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+ dgcat2.lm(30,60]=dgcat2.lm(60,90] dgcat2.lm(30,60]=dgcat2.lm(90,120] 
+                          -0.09443                            0.68621 
+
+Linear hypothesis test
+
+Hypothesis:
+dgcat2.lm(30,60] - dgcat2.lm(60,90] = 0
+dgcat2.lm(30,60] - dgcat2.lm(90,120] = 0
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)
+1   1172 10065                         
+2   1170 10028  2      37.2 2.17   0.11
+> linearHypothesis(dgcat2.lm, verbose=TRUE, paste( c("dgcat2.lm(30,60]=dgcat2.lm(60,90]")))
+
+Hypothesis matrix:
+                                  (Intercept) dgcat2.lm(30,60] dgcat2.lm(60,90]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]           0                1               -1
+                                  dgcat2.lm(90,120] dgcat2.lm(120,Inf]
+dgcat2.lm(30,60]=dgcat2.lm(60,90]                 0                  0
+
+Right-hand-side vector:
+*rhs* 
+    0 
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+dgcat2.lm(30,60]=dgcat2.lm(60,90] 
+                         -0.09443 
+
+Linear hypothesis test
+
+Hypothesis:
+dgcat2.lm(30,60] - dgcat2.lm(60,90] = 0
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)
+1   1171 10029                         
+2   1170 10028  1      1.23 0.14   0.71
+> linearHypothesis(dgcat2.lm, verbose=TRUE, paste( c("dgcat2.lm(60,90]=dgcat2.lm(90,120]")))
+
+Hypothesis matrix:
+                                   (Intercept) dgcat2.lm(30,60]
+dgcat2.lm(60,90]=dgcat2.lm(90,120]           0                0
+                                   dgcat2.lm(60,90] dgcat2.lm(90,120]
+dgcat2.lm(60,90]=dgcat2.lm(90,120]                1                -1
+                                   dgcat2.lm(120,Inf]
+dgcat2.lm(60,90]=dgcat2.lm(90,120]                  0
+
+Right-hand-side vector:
+*rhs* 
+    0 
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+dgcat2.lm(60,90]=dgcat2.lm(90,120] 
+                            0.7806 
+
+Linear hypothesis test
+
+Hypothesis:
+dgcat2.lm(60,90] - dgcat2.lm(90,120] = 0
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)  
+1   1171 10063                           
+2   1170 10028  1      34.5 4.03  0.045 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> linearHypothesis(dgcat2.lm, verbose=TRUE, paste( c("dgcat2.lm(30,60]=dgcat2.lm(90,120]")))
+
+Hypothesis matrix:
+                                   (Intercept) dgcat2.lm(30,60]
+dgcat2.lm(30,60]=dgcat2.lm(90,120]           0                1
+                                   dgcat2.lm(60,90] dgcat2.lm(90,120]
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                0                -1
+                                   dgcat2.lm(120,Inf]
+dgcat2.lm(30,60]=dgcat2.lm(90,120]                  0
+
+Right-hand-side vector:
+*rhs* 
+    0 
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+dgcat2.lm(30,60]=dgcat2.lm(90,120] 
+                            0.6862 
+
+Linear hypothesis test
+
+Hypothesis:
+dgcat2.lm(30,60] - dgcat2.lm(90,120] = 0
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)  
+1   1171 10060                           
+2   1170 10028  1      31.5 3.68  0.055 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> 
+> linearHypothesis(dgcat2.lm, verbose=TRUE, paste( c("(Intercept) + dgcat2.lm(90,120] = 3") ))
+
+Hypothesis matrix:
+                                    (Intercept) dgcat2.lm(30,60]
+(Intercept) + dgcat2.lm(90,120] = 3           1                0
+                                    dgcat2.lm(60,90] dgcat2.lm(90,120]
+(Intercept) + dgcat2.lm(90,120] = 3                0                 1
+                                    dgcat2.lm(120,Inf]
+(Intercept) + dgcat2.lm(90,120] = 3                  0
+
+Right-hand-side vector:
+*rhs* 
+    3 
+
+Estimated linear function (hypothesis.matrix %*% coef - rhs)
+(Intercept) + dgcat2.lm(90,120] = 3 
+                            -0.5941 
+
+Linear hypothesis test
+
+Hypothesis:
+(Intercept) + dgcat2.lm(90,120] = 3
+
+Model 1: restricted model
+Model 2: dRGDP ~ dgcat2.lm
+
+  Res.Df   RSS Df Sum of Sq    F Pr(>F)  
+1   1171 10056                           
+2   1170 10028  1      27.9 3.25  0.072 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> 
+> 
+> ## Country-Year average by debtgdp ("correct weights")
+> ## Table 3 Corrected
+> (RR.correct.sd <- with(RR, tapply( dRGDP, dgcat, sd, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    2.859     2.898     2.793     3.506 
+> (RR.correct.mean <- with(RR, tapply( dRGDP, dgcat, mean, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    4.174     3.092     3.187     2.168 
+> RR.correct.mean.df <- data.frame(RR.correct.mean, dgcat=names(RR.correct.mean) )
+> ## Averaged Country averages by debtgdp ("equal weights")
+> (RR.equalwt.mean <- with(RR, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia   3.206 4.9472  4.042    3.7743
+Austria     5.208 3.2565 -3.824        NA
+Belgium        NA 4.1917  3.080    2.5668
+Canada      2.516 3.5254  4.524    2.9566
+Denmark     3.519 1.7000  2.391        NA
+Finland     3.817 2.4185  5.489        NA
+France      5.058 2.6162  3.020        NA
+Germany     3.874 0.8758     NA        NA
+Greece      4.001 0.3402  2.696    2.9106
+Ireland     4.209 4.4522  3.950    2.4286
+Italy       5.353 2.0543  1.772    1.0289
+Japan       7.331 3.9571  1.008    0.6873
+Netherlands 4.083 2.6208  1.070        NA
+New Zealand 2.466 2.8896  3.884    2.5747
+Norway      3.400 5.1083 10.201        NA
+Portugal    4.451 3.5495  1.894        NA
+Spain       1.549 3.3987  4.156        NA
+Sweden      3.567 2.9322  2.666        NA
+UK             NA 2.2312  2.522    2.3991
+US             NA 3.3702  3.264   -1.9889
+> ## NYT Appendix input to Table 1 Line 3
+> (RR.equalwt.median <- with(RR, tapply( dRGDP, list(Country,dgcat), median, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia   3.489 5.8789  4.273    6.4375
+Austria     4.782 2.3410 -3.824        NA
+Belgium        NA 4.0078  2.931    2.1018
+Canada      2.281 3.4419  4.430    2.1747
+Denmark     2.793 0.8415  2.560        NA
+Finland     3.287 3.1707  5.062        NA
+France      5.430 2.5100  3.325        NA
+Germany     3.824 1.1762     NA        NA
+Greece      3.922 0.5180  3.800    3.3640
+Ireland     5.049 4.0954  3.758    3.0000
+Italy       5.769 1.8354  1.564    1.6410
+Japan       7.956 4.1768  1.723    1.4135
+Netherlands 4.222 2.9224  1.070        NA
+New Zealand 2.813 2.9610  2.856    7.7113
+Norway      3.524 4.3744 10.201        NA
+Portugal    4.509 3.2536  2.281        NA
+Spain       1.652 3.3753  4.156        NA
+Sweden      4.163 2.9491  2.861        NA
+UK             NA 2.6801  2.236    2.9241
+US             NA 3.4631  3.394   -0.7053
+> ## Table 3 Country equal weighting
+> summary(RR.equalwt.mean)
+     0-30%          30-60%         60-90%        Above 90%    
+ Min.   :1.55   Min.   :0.34   Min.   :-3.82   Min.   :-1.99  
+ 1st Qu.:3.40   1st Qu.:2.37   1st Qu.: 2.14   1st Qu.: 1.37  
+ Median :3.87   Median :3.09   Median : 3.02   Median : 2.50  
+ Mean   :3.98   Mean   :3.02   Mean   : 3.04   Mean   : 1.93  
+ 3rd Qu.:4.45   3rd Qu.:3.65   3rd Qu.: 4.00   3rd Qu.: 2.83  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 3.77  
+ NA's   :3                     NA's   :1       NA's   :10     
+> 
+> ## Country-Year average by debtgdp ("correct weights") expanded categories
+> (RR.correct.mean.2 <- with(RR, tapply( dRGDP, dgcat2, mean, na.rm=TRUE )))
+     0-30%     30-60%     60-90%    90-120% Above 120% 
+     4.174      3.092      3.187      2.406      1.562 
+> RR.correct.mean.2.df <- data.frame(RR.correct.mean.2, dgcat=names(RR.correct.mean.2) )
+> ## Averaged Country averages by debtgdp ("equal weights")
+> (RR.ex.equalwt.mean <- with(RR, tapply( dRGDP, list(Country,dgcat2), mean, na.rm=TRUE )))
+            0-30% 30-60% 60-90% 90-120% Above 120%
+Australia   3.206 4.9472  4.042  6.9202     2.9878
+Austria     5.208 3.2565 -3.824      NA         NA
+Belgium        NA 4.1917  3.080  2.7026    -0.6924
+Canada      2.516 3.5254  4.524  4.5448     0.5743
+Denmark     3.519 1.7000  2.391      NA         NA
+Finland     3.817 2.4185  5.489      NA         NA
+France      5.058 2.6162  3.020      NA         NA
+Germany     3.874 0.8758     NA      NA         NA
+Greece      4.001 0.3402  2.696  2.9106         NA
+Ireland     4.209 4.4522  3.950  2.4286         NA
+Italy       5.353 2.0543  1.772  1.0289         NA
+Japan       7.331 3.9571  1.008  1.3596     0.5379
+Netherlands 4.083 2.6208  1.070      NA         NA
+New Zealand 2.466 2.8896  3.884 -2.2566     9.8217
+Norway      3.400 5.1083 10.201      NA         NA
+Portugal    4.451 3.5495  1.894      NA         NA
+Spain       1.549 3.3987  4.156      NA         NA
+Sweden      3.567 2.9322  2.666      NA         NA
+UK             NA 2.2312  2.522  3.3034     1.8716
+US             NA 3.3702  3.264  0.9955   -10.9422
+> summary(RR.ex.equalwt.mean)
+     0-30%          30-60%         60-90%         90-120%     
+ Min.   :1.55   Min.   :0.34   Min.   :-3.82   Min.   :-2.26  
+ 1st Qu.:3.40   1st Qu.:2.37   1st Qu.: 2.14   1st Qu.: 1.11  
+ Median :3.87   Median :3.09   Median : 3.02   Median : 2.57  
+ Mean   :3.98   Mean   :3.02   Mean   : 3.04   Mean   : 2.39  
+ 3rd Qu.:4.45   3rd Qu.:3.65   3rd Qu.: 4.00   3rd Qu.: 3.21  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 6.92  
+ NA's   :3                     NA's   :1       NA's   :10     
+   Above 120%     
+ Min.   :-10.942  
+ 1st Qu.: -0.077  
+ Median :  0.574  
+ Mean   :  0.594  
+ 3rd Qu.:  2.430  
+ Max.   :  9.822  
+ NA's   :13       
+> 
+> 
+> ## Selective treatment of early years
+> RR.selective <- subset(RR,
++                        !((Year<1950 & Country=="New Zealand") | (Year<1951 & Country=="Australia") | (Year<1951 & Country=="Canada") ))
+> (RR.selective.mean <- with(RR.selective, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia   3.206 4.9472  4.042        NA
+Austria     5.208 3.2565 -3.824        NA
+Belgium        NA 4.1917  3.080    2.5668
+Canada      2.516 3.5254  4.524        NA
+Denmark     3.519 1.7000  2.391        NA
+Finland     3.817 2.4185  5.489        NA
+France      5.058 2.6162  3.020        NA
+Germany     3.874 0.8758     NA        NA
+Greece      4.001 0.3402  2.696    2.9106
+Ireland     4.209 4.4522  3.950    2.4286
+Italy       5.353 2.0543  1.772    1.0289
+Japan       7.331 3.9571  1.008    0.6873
+Netherlands 4.083 2.6208  1.070        NA
+New Zealand 2.466 2.8896  3.884   -7.6351
+Norway      3.400 5.1083 10.201        NA
+Portugal    4.451 3.5495  1.894        NA
+Spain       1.549 3.3987  4.156        NA
+Sweden      3.567 2.9322  2.666        NA
+UK             NA 2.2312  2.522    2.3991
+US             NA 3.3702  3.264   -1.9889
+> (RR.selective.median <- with(RR.selective, tapply( dRGDP, list(Country,dgcat), median, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia   3.489 5.8789  4.273        NA
+Austria     4.782 2.3410 -3.824        NA
+Belgium        NA 4.0078  2.931    2.1018
+Canada      2.281 3.4419  4.430        NA
+Denmark     2.793 0.8415  2.560        NA
+Finland     3.287 3.1707  5.062        NA
+France      5.430 2.5100  3.325        NA
+Germany     3.824 1.1762     NA        NA
+Greece      3.922 0.5180  3.800    3.3640
+Ireland     5.049 4.0954  3.758    3.0000
+Italy       5.769 1.8354  1.564    1.6410
+Japan       7.956 4.1768  1.723    1.4135
+Netherlands 4.222 2.9224  1.070        NA
+New Zealand 2.813 2.9610  2.856   -7.6351
+Norway      3.524 4.3744 10.201        NA
+Portugal    4.509 3.2536  2.281        NA
+Spain       1.652 3.3753  4.156        NA
+Sweden      4.163 2.9491  2.861        NA
+UK             NA 2.6801  2.236    2.9241
+US             NA 3.4631  3.394   -0.7053
+> ## Equal weights
+> ## Table 3 Weights,Exclusion
+> summary(RR.selective.mean)
+     0-30%          30-60%         60-90%        Above 90%     
+ Min.   :1.55   Min.   :0.34   Min.   :-3.82   Min.   :-7.635  
+ 1st Qu.:3.40   1st Qu.:2.37   1st Qu.: 2.14   1st Qu.: 0.018  
+ Median :3.87   Median :3.09   Median : 3.02   Median : 1.714  
+ Mean   :3.98   Mean   :3.02   Mean   : 3.04   Mean   : 0.300  
+ 3rd Qu.:4.45   3rd Qu.:3.65   3rd Qu.: 4.00   3rd Qu.: 2.463  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 2.911  
+ NA's   :3                     NA's   :1       NA's   :12      
+> ## Correct weights
+> ## Table 3 Selective years exclusion
+> with(RR.selective, tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    4.174     3.092     3.187     1.920 
+> 
+> ## Spreadsheet error 
+> RR.spreadsheet <- subset(RR, ! Country %in% c("Australia","Austria","Belgium","Canada","Denmark") )
+> (RR.spreadsheet.mean <- with(RR.spreadsheet, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia      NA     NA     NA        NA
+Austria        NA     NA     NA        NA
+Belgium        NA     NA     NA        NA
+Canada         NA     NA     NA        NA
+Denmark        NA     NA     NA        NA
+Finland     3.817 2.4185  5.489        NA
+France      5.058 2.6162  3.020        NA
+Germany     3.874 0.8758     NA        NA
+Greece      4.001 0.3402  2.696    2.9106
+Ireland     4.209 4.4522  3.950    2.4286
+Italy       5.353 2.0543  1.772    1.0289
+Japan       7.331 3.9571  1.008    0.6873
+Netherlands 4.083 2.6208  1.070        NA
+New Zealand 2.466 2.8896  3.884    2.5747
+Norway      3.400 5.1083 10.201        NA
+Portugal    4.451 3.5495  1.894        NA
+Spain       1.549 3.3987  4.156        NA
+Sweden      3.567 2.9322  2.666        NA
+UK             NA 2.2312  2.522    2.3991
+US             NA 3.3702  3.264   -1.9889
+> (RR.spreadsheet.median <- with(RR.spreadsheet, tapply( dRGDP, list(Country,dgcat), median, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia      NA     NA     NA        NA
+Austria        NA     NA     NA        NA
+Belgium        NA     NA     NA        NA
+Canada         NA     NA     NA        NA
+Denmark        NA     NA     NA        NA
+Finland     3.287  3.171  5.062        NA
+France      5.430  2.510  3.325        NA
+Germany     3.824  1.176     NA        NA
+Greece      3.922  0.518  3.800    3.3640
+Ireland     5.049  4.095  3.758    3.0000
+Italy       5.769  1.835  1.564    1.6410
+Japan       7.956  4.177  1.723    1.4135
+Netherlands 4.222  2.922  1.070        NA
+New Zealand 2.813  2.961  2.856    7.7113
+Norway      3.524  4.374 10.201        NA
+Portugal    4.509  3.254  2.281        NA
+Spain       1.652  3.375  4.156        NA
+Sweden      4.163  2.949  2.861        NA
+UK             NA  2.680  2.236    2.9241
+US             NA  3.463  3.394   -0.7053
+> ## Table 3 Spreadsheet, Weights
+> summary(RR.spreadsheet.mean)
+     0-30%          30-60%         60-90%        Above 90%     
+ Min.   :1.55   Min.   :0.34   Min.   : 1.01   Min.   :-1.989  
+ 1st Qu.:3.57   1st Qu.:2.33   1st Qu.: 2.05   1st Qu.: 0.858  
+ Median :4.00   Median :2.89   Median : 2.86   Median : 2.399  
+ Mean   :4.09   Mean   :2.85   Mean   : 3.40   Mean   : 1.434  
+ 3rd Qu.:4.45   3rd Qu.:3.47   3rd Qu.: 3.93   3rd Qu.: 2.502  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 2.911  
+ NA's   :7      NA's   :5      NA's   :6       NA's   :13      
+> ## Table 3 Spreadsheet error
+> with(RR.spreadsheet, tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    4.236     2.959     3.160     1.875 
+> 
+> ## Selective treatment of early years and spreadsheet error
+> RR.selective.spreadsheet <- subset(RR.selective, ! Country %in% c("Australia","Austria","Belgium","Canada","Denmark") )
+> RR.selective.spreadsheet.mean <- with(RR.selective.spreadsheet, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE ))
+> (RR.selective.spreadsheet.eqweight.median <- with(RR.selective.spreadsheet, tapply( dRGDP, list(Country,dgcat), median, na.rm=TRUE )))
+            0-30% 30-60% 60-90% Above 90%
+Australia      NA     NA     NA        NA
+Austria        NA     NA     NA        NA
+Belgium        NA     NA     NA        NA
+Canada         NA     NA     NA        NA
+Denmark        NA     NA     NA        NA
+Finland     3.287  3.171  5.062        NA
+France      5.430  2.510  3.325        NA
+Germany     3.824  1.176     NA        NA
+Greece      3.922  0.518  3.800    3.3640
+Ireland     5.049  4.095  3.758    3.0000
+Italy       5.769  1.835  1.564    1.6410
+Japan       7.956  4.177  1.723    1.4135
+Netherlands 4.222  2.922  1.070        NA
+New Zealand 2.813  2.961  2.856   -7.6351
+Norway      3.524  4.374 10.201        NA
+Portugal    4.509  3.254  2.281        NA
+Spain       1.652  3.375  4.156        NA
+Sweden      4.163  2.949  2.861        NA
+UK             NA  2.680  2.236    2.9241
+US             NA  3.463  3.394   -0.7053
+> ## Equal weights
+> ## Table 3 Weights,Exclusion,Spreadsheet Error
+> summary(RR.selective.spreadsheet.mean)
+     0-30%          30-60%         60-90%        Above 90%     
+ Min.   :1.55   Min.   :0.34   Min.   : 1.01   Min.   :-7.635  
+ 1st Qu.:3.57   1st Qu.:2.33   1st Qu.: 2.05   1st Qu.:-0.651  
+ Median :4.00   Median :2.89   Median : 2.86   Median : 1.029  
+ Mean   :4.09   Mean   :2.85   Mean   : 3.40   Mean   :-0.024  
+ 3rd Qu.:4.45   3rd Qu.:3.47   3rd Qu.: 3.93   3rd Qu.: 2.414  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 2.911  
+ NA's   :7      NA's   :5      NA's   :6       NA's   :13      
+> ## Correct weights
+> ## Table 3 Exclusion,Spreadsheet Error
+> with(RR.selective.spreadsheet, tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    4.236     2.959     3.160     1.692 
+> 
+> ## Actually available data years 1946-2009 with selective exclusion and spreadsheet error
+> avail.data <- ddply(RR.selective.spreadsheet, ~Country, summarize, min.year=min(Year), count.year=sum(!is.na(dRGDP) & !is.na(debtgdp)))
+> avail.data[order(avail.data[,"min.year"]),]
+       Country min.year count.year
+1      Finland     1946         64
+10      Norway     1946         64
+12       Spain     1946         42
+13      Sweden     1946         64
+14          UK     1946         64
+15          US     1946         64
+5      Ireland     1947         63
+2       France     1950         54
+9  New Zealand     1950         60
+11    Portugal     1950         58
+3      Germany     1951         59
+6        Italy     1951         59
+7        Japan     1956         54
+8  Netherlands     1957         53
+4       Greece     1970         40
+> 
+> ## And New Zealand transcription error
+> ## selective.spreadsheet.transcription <- with(RR.selective.spreadsheet, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE ))
+> RR.selective.spreadsheet.mean.transcription <- RR.selective.spreadsheet.mean
+> RR.selective.spreadsheet.mean.transcription["New Zealand",4] <- -7.9
+> summary(RR.selective.spreadsheet.mean.transcription)
+     0-30%          30-60%         60-90%        Above 90%     
+ Min.   :1.55   Min.   :0.34   Min.   : 1.01   Min.   :-7.900  
+ 1st Qu.:3.57   1st Qu.:2.33   1st Qu.: 2.05   1st Qu.:-0.651  
+ Median :4.00   Median :2.89   Median : 2.86   Median : 1.029  
+ Mean   :4.09   Mean   :2.85   Mean   : 3.40   Mean   :-0.062  
+ 3rd Qu.:4.45   3rd Qu.:3.47   3rd Qu.: 3.93   3rd Qu.: 2.414  
+ Max.   :7.33   Max.   :5.11   Max.   :10.20   Max.   : 2.911  
+ NA's   :7      NA's   :5      NA's   :6       NA's   :13      
+> ## Table 3 Weights,Exclusion,Spreadsheet Error,Transcription
+> (RR.published.mean <- apply(RR.selective.spreadsheet.mean.transcription,2,mean,na.rm=TRUE))
+    0-30%    30-60%    60-90% Above 90% 
+  4.08922   2.85432   3.39944  -0.06206 
+> RR.published.mean.df <- data.frame(RR.published.mean , dgcat=names(RR.published.mean) )
+> 
+> 
+> ## Medians
+> ## NYT Appendix Table 1 Line 4
+> (RR.correct.median <- with(RR, tapply( dRGDP, dgcat, median, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    4.145     3.105     2.898     2.335 
+> (RR.correct.selective.median <- with(RR.selective, tapply( dRGDP, dgcat, median, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    4.145     3.105     2.898     2.161 
+> (RR.correct.spreadsheet.median <- with(RR.spreadsheet, tapply( dRGDP, dgcat, median, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    4.400     3.052     2.854     2.337 
+> ## NYT Appendix Table 1 Line 3 (Use Median line)
+> (RR.eqweight.median <- summary(RR.equalwt.median))
+     0-30%          30-60%          60-90%        Above 90%     
+ Min.   :1.65   Min.   :0.518   Min.   :-3.82   Min.   :-0.705  
+ 1st Qu.:3.29   1st Qu.:2.468   1st Qu.: 2.26   1st Qu.: 1.756  
+ Median :3.92   Median :3.066   Median : 2.93   Median : 2.549  
+ Mean   :4.09   Mean   :2.999   Mean   : 3.09   Mean   : 3.006  
+ 3rd Qu.:4.78   3rd Qu.:3.599   3rd Qu.: 3.98   3rd Qu.: 3.273  
+ Max.   :7.96   Max.   :5.879   Max.   :10.20   Max.   : 7.711  
+ NA's   :3                      NA's   :1       NA's   :10      
+> summary(RR.spreadsheet.median)
+     0-30%          30-60%          60-90%        Above 90%     
+ Min.   :1.65   Min.   :0.518   Min.   : 1.07   Min.   :-0.705  
+ 1st Qu.:3.52   1st Qu.:2.595   1st Qu.: 2.25   1st Qu.: 1.527  
+ Median :4.16   Median :2.961   Median : 3.09   Median : 2.924  
+ Mean   :4.32   Mean   :2.897   Mean   : 3.45   Mean   : 2.764  
+ 3rd Qu.:5.05   3rd Qu.:3.419   3rd Qu.: 3.79   3rd Qu.: 3.182  
+ Max.   :7.96   Max.   :4.374   Max.   :10.20   Max.   : 7.711  
+ NA's   :7      NA's   :5       NA's   :6       NA's   :13      
+> ## NYT Appendix Table 1 Line 2 (Dataset is "RR.selective" because it EXCLUDES early years but spreadsheet is corrected)
+> summary(RR.selective.median)
+     0-30%          30-60%          60-90%        Above 90%     
+ Min.   :1.65   Min.   :0.518   Min.   :-3.82   Min.   :-7.635  
+ 1st Qu.:3.29   1st Qu.:2.468   1st Qu.: 2.26   1st Qu.: 0.884  
+ Median :3.92   Median :3.066   Median : 2.93   Median : 1.871  
+ Mean   :4.09   Mean   :2.999   Mean   : 3.09   Mean   : 0.763  
+ 3rd Qu.:4.78   3rd Qu.:3.599   3rd Qu.: 3.98   3rd Qu.: 2.943  
+ Max.   :7.96   Max.   :5.879   Max.   :10.20   Max.   : 3.364  
+ NA's   :3                      NA's   :1       NA's   :12      
+> (RR.correct.ex.median <- with(RR, tapply( dRGDP, dgcat2, median, na.rm=TRUE )))
+     0-30%     30-60%     60-90%    90-120% Above 120% 
+     4.145      3.105      2.898      2.373      2.039 
+> (RR.selective.spreadsheet.mean.median <- with(RR.selective.spreadsheet, tapply( dRGDP, dgcat, median, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    4.400     3.052     2.854     2.333 
+> (RR.published.median <- apply(RR.selective.spreadsheet.eqweight.median,2,median,na.rm=TRUE))
+    0-30%    30-60%    60-90% Above 90% 
+    4.163     2.961     3.093     1.641 
+> 
+> 
+> ## Counts of years
+> with(RR, table(Country,dgcat))
+             dgcat
+Country       0-30% 30-60% 60-90% Above 90%
+  Australia      37     13      9         5
+  Austria        34     27      1         0
+  Belgium         0     17     21        25
+  Canada          3     42     14         5
+  Denmark        23     16     17         0
+  Finland        44     16      4         0
+  France         24     20     10         0
+  Germany        48     11      0         0
+  Greece         13      5      3        19
+  Ireland        10     14     32         7
+  Italy          26      6     17        10
+  Japan          22     17      4        11
+  Netherlands    17     34      2         0
+  New Zealand     9     33     17         5
+  Norway         51     12      1         0
+  Portugal       42      9      7         0
+  Spain           5     36      1         0
+  Sweden         18     35     11         0
+  UK              0     39      6        19
+  US              0     37     23         4
+> apply(with(RR,table( Country,dgcat)),2,sum)
+    0-30%    30-60%    60-90% Above 90% 
+      426       439       200       110 
+> 
+> with(RR.selective,table( Country,dgcat))
+             dgcat
+Country       0-30% 30-60% 60-90% Above 90%
+  Australia      37     13      9         0
+  Austria        34     27      1         0
+  Belgium         0     17     21        25
+  Canada          3     42     14         0
+  Denmark        23     16     17         0
+  Finland        44     16      4         0
+  France         24     20     10         0
+  Germany        48     11      0         0
+  Greece         13      5      3        19
+  Ireland        10     14     32         7
+  Italy          26      6     17        10
+  Japan          22     17      4        11
+  Netherlands    17     34      2         0
+  New Zealand     9     33     17         1
+  Norway         51     12      1         0
+  Portugal       42      9      7         0
+  Spain           5     36      1         0
+  Sweden         18     35     11         0
+  UK              0     39      6        19
+  US              0     37     23         4
+> apply(with(RR.selective,table( Country,dgcat)),2,sum)
+    0-30%    30-60%    60-90% Above 90% 
+      426       439       200        96 
+> 
+> with(RR.selective.spreadsheet,table( Country,dgcat))
+             dgcat
+Country       0-30% 30-60% 60-90% Above 90%
+  Australia       0      0      0         0
+  Austria         0      0      0         0
+  Belgium         0      0      0         0
+  Canada          0      0      0         0
+  Denmark         0      0      0         0
+  Finland        44     16      4         0
+  France         24     20     10         0
+  Germany        48     11      0         0
+  Greece         13      5      3        19
+  Ireland        10     14     32         7
+  Italy          26      6     17        10
+  Japan          22     17      4        11
+  Netherlands    17     34      2         0
+  New Zealand     9     33     17         1
+  Norway         51     12      1         0
+  Portugal       42      9      7         0
+  Spain           5     36      1         0
+  Sweden         18     35     11         0
+  UK              0     39      6        19
+  US              0     37     23         4
+> apply(with(RR.selective.spreadsheet,table( Country,dgcat)),2,sum)
+    0-30%    30-60%    60-90% Above 90% 
+      329       324       138        71 
+> 
+> 
+> RR.newzealand.1951 <- subset(RR.selective.spreadsheet,Country=="New Zealand" & Year==1951)
+> 
+> 
+> ## Categorical scatterplot
+> n <- ggplot(RR, aes(x=dgcat,y=dRGDP)) + geom_point(shape=3,color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Category")
+> n <- n + geom_point(RR.published.mean.df, mapping=aes(x=dgcat,y=RR.published.mean), shape=5,  size=5 ) 
+> n <- n + geom_text(RR.published.mean.df, mapping=aes(x=dgcat,y=RR.published.mean,label=round(RR.published.mean,1)),hjust=-0.7,size=3,color='darkgray')
+> n <- n + geom_point(RR.correct.mean.df,  mapping=aes(x=dgcat,y=RR.correct.mean,label=RR.correct.mean), shape=16, size=4 )  + theme_bw()
+> n <- n + geom_text(RR.correct.mean.df,  mapping=aes(x=dgcat,y=RR.correct.mean,label=round(RR.correct.mean,1)), hjust=1.7,size=3,color='darkgray')
+> n <- n + geom_point(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP), shape=0, size=3 )
+> n <- n + geom_text(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP,label=paste(round(dRGDP,1))), hjust=-0.7,size=3,color='darkgray')
+> n <- n + geom_text(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP,label=paste("NZ",Year)), hjust=1.2,size=3,color='darkgray')
+> print(n)
+> 
+> 
+> ## Create legend for categorical scatterplot
+> plot(3,10,pch=0,ylim=c(0,70),xlim=c(0,5.5))
+> text(3.2,10,"New Zealand 1951",adj=0)
+> points(0,15,pch=16)
+> text(0.2,15,"Correct average real GDP growth",adj=0)
+> points(0,10,pch=5,cex=1.5)
+> text(0.2,10,"RR average real GDP growth",adj=0)
+> points(3,15,pch=3,col='darkgray')
+> text(3.2,15,"Country-Year real GDP growth",adj=0)
+> 
+> ## Categorical scatterplot for expanded categories
+> o <- ggplot(RR, aes(x=dgcat2,y=dRGDP)) + geom_point(shape=3,color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Category")
+> o <- o + geom_point(RR.correct.mean.2.df,  mapping=aes(x=dgcat,y=RR.correct.mean.2), shape=16, size=4 )  + theme_bw()
+> o <- o + geom_text(RR.correct.mean.2.df, mapping=aes(x=dgcat,y=RR.correct.mean.2,label=round(RR.correct.mean.2,1)), hjust=1.7, size=3,color='darkgray')
+> print(o)
+> 
+> ## Scatterplot (continuous)
+> library(mgcv)
+This is mgcv 1.7-22. For overview type 'help("mgcv-package")'.
+> RR.gam <- gam(dRGDP ~ s(debtgdp, bs="cs"),data=RR)
+> 
+> ## Cross-validation technique for loess parameters
+> ## http://stats.stackexchange.com/questions/2002/how-do-i-decide-what-span-to-use-in-loess-regression-in-r
+> m <- ggplot(RR, aes(x=debtgdp,y=dRGDP))
+> m1 <- m + geom_vline(xintercept=90,color='lightgray',size=1.5)
+> m1 <- m1 + geom_point(color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Ratio") + scale_x_continuous(breaks=seq(0,240,30)) + theme_bw()
+> ## m1 <- m1 + geom_smooth(method='loess',span=1.0,color='black') + geom_smooth(method='loess',span=0.2,color='black')
+> m1 <- m1 + geom_smooth(method=gam, color='black',formula= y ~ s(x, bs = "cs"))
+> ## m1 <- m1 + geom_smooth(method='auto', color='black')
+> print(m1)
+> 
+> ## Categorical scatterplot later years
+> RR2000 <- subset(RR, Year>=2000)
+> (RR.later.mean <- with(RR2000, tapply( dRGDP, dgcat, mean, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    2.748     1.882     1.291     1.745 
+> RR.later.mean.df <- data.frame(RR.later.mean, dgcat=names(RR.later.mean) )
+> 
+> L <- ggplot(RR2000, aes(x=dgcat,y=dRGDP)) + geom_point(shape=3,color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Category")
+> ## L <- L + geom_text(mapping=aes(label=paste(Country,Year) ), size=2, hjust=-0.2,color='darkgray') 
+> L <- L + geom_point(RR.later.mean.df,  mapping=aes(x=dgcat,y=RR.later.mean,label=RR.later.mean), shape=16, size=4 )  + theme_bw()
+> L <- L + geom_text(RR.later.mean.df,  mapping=aes(x=dgcat,y=RR.later.mean,label=round(RR.later.mean,1)), hjust=1.7,size=3,color='darkgray')
+> ## L <- L + coord_cartesian(ylim=c(-12, 30)) 
+> print(L)
+> 
+> 
+> ## Scatterplot closeup
+> pdf("closeup.pdf",height=4,width=7)
+> m2 <- m + geom_point(color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Ratio") + scale_x_continuous(breaks=seq(0,240,30)) + theme_bw() +  geom_vline(xintercept=90,color='lightgray',size=1.5)
+> ## m2 <- m2 + geom_smooth(method='loess',span=0.75,color='black') + geom_smooth(method='loess',span=0.4,color='black') 
+> ## m2 <- m2 + geom_smooth(method='auto',color='black')
+> m2 <- m2 + geom_smooth(method=gam, color='black',formula= y ~ s(x, bs = "cs"))
+> m2 <- m2 + coord_cartesian(ylim=c(0, 7),xlim=c(0,150)) + scale_y_continuous(breaks=c(0,1,2,3,4,5,6,7)) + theme_bw()
+> print(m2)
+> 
+> 
+> ## Get the range for which the lower bound and upper bound include 3 percent
+> subset(ggplot_build(m1)$data[[3]],  (ymin<3.1 & ymin>2.9) | (ymax<3.1 & ymax>2.9 ))
+        x     y  ymin  ymax     se PANEL group
+12  37.28 3.286 3.019 3.552 0.1359     1     1
+13  40.37 3.216 2.950 3.482 0.1355     1     1
+35 108.38 2.575 2.065 3.085 0.2603     1     1
+36 111.47 2.526 1.997 3.054 0.2697     1     1
+37 114.56 2.474 1.929 3.020 0.2785     1     1
+38 117.65 2.422 1.860 2.984 0.2866     1     1
+39 120.74 2.368 1.791 2.945 0.2944     1     1
+40 123.83 2.313 1.721 2.904 0.3018     1     1
+> 
+> subset(RR,
++        Country %in% c("Australia","Belgium","Canada","Greece","Ireland","Italy","Japan","New Zealand","UK","US"),
++        select=c(Country,Year,dgcat,debtgdp,dRGDP))
+         Country Year     dgcat debtgdp     dRGDP
+147    Australia 1946 Above 90% 190.419  -3.55795
+148    Australia 1947 Above 90% 177.321   2.45947
+149    Australia 1948 Above 90% 148.930   6.43753
+150    Australia 1949 Above 90% 125.829   6.61199
+151    Australia 1950 Above 90% 109.809   6.92020
+152    Australia 1951    60-90%  87.094   4.27261
+153    Australia 1952    60-90%  86.066   0.90465
+154    Australia 1953    60-90%  79.865   3.11928
+155    Australia 1954    60-90%  76.847   6.21681
+156    Australia 1955    60-90%  74.981   5.46209
+157    Australia 1956    60-90%  71.818   3.44161
+158    Australia 1957    60-90%  67.724   2.00301
+159    Australia 1958    60-90%  66.050   4.80293
+160    Australia 1959    60-90%  62.388   6.15657
+161    Australia 1960    30-60%  48.336   4.19121
+162    Australia 1961    30-60%  49.378   0.68947
+163    Australia 1962    30-60%  50.331   6.24884
+164    Australia 1963    30-60%  47.588   6.12557
+165    Australia 1964    30-60%  45.012   6.84150
+166    Australia 1965    30-60%  43.739   5.10734
+167    Australia 1966    30-60%  42.481   2.78306
+168    Australia 1967    30-60%  40.534   6.75167
+169    Australia 1968    30-60%  39.494   5.87889
+170    Australia 1969    30-60%  36.801   6.08170
+171    Australia 1970    30-60%  34.964   6.35979
+172    Australia 1971    30-60%  32.290   4.44882
+173    Australia 1972    30-60%  30.722   2.80580
+174    Australia 1973     0-30%  27.361   5.42113
+175    Australia 1974     0-30%  22.366   2.47919
+176    Australia 1975     0-30%  23.637   2.70746
+177    Australia 1976     0-30%  22.982   4.03105
+178    Australia 1977     0-30%  23.639   1.04676
+179    Australia 1978     0-30%  24.733   2.90108
+180    Australia 1979     0-30%  20.872   5.26597
+181    Australia 1980     0-30%  19.124   1.99840
+182    Australia 1981     0-30%  16.177   4.15575
+183    Australia 1982     0-30%  15.044  -0.00974
+184    Australia 1983     0-30%  17.580  -0.52601
+185    Australia 1984     0-30%  20.063   6.41450
+186    Australia 1985     0-30%  21.424   5.71620
+187    Australia 1986     0-30%  21.492   2.11058
+188    Australia 1987     0-30%  19.994   4.39628
+189    Australia 1988     0-30%  16.294   4.03041
+190    Australia 1989     0-30%  12.498   4.57495
+191    Australia 1990     0-30%  10.331   1.60444
+192    Australia 1991     0-30%   9.308  -1.25012
+193    Australia 1992     0-30%  10.866   2.11229
+194    Australia 1993     0-30%  13.815   3.89721
+195    Australia 1994     0-30%  15.918   5.01354
+196    Australia 1995     0-30%  18.383   3.48883
+197    Australia 1996     0-30%  17.775   4.28161
+198    Australia 1997     0-30%  17.412   3.99700
+199    Australia 1998     0-30%  14.586   5.05138
+200    Australia 1999     0-30%  13.216   4.40172
+201    Australia 2000     0-30%  11.106   3.42613
+202    Australia 2001     0-30%   9.240   2.08934
+203    Australia 2002     0-30%   8.228   4.24735
+204    Australia 2003     0-30%   7.031   2.96594
+205    Australia 2004     0-30%   6.271   3.84228
+206    Australia 2005     0-30%   5.892   2.75919
+207    Australia 2006     0-30%   5.393   2.84037
+208    Australia 2007     0-30%   4.905   4.04878
+209    Australia 2008     0-30%   4.678   2.35422
+210    Australia 2009     0-30%   8.418   0.73225
+469      Belgium 1947 Above 90%  98.642  15.21630
+470      Belgium 1948    60-90%  74.241  11.44055
+471      Belgium 1949    60-90%  78.254  -1.30663
+472      Belgium 1950    60-90%  73.683   5.64132
+473      Belgium 1951    60-90%  64.472   7.03306
+474      Belgium 1952    60-90%  66.254  -0.42952
+475      Belgium 1953    60-90%  68.460   2.93108
+476      Belgium 1954    60-90%  69.861  -1.26873
+477      Belgium 1955    60-90%  68.624   5.14951
+478      Belgium 1956    60-90%  65.890   2.43216
+479      Belgium 1957    60-90%  62.838   3.04614
+480      Belgium 1958    60-90%  67.169  -1.49460
+481      Belgium 1959    60-90%  70.280   2.58742
+482      Belgium 1960    60-90%  69.669   6.42816
+483      Belgium 1961    60-90%  67.975   4.96359
+484      Belgium 1962    60-90%  65.662   4.60096
+485      Belgium 1963    60-90%  63.850   6.18463
+486      Belgium 1964    30-60%  59.369   7.15104
+487      Belgium 1965    30-60%  57.699   3.44247
+488      Belgium 1966    30-60%  55.333   3.75867
+489      Belgium 1967    30-60%  54.077   3.34511
+490      Belgium 1968    30-60%  54.794   5.20399
+491      Belgium 1969    30-60%  52.218   7.52912
+492      Belgium 1970    30-60%  48.328   5.09118
+493      Belgium 1971    30-60%  45.483   4.90976
+494      Belgium 1972    30-60%  44.810   6.32755
+495      Belgium 1973    30-60%  42.171   7.40210
+496      Belgium 1974    30-60%  38.683   3.12869
+497      Belgium 1975    30-60%  39.634  -2.89670
+498      Belgium 1976    30-60%  39.384   5.71506
+499      Belgium 1977    30-60%  42.209   1.11663
+500      Belgium 1978    30-60%  45.534   3.08236
+501      Belgium 1979    30-60%  49.233   2.94325
+502      Belgium 1980    30-60%  55.245   4.00784
+503      Belgium 1981    60-90%  65.402   0.14607
+504      Belgium 1982    60-90%  76.447   0.58071
+505      Belgium 1983    60-90%  86.851   0.39744
+506      Belgium 1984 Above 90%  92.556   2.10182
+507      Belgium 1985 Above 90% 100.132   1.84741
+508      Belgium 1986 Above 90% 105.441   1.85351
+509      Belgium 1987 Above 90% 109.764   2.37334
+510      Belgium 1988 Above 90% 111.297   4.56559
+511      Belgium 1989 Above 90% 109.349   3.61794
+512      Belgium 1990 Above 90% 109.830   3.09000
+513      Belgium 1991 Above 90% 112.520   1.80037
+514      Belgium 1992 Above 90% 114.815   1.33160
+515      Belgium 1993 Above 90% 121.692  -0.69238
+516      Belgium 1994 Above 90% 118.745   3.29157
+517      Belgium 1995 Above 90% 117.027   4.27743
+518      Belgium 1996 Above 90% 112.840   0.89029
+519      Belgium 1997 Above 90% 109.890   3.68724
+520      Belgium 1998 Above 90% 105.342   1.73004
+521      Belgium 1999 Above 90% 103.640   3.37979
+522      Belgium 2000 Above 90%  99.725   3.79580
+523      Belgium 2001 Above 90%  99.332   0.76526
+524      Belgium 2002 Above 90%  98.187   1.49489
+525      Belgium 2003 Above 90%  95.734   1.01322
+526      Belgium 2004 Above 90%  93.350   2.78251
+527      Belgium 2005 Above 90%  91.841   2.17037
+528      Belgium 2006    60-90%  87.389   3.01514
+529      Belgium 2007    60-90%  85.341   2.59878
+530      Belgium 2008 Above 90%  90.373   0.96916
+531      Belgium 2009 Above 90%  96.611  -3.18236
+614       Canada 1946 Above 90% 135.913  -1.02605
+615       Canada 1947 Above 90% 117.030   4.42584
+616       Canada 1948 Above 90% 105.183   1.83276
+617       Canada 1949 Above 90% 124.017   2.17473
+618       Canada 1950 Above 90% 110.967   7.37592
+619       Canada 1951    60-90%  89.091   5.67323
+620       Canada 1952    60-90%  81.126   7.27677
+621       Canada 1953    60-90%  82.601   4.67293
+622       Canada 1954    60-90%  77.012  -0.69126
+623       Canada 1955    60-90%  72.333   9.33882
+624       Canada 1956    60-90%  68.087   8.08992
+625       Canada 1957    60-90%  61.413   2.89566
+626       Canada 1958    60-90%  61.732   1.78891
+627       Canada 1959    60-90%  63.660   4.05379
+628       Canada 1960    60-90%  61.707   3.10714
+629       Canada 1961    30-60%  53.163   2.95096
+630       Canada 1962    30-60%  53.848   7.00616
+631       Canada 1963    30-60%  53.643   5.05933
+632       Canada 1964    30-60%  52.076   6.51585
+633       Canada 1965    30-60%  48.073   6.64898
+634       Canada 1966    30-60%  50.831   6.48373
+635       Canada 1967    30-60%  49.990   3.04469
+636       Canada 1968    30-60%  50.209   5.22704
+637       Canada 1969    30-60%  49.490   5.27146
+638       Canada 1970    30-60%  44.844   2.58359
+639       Canada 1971    30-60%  44.812   5.56891
+640       Canada 1972    30-60%  44.471   5.28382
+641       Canada 1973    30-60%  41.314   7.16134
+642       Canada 1974    30-60%  37.815   4.08488
+643       Canada 1975    30-60%  37.071   2.25927
+644       Canada 1976    30-60%  36.277   5.47689
+645       Canada 1977    30-60%  36.409   3.36066
+646       Canada 1978    30-60%  34.140   4.04395
+647       Canada 1979    30-60%  37.764   4.15687
+648       Canada 1980    30-60%  35.148   1.33814
+649       Canada 1981    30-60%  35.381   1.54751
+650       Canada 1982    30-60%  36.200   0.12499
+651       Canada 1983    30-60%  39.031   3.86689
+652       Canada 1984    30-60%  41.974   5.89410
+653       Canada 1985    30-60%  45.348   5.35403
+654       Canada 1986    30-60%  49.753   4.03755
+655       Canada 1987    30-60%  51.099   1.78001
+656       Canada 1988    30-60%  53.659  -0.17285
+657       Canada 1989    30-60%  54.615   0.99756
+658       Canada 1990    30-60%  55.223   1.92751
+659       Canada 1991    30-60%  57.308   3.10463
+660       Canada 1992    30-60%  59.713   3.52310
+661       Canada 1993    60-90%  61.357   2.78664
+662       Canada 1994    60-90%  63.450   5.05138
+663       Canada 1995    60-90%  63.160   4.18635
+664       Canada 1996    60-90%  61.466   5.09977
+665       Canada 1997    30-60%  58.179   5.39264
+666       Canada 1998    30-60%  56.625   2.68278
+667       Canada 1999    30-60%  52.271   2.02577
+668       Canada 2000    30-60%  43.761   3.25357
+669       Canada 2001    30-60%  41.961   1.99015
+670       Canada 2002    30-60%  41.801   1.50206
+671       Canada 2003    30-60%  39.505   1.01352
+672       Canada 2004    30-60%  36.077   3.86413
+673       Canada 2005    30-60%  32.184   2.73921
+674       Canada 2006     0-30%  28.696   2.28089
+675       Canada 2007     0-30%  27.173   3.13409
+676       Canada 2008     0-30%  23.325   2.13213
+677       Canada 2009    30-60%  30.237  -1.90668
+1455      Greece 1970     0-30%  18.822   7.95493
+1456      Greece 1971     0-30%  19.005   7.11787
+1457      Greece 1972     0-30%  20.120  12.44359
+1458      Greece 1973     0-30%  16.556   3.92246
+1459      Greece 1974     0-30%  17.478  -3.63836
+1460      Greece 1975     0-30%  18.176   6.04998
+1461      Greece 1976     0-30%  20.804   6.36050
+1462      Greece 1977     0-30%  23.233   3.42818
+1463      Greece 1978     0-30%  23.652   6.69677
+1464      Greece 1979     0-30%  23.133   3.69074
+1465      Greece 1980     0-30%  24.593   0.67700
+1466      Greece 1981     0-30%  28.774  -1.55400
+1467      Greece 1982     0-30%  29.634  -1.13300
+1468      Greece 1983    30-60%  33.960  -1.07900
+1469      Greece 1984    30-60%  40.503   2.01100
+1470      Greece 1985    30-60%  47.133   2.51000
+1471      Greece 1986    30-60%  47.660   0.51800
+1472      Greece 1987    30-60%  52.988  -2.25900
+1473      Greece 1988    60-90%  62.663   4.28800
+1474      Greece 1989    60-90%  65.840   3.80000
+1475      Greece 1990    60-90%  89.067   0.00000
+1476      Greece 1991 Above 90%  91.125   3.10000
+1477      Greece 1992 Above 90%  97.610   0.70000
+1478      Greece 1993 Above 90%  97.608  -1.60000
+1479      Greece 1994 Above 90% 103.197   2.00000
+1480      Greece 1995 Above 90% 104.806   2.10000
+1481      Greece 1996 Above 90% 108.105   2.35800
+1482      Greece 1997 Above 90% 105.220   3.63800
+1483      Greece 1998 Above 90% 103.746   3.36400
+1484      Greece 1999 Above 90% 103.561   3.42000
+1485      Greece 2000 Above 90% 108.926   4.47700
+1486      Greece 2001 Above 90% 109.684   4.19700
+1487      Greece 2002 Above 90% 109.199   3.43900
+1488      Greece 2003 Above 90% 106.407   5.58200
+1489      Greece 2004 Above 90% 108.282   4.91600
+1490      Greece 2005 Above 90% 108.991   2.89800
+1491      Greece 2006 Above 90% 106.103   4.49700
+1492      Greece 2007 Above 90% 105.030   4.03600
+1493      Greece 2008 Above 90% 107.872   2.93300
+1494      Greece 2009 Above 90% 100.000  -0.75300
+1522     Ireland 1947     0-30%  20.591   1.89474
+1523     Ireland 1948     0-30%  21.017   4.86081
+1524     Ireland 1949     0-30%  27.543   5.23696
+1525     Ireland 1950    30-60%  37.684   0.81790
+1526     Ireland 1951    30-60%  45.606   2.51197
+1527     Ireland 1952    30-60%  47.429   2.52670
+1528     Ireland 1953    30-60%  49.223   2.69692
+1529     Ireland 1954    30-60%  55.983   0.89650
+1530     Ireland 1955    60-90%  63.820   2.60276
+1531     Ireland 1956    60-90%  67.314  -1.30336
+1532     Ireland 1957    60-90%  70.149  -0.15067
+1533     Ireland 1958    60-90%  72.794  -2.05929
+1534     Ireland 1959    60-90%  70.337   4.05111
+1535     Ireland 1960    60-90%  73.639   5.62669
+1536     Ireland 1961    60-90%  73.660   4.77447
+1537     Ireland 1962    60-90%  73.513   3.25830
+1538     Ireland 1963    60-90%  74.475   4.73323
+1539     Ireland 1964    60-90%  70.890   3.91529
+1540     Ireland 1965    60-90%  73.418   1.74382
+1541     Ireland 1966    60-90%  78.055   0.85352
+1542     Ireland 1967    60-90%  76.973   5.93093
+1543     Ireland 1968    60-90%  66.105   8.26622
+1544     Ireland 1969    60-90%  63.586   6.01642
+1545     Ireland 1970    60-90%  62.237   2.66068
+1546     Ireland 1971    30-60%  59.673   3.46656
+1547     Ireland 1972    30-60%  55.883   6.48946
+1548     Ireland 1973    30-60%  52.062   4.72433
+1549     Ireland 1974    60-90%  65.459   4.26006
+1550     Ireland 1975    60-90%  72.360   5.65403
+1551     Ireland 1976    60-90%  77.639   1.39809
+1552     Ireland 1977    60-90%  74.144   8.20924
+1553     Ireland 1978    60-90%  76.472   7.19046
+1554     Ireland 1979    60-90%  82.606   3.07242
+1555     Ireland 1980    60-90%  84.351   2.90000
+1556     Ireland 1981    60-90%  89.753   2.50000
+1557     Ireland 1982    60-90%  87.202   1.50000
+1558     Ireland 1983 Above 90%  96.492  -0.70000
+1559     Ireland 1984 Above 90% 101.604   3.20000
+1560     Ireland 1985 Above 90% 102.963   1.90000
+1561     Ireland 1986 Above 90% 109.679   0.40000
+1562     Ireland 1987 Above 90% 112.430   3.60000
+1563     Ireland 1988 Above 90% 108.334   3.00000
+1564     Ireland 1989 Above 90%  97.679   5.60000
+1565     Ireland 1990    60-90%  87.709   7.70000
+1566     Ireland 1991    60-90%  85.521   1.60000
+1567     Ireland 1992    60-90%  83.555   3.60000
+1568     Ireland 1993    60-90%  83.271   2.30000
+1569     Ireland 1994    60-90%  79.801   5.90000
+1570     Ireland 1995    60-90%  72.954   9.60000
+1571     Ireland 1996    60-90%  65.549   8.10000
+1572     Ireland 1997    30-60%  58.166  11.50000
+1573     Ireland 1998    30-60%  48.763   8.40000
+1574     Ireland 1999    30-60%  43.979  10.70000
+1575     Ireland 2000    30-60%  34.830   9.40000
+1576     Ireland 2001    30-60%  30.944   5.70000
+1577     Ireland 2002     0-30%  27.914   6.50000
+1578     Ireland 2003     0-30%  26.911   4.40000
+1579     Ireland 2004     0-30%  25.383   4.60000
+1580     Ireland 2005     0-30%  23.556   6.20000
+1581     Ireland 2006     0-30%  20.320   5.40000
+1582     Ireland 2007     0-30%  19.794   6.00000
+1583     Ireland 2008     0-30%  27.719  -3.00000
+1584     Ireland 2009    30-60%  44.371  -7.50000
+1658       Italy 1951     0-30%  26.570   7.46558
+1659       Italy 1952     0-30%  26.874   7.48511
+1660       Italy 1953     0-30%  26.721   7.21472
+1661       Italy 1954     0-30%  28.649   5.18680
+1662       Italy 1955     0-30%  28.322   5.81942
+1663       Italy 1956     0-30%  27.965   4.53408
+1664       Italy 1957     0-30%  27.531   5.90368
+1665       Italy 1958     0-30%  27.006   5.34696
+1666       Italy 1959     0-30%  26.699   6.22756
+1667       Italy 1960     0-30%  24.698   5.42195
+1668       Italy 1961     0-30%  21.743   8.42175
+1669       Italy 1962     0-30%  20.760   7.79709
+1670       Italy 1963     0-30%  18.268   7.12306
+1671       Italy 1964     0-30%  17.952   3.90267
+1672       Italy 1965     0-30%  17.863   2.24858
+1673       Italy 1966     0-30%  16.660   5.21974
+1674       Italy 1967     0-30%  14.263   7.11988
+1675       Italy 1968     0-30%  16.046   8.36193
+1676       Italy 1969     0-30%  15.993   5.71838
+1677       Italy 1970     0-30%  14.402   2.24585
+1678       Italy 1971     0-30%  16.377   1.89432
+1679       Italy 1972     0-30%  18.643   2.92594
+1680       Italy 1973     0-30%  20.199   6.54193
+1681       Italy 1974     0-30%  22.675   4.68962
+1682       Italy 1975     0-30%  27.637  -2.14642
+1683       Italy 1976     0-30%  29.992   6.49824
+1684       Italy 1977    30-60%  32.793   2.88972
+1685       Italy 1978    30-60%  46.647   3.72813
+1686       Italy 1979    30-60%  45.761   5.67286
+1687       Italy 1980    30-60%  45.626  -1.41400
+1688       Italy 1981    30-60%  52.859   0.78100
+1689       Italy 1982    30-60%  58.479   0.66800
+1690       Italy 1983    60-90%  64.307   0.91300
+1691       Italy 1984    60-90%  66.456   3.22600
+1692       Italy 1985    60-90%  61.973   2.79800
+1693       Italy 1986    60-90%  67.102   2.86000
+1694       Italy 1987    60-90%  70.816   3.19200
+1695       Italy 1988    60-90%  73.707   4.19400
+1696       Italy 1989    60-90%  76.675   3.38800
+1697       Italy 1990    60-90%  78.984   2.05300
+1698       Italy 1991    60-90%  81.949   1.53400
+1699       Italy 1992    60-90%  85.443   0.77300
+1700       Italy 1993 Above 90%  95.140  -0.88800
+1701       Italy 1994 Above 90% 104.801   2.15200
+1702       Italy 1995 Above 90% 104.289   2.82700
+1703       Italy 1996 Above 90% 103.776   1.09500
+1704       Italy 1997 Above 90% 101.151   1.87200
+1705       Italy 1998 Above 90%  99.744   1.40100
+1706       Italy 1999 Above 90%  97.801   1.46400
+1707       Italy 2000 Above 90%  95.117   3.69300
+1708       Italy 2001 Above 90%  91.710   1.81800
+1709       Italy 2002    60-90%  88.242   0.45400
+1710       Italy 2003    60-90%  86.657  -0.01700
+1711       Italy 2004    60-90%  85.104   1.53200
+1712       Italy 2005    60-90%  84.858   0.65600
+1713       Italy 2006    60-90%  84.621   2.03600
+1714       Italy 2007    60-90%  83.407   1.56400
+1715       Italy 2008    60-90%  86.260  -1.04000
+1716       Italy 2009 Above 90%  97.135  -5.14500
+1802       Japan 1956     0-30%  10.616   6.20153
+1803       Japan 1957     0-30%   8.936   7.32825
+1804       Japan 1958     0-30%   9.321   6.39536
+1805       Japan 1959     0-30%   9.499   8.34297
+1806       Japan 1960     0-30%   8.372  11.26212
+1807       Japan 1961     0-30%   6.325   9.99770
+1808       Japan 1962     0-30%   5.836   6.71625
+1809       Japan 1963     0-30%   4.717   7.71375
+1810       Japan 1964     0-30%   4.567   9.23443
+1811       Japan 1965     0-30%   5.375   5.12190
+1812       Japan 1966     0-30%   6.975   9.70178
+1813       Japan 1967     0-30%   8.536  10.46442
+1814       Japan 1968     0-30%   9.034  10.52781
+1815       Japan 1969     0-30%   8.805  11.78322
+1816       Japan 1970     0-30%   8.489  10.13370
+1817       Japan 1971     0-30%   9.424   4.73128
+1818       Japan 1972     0-30%  12.668   8.59312
+1819       Japan 1973     0-30%  11.693   8.19771
+1820       Japan 1974     0-30%  11.702  -1.59306
+1821       Japan 1975     0-30%  15.368   2.83807
+1822       Japan 1976     0-30%  19.618   4.00023
+1823       Japan 1977     0-30%  24.834   3.58950
+1824       Japan 1978    30-60%  30.498   4.22295
+1825       Japan 1979    30-60%  35.006   6.80468
+1826       Japan 1980    30-60%  39.062   4.62660
+1827       Japan 1981    30-60%  40.927   4.17684
+1828       Japan 1982    30-60%  44.276   3.37661
+1829       Japan 1983    30-60%  48.058   3.06074
+1830       Japan 1984    30-60%  49.249   4.46390
+1831       Japan 1985    30-60%  50.207   6.33336
+1832       Japan 1986    30-60%  54.169   2.83108
+1833       Japan 1987    30-60%  55.815   4.10743
+1834       Japan 1988    30-60%  54.040   7.14669
+1835       Japan 1989    30-60%  50.789   5.37015
+1836       Japan 1990    30-60%  49.230   5.57240
+1837       Japan 1991    30-60%  47.966   3.32434
+1838       Japan 1992    30-60%  49.814   0.81903
+1839       Japan 1993    30-60%  55.320   0.17106
+1840       Japan 1994    30-60%  59.957   0.86358
+1841       Japan 1995    60-90%  66.119   1.88166
+1842       Japan 1996    60-90%  70.433   2.63729
+1843       Japan 1997    60-90%  75.332   1.56357
+1844       Japan 1998    60-90%  86.671  -2.04887
+1845       Japan 1999 Above 90%  98.340  -0.14101
+1846       Japan 2000 Above 90% 106.481   2.86014
+1847       Japan 2001 Above 90% 122.019   0.18439
+1848       Japan 2002 Above 90% 130.914   0.26226
+1849       Japan 2003 Above 90% 136.677   1.41354
+1850       Japan 2004 Above 90% 150.725   2.74426
+1851       Japan 2005 Above 90% 162.075   1.93409
+1852       Japan 2006 Above 90% 164.036   2.03947
+1853       Japan 2007 Above 90% 162.465   2.33732
+1854       Japan 2008 Above 90% 166.878  -0.70525
+1855       Japan 2009 Above 90% 181.511  -5.36936
+2137 New Zealand 1946 Above 90% 134.014   7.71132
+2138 New Zealand 1947 Above 90% 120.430  11.93208
+2139 New Zealand 1948 Above 90% 117.206  -9.92210
+2140 New Zealand 1949 Above 90% 111.486  10.78744
+2141 New Zealand 1950    60-90%  87.653  14.67595
+2142 New Zealand 1951 Above 90%  91.751  -7.63510
+2143 New Zealand 1952    60-90%  85.832   4.34783
+2144 New Zealand 1953    60-90%  79.264   3.42078
+2145 New Zealand 1954    60-90%  75.276  13.76523
+2146 New Zealand 1955    60-90%  73.844   1.86359
+2147 New Zealand 1956    60-90%  70.760   5.18268
+2148 New Zealand 1957    60-90%  68.056   2.85641
+2149 New Zealand 1958    60-90%  67.394   3.92760
+2150 New Zealand 1959    60-90%  65.798   7.11934
+2151 New Zealand 1960    60-90%  62.859   0.00000
+2152 New Zealand 1961    60-90%  62.391   5.59045
+2153 New Zealand 1962    60-90%  60.276   2.15575
+2154 New Zealand 1963    30-60%  59.098   6.33492
+2155 New Zealand 1964    30-60%  56.332   4.87398
+2156 New Zealand 1965    30-60%  55.187   6.36943
+2157 New Zealand 1966    30-60%  55.855   6.30831
+2158 New Zealand 1967    30-60%  57.661  -4.56510
+2159 New Zealand 1968    30-60%  58.985  -0.16128
+2160 New Zealand 1969    30-60%  54.080  10.32480
+2161 New Zealand 1970    30-60%  49.333  -1.41749
+2162 New Zealand 1971    30-60%  43.744   5.18582
+2163 New Zealand 1972    30-60%  39.982   4.28421
+2164 New Zealand 1973    30-60%  37.776   7.10438
+2165 New Zealand 1974    30-60%  36.048   5.95261
+2166 New Zealand 1975    30-60%  35.816  -1.15004
+2167 New Zealand 1976    30-60%  39.373   2.43984
+2168 New Zealand 1977    30-60%  41.971  -4.87126
+2169 New Zealand 1978    30-60%  44.097   0.40323
+2170 New Zealand 1979    30-60%  44.526   2.03953
+2171 New Zealand 1980    30-60%  44.977   1.00900
+2172 New Zealand 1981    30-60%  41.630   2.96100
+2173 New Zealand 1982    30-60%  45.767   2.87800
+2174 New Zealand 1983    30-60%  53.753  -0.12400
+2175 New Zealand 1984    30-60%  55.591   6.85800
+2176 New Zealand 1985    60-90%  62.365   1.21300
+2177 New Zealand 1986    30-60%  57.291   1.81000
+2178 New Zealand 1987    60-90%  67.778   0.75400
+2179 New Zealand 1988    30-60%  57.439  -0.02200
+2180 New Zealand 1989    30-60%  55.265   0.84600
+2181 New Zealand 1990    60-90%  60.618   0.05600
+2182 New Zealand 1991    60-90%  60.238  -1.67700
+2183 New Zealand 1992    60-90%  62.029   0.77100
+2184 New Zealand 1993    30-60%  58.336   5.19500
+2185 New Zealand 1994    30-60%  52.978   5.85900
+2186 New Zealand 1995    30-60%  47.202   4.33700
+2187 New Zealand 1996    30-60%  42.364   4.01900
+2188 New Zealand 1997    30-60%  35.399   2.16300
+2189 New Zealand 1998    30-60%  36.649  -0.04800
+2190 New Zealand 1999    30-60%  33.484   4.32900
+2191 New Zealand 2000    30-60%  31.095   3.83000
+2192 New Zealand 2001     0-30%  29.493   2.61400
+2193 New Zealand 2002     0-30%  27.634   4.92600
+2194 New Zealand 2003     0-30%  25.787   4.13500
+2195 New Zealand 2004     0-30%  23.693   4.53600
+2196 New Zealand 2005     0-30%  22.271   2.81300
+2197 New Zealand 2006     0-30%  21.348   1.95400
+2198 New Zealand 2007     0-30%  17.525   3.19300
+2199 New Zealand 2008     0-30%  17.739   0.19400
+2200 New Zealand 2009     0-30%  24.255  -2.17500
+3016          UK 1946 Above 90% 247.482  -2.45831
+3017          UK 1947 Above 90% 237.941  -1.27622
+3018          UK 1948 Above 90% 213.972   2.92411
+3019          UK 1949 Above 90% 197.768   3.31472
+3020          UK 1950 Above 90% 193.883   3.18146
+3021          UK 1951 Above 90% 175.338   2.72782
+3022          UK 1952 Above 90% 161.991   0.05238
+3023          UK 1953 Above 90% 152.158   3.83630
+3024          UK 1954 Above 90% 146.657   4.11184
+3025          UK 1955 Above 90% 138.194   3.45773
+3026          UK 1956 Above 90% 129.027   0.92816
+3027          UK 1957 Above 90% 122.181   1.65885
+3028          UK 1958 Above 90% 118.143   0.31936
+3029          UK 1959 Above 90% 112.436   4.28101
+3030          UK 1960 Above 90% 106.760   5.33010
+3031          UK 1961 Above 90% 103.061   2.33333
+3032          UK 1962 Above 90%  99.871   1.08124
+3033          UK 1963 Above 90%  98.155   4.29857
+3034          UK 1964 Above 90%  90.965   5.48038
+3035          UK 1965    60-90%  84.822   2.22696
+3036          UK 1966    60-90%  82.068   1.92516
+3037          UK 1967    60-90%  79.407   2.46377
+3038          UK 1968    60-90%  78.326   4.19816
+3039          UK 1969    60-90%  72.271   2.07450
+3040          UK 1970    60-90%  63.988   2.24424
+3041          UK 1971    30-60%  57.989   2.09328
+3042          UK 1972    30-60%  55.462   3.65554
+3043          UK 1973    30-60%  49.480   7.19587
+3044          UK 1974    30-60%  47.478  -1.31294
+3045          UK 1975    30-60%  42.411  -0.62218
+3046          UK 1976    30-60%  44.811   2.63496
+3047          UK 1977    30-60%  45.700   2.37470
+3048          UK 1978    30-60%  46.757   3.22960
+3049          UK 1979    30-60%  43.613   2.68008
+3050          UK 1980    30-60%  40.875  -2.08180
+3051          UK 1981    30-60%  44.107  -1.32346
+3052          UK 1982    30-60%  42.128   2.09307
+3053          UK 1983    30-60%  41.642   3.62435
+3054          UK 1984    30-60%  43.343   2.67092
+3055          UK 1985    30-60%  43.684   3.59938
+3056          UK 1986    30-60%  44.036   4.01233
+3057          UK 1987    30-60%  43.347   4.56208
+3058          UK 1988    30-60%  41.259   5.03210
+3059          UK 1989    30-60%  37.565   2.28145
+3060          UK 1990    30-60%  33.840   0.77927
+3061          UK 1991    30-60%  33.191  -1.39244
+3062          UK 1992    30-60%  34.486   0.14663
+3063          UK 1993    30-60%  38.037   2.22225
+3064          UK 1994    30-60%  44.282   4.28017
+3065          UK 1995    30-60%  47.618   3.04274
+3066          UK 1996    30-60%  49.977   2.87926
+3067          UK 1997    30-60%  50.542   3.30717
+3068          UK 1998    30-60%  47.597   3.60573
+3069          UK 1999    30-60%  45.399   3.47324
+3070          UK 2000    30-60%  43.648   3.91504
+3071          UK 2001    30-60%  41.686   2.46183
+3072          UK 2002    30-60%  40.402   2.09653
+3073          UK 2003    30-60%  39.308   2.81802
+3074          UK 2004    30-60%  41.327   2.75781
+3075          UK 2005    30-60%  38.595   2.05759
+3076          UK 2006    30-60%  40.051   2.83784
+3077          UK 2007    30-60%  41.033   3.02238
+3078          UK 2008    30-60%  42.452   0.70692
+3079          UK 2009    30-60%  54.954  -4.40000
+3237          US 1946 Above 90% 121.252 -10.94216
+3238          US 1947 Above 90% 105.812  -0.89834
+3239          US 1948 Above 90%  93.754   4.39727
+3240          US 1949 Above 90%  94.600  -0.51235
+3241          US 1950    60-90%  87.626   8.74397
+3242          US 1951    60-90%  75.220   7.73180
+3243          US 1952    60-90%  72.315   3.83138
+3244          US 1953    60-90%  70.148   4.60359
+3245          US 1954    60-90%  71.309  -0.63054
+3246          US 1955    60-90%  66.162   7.19859
+3247          US 1956    60-90%  62.357   1.97576
+3248          US 1957    30-60%  58.670   2.01592
+3249          US 1958    30-60%  59.149  -0.90346
+3250          US 1959    30-60%  56.199   7.17334
+3251          US 1960    30-60%  54.394   2.47602
+3252          US 1961    30-60%  53.042   2.33141
+3253          US 1962    30-60%  50.914   6.05820
+3254          US 1963    30-60%  49.508   4.37118
+3255          US 1964    30-60%  46.973   5.78788
+3256          US 1965    30-60%  44.121   6.42042
+3257          US 1966    30-60%  40.613   6.51505
+3258          US 1967    30-60%  39.190   2.52776
+3259          US 1968    30-60%  38.204   4.84211
+3260          US 1969    30-60%  35.933   3.10640
+3261          US 1970    30-60%  35.724   0.19006
+3262          US 1971    30-60%  35.333   3.35839
+3263          US 1972    30-60%  34.515   5.31122
+3264          US 1973    30-60%  33.143   5.79426
+3265          US 1974    30-60%  31.681  -0.55115
+3266          US 1975    30-60%  32.557  -0.21268
+3267          US 1976    30-60%  34.004   5.36530
+3268          US 1977    30-60%  34.424   4.59806
+3269          US 1978    30-60%  33.636   5.57673
+3270          US 1979    30-60%  32.258   3.12456
+3271          US 1980    30-60%  32.556  -0.27327
+3272          US 1981    30-60%  31.913   2.53811
+3273          US 1982    30-60%  35.105  -1.94248
+3274          US 1983    30-60%  38.964   4.51890
+3275          US 1984    30-60%  39.998   7.18523
+3276          US 1985    30-60%  43.227   4.13860
+3277          US 1986    30-60%  47.651   3.46313
+3278          US 1987    30-60%  49.622   3.20045
+3279          US 1988    30-60%  51.022   4.11032
+3280          US 1989    30-60%  52.123   3.57241
+3281          US 1990    30-60%  55.742   1.87677
+3282          US 1991    60-90%  61.169  -0.23401
+3283          US 1992    60-90%  64.087   3.39359
+3284          US 1993    60-90%  66.165   2.85142
+3285          US 1994    60-90%  66.233   4.07467
+3286          US 1995    60-90%  67.083   2.51389
+3287          US 1996    60-90%  66.656   3.74105
+3288          US 1997    60-90%  64.965   4.45627
+3289          US 1998    60-90%  62.844   4.35546
+3290          US 1999    60-90%  60.472   4.82618
+3291          US 2000    30-60%  57.018   4.13922
+3292          US 2001    30-60%  56.459   1.07964
+3293          US 2002    30-60%  58.523   1.81366
+3294          US 2003    60-90%  60.879   2.49026
+3295          US 2004    60-90%  62.177   3.57327
+3296          US 2005    60-90%  62.767   3.05452
+3297          US 2006    60-90%  63.490   2.67281
+3298          US 2007    60-90%  63.985   2.14161
+3299          US 2008    60-90%  74.091   0.43817
+3300          US 2009    60-90%  83.483  -2.73017
+> 
+> subset(RR,
++        debtgdp>90,
++        select=c(Country,Year,dgcat,debtgdp,dRGDP))
+         Country Year     dgcat debtgdp     dRGDP
+147    Australia 1946 Above 90%  190.42  -3.55795
+148    Australia 1947 Above 90%  177.32   2.45947
+149    Australia 1948 Above 90%  148.93   6.43753
+150    Australia 1949 Above 90%  125.83   6.61199
+151    Australia 1950 Above 90%  109.81   6.92020
+469      Belgium 1947 Above 90%   98.64  15.21630
+506      Belgium 1984 Above 90%   92.56   2.10182
+507      Belgium 1985 Above 90%  100.13   1.84741
+508      Belgium 1986 Above 90%  105.44   1.85351
+509      Belgium 1987 Above 90%  109.76   2.37334
+510      Belgium 1988 Above 90%  111.30   4.56559
+511      Belgium 1989 Above 90%  109.35   3.61794
+512      Belgium 1990 Above 90%  109.83   3.09000
+513      Belgium 1991 Above 90%  112.52   1.80037
+514      Belgium 1992 Above 90%  114.82   1.33160
+515      Belgium 1993 Above 90%  121.69  -0.69238
+516      Belgium 1994 Above 90%  118.74   3.29157
+517      Belgium 1995 Above 90%  117.03   4.27743
+518      Belgium 1996 Above 90%  112.84   0.89029
+519      Belgium 1997 Above 90%  109.89   3.68724
+520      Belgium 1998 Above 90%  105.34   1.73004
+521      Belgium 1999 Above 90%  103.64   3.37979
+522      Belgium 2000 Above 90%   99.72   3.79580
+523      Belgium 2001 Above 90%   99.33   0.76526
+524      Belgium 2002 Above 90%   98.19   1.49489
+525      Belgium 2003 Above 90%   95.73   1.01322
+526      Belgium 2004 Above 90%   93.35   2.78251
+527      Belgium 2005 Above 90%   91.84   2.17037
+530      Belgium 2008 Above 90%   90.37   0.96916
+531      Belgium 2009 Above 90%   96.61  -3.18236
+614       Canada 1946 Above 90%  135.91  -1.02605
+615       Canada 1947 Above 90%  117.03   4.42584
+616       Canada 1948 Above 90%  105.18   1.83276
+617       Canada 1949 Above 90%  124.02   2.17473
+618       Canada 1950 Above 90%  110.97   7.37592
+1476      Greece 1991 Above 90%   91.12   3.10000
+1477      Greece 1992 Above 90%   97.61   0.70000
+1478      Greece 1993 Above 90%   97.61  -1.60000
+1479      Greece 1994 Above 90%  103.20   2.00000
+1480      Greece 1995 Above 90%  104.81   2.10000
+1481      Greece 1996 Above 90%  108.11   2.35800
+1482      Greece 1997 Above 90%  105.22   3.63800
+1483      Greece 1998 Above 90%  103.75   3.36400
+1484      Greece 1999 Above 90%  103.56   3.42000
+1485      Greece 2000 Above 90%  108.93   4.47700
+1486      Greece 2001 Above 90%  109.68   4.19700
+1487      Greece 2002 Above 90%  109.20   3.43900
+1488      Greece 2003 Above 90%  106.41   5.58200
+1489      Greece 2004 Above 90%  108.28   4.91600
+1490      Greece 2005 Above 90%  108.99   2.89800
+1491      Greece 2006 Above 90%  106.10   4.49700
+1492      Greece 2007 Above 90%  105.03   4.03600
+1493      Greece 2008 Above 90%  107.87   2.93300
+1494      Greece 2009 Above 90%  100.00  -0.75300
+1558     Ireland 1983 Above 90%   96.49  -0.70000
+1559     Ireland 1984 Above 90%  101.60   3.20000
+1560     Ireland 1985 Above 90%  102.96   1.90000
+1561     Ireland 1986 Above 90%  109.68   0.40000
+1562     Ireland 1987 Above 90%  112.43   3.60000
+1563     Ireland 1988 Above 90%  108.33   3.00000
+1564     Ireland 1989 Above 90%   97.68   5.60000
+1700       Italy 1993 Above 90%   95.14  -0.88800
+1701       Italy 1994 Above 90%  104.80   2.15200
+1702       Italy 1995 Above 90%  104.29   2.82700
+1703       Italy 1996 Above 90%  103.78   1.09500
+1704       Italy 1997 Above 90%  101.15   1.87200
+1705       Italy 1998 Above 90%   99.74   1.40100
+1706       Italy 1999 Above 90%   97.80   1.46400
+1707       Italy 2000 Above 90%   95.12   3.69300
+1708       Italy 2001 Above 90%   91.71   1.81800
+1716       Italy 2009 Above 90%   97.14  -5.14500
+1845       Japan 1999 Above 90%   98.34  -0.14101
+1846       Japan 2000 Above 90%  106.48   2.86014
+1847       Japan 2001 Above 90%  122.02   0.18439
+1848       Japan 2002 Above 90%  130.91   0.26226
+1849       Japan 2003 Above 90%  136.68   1.41354
+1850       Japan 2004 Above 90%  150.73   2.74426
+1851       Japan 2005 Above 90%  162.07   1.93409
+1852       Japan 2006 Above 90%  164.04   2.03947
+1853       Japan 2007 Above 90%  162.47   2.33732
+1854       Japan 2008 Above 90%  166.88  -0.70525
+1855       Japan 2009 Above 90%  181.51  -5.36936
+2137 New Zealand 1946 Above 90%  134.01   7.71132
+2138 New Zealand 1947 Above 90%  120.43  11.93208
+2139 New Zealand 1948 Above 90%  117.21  -9.92210
+2140 New Zealand 1949 Above 90%  111.49  10.78744
+2142 New Zealand 1951 Above 90%   91.75  -7.63510
+3016          UK 1946 Above 90%  247.48  -2.45831
+3017          UK 1947 Above 90%  237.94  -1.27622
+3018          UK 1948 Above 90%  213.97   2.92411
+3019          UK 1949 Above 90%  197.77   3.31472
+3020          UK 1950 Above 90%  193.88   3.18146
+3021          UK 1951 Above 90%  175.34   2.72782
+3022          UK 1952 Above 90%  161.99   0.05238
+3023          UK 1953 Above 90%  152.16   3.83630
+3024          UK 1954 Above 90%  146.66   4.11184
+3025          UK 1955 Above 90%  138.19   3.45773
+3026          UK 1956 Above 90%  129.03   0.92816
+3027          UK 1957 Above 90%  122.18   1.65885
+3028          UK 1958 Above 90%  118.14   0.31936
+3029          UK 1959 Above 90%  112.44   4.28101
+3030          UK 1960 Above 90%  106.76   5.33010
+3031          UK 1961 Above 90%  103.06   2.33333
+3032          UK 1962 Above 90%   99.87   1.08124
+3033          UK 1963 Above 90%   98.16   4.29857
+3034          UK 1964 Above 90%   90.97   5.48038
+3237          US 1946 Above 90%  121.25 -10.94216
+3238          US 1947 Above 90%  105.81  -0.89834
+3239          US 1948 Above 90%   93.75   4.39727
+3240          US 1949 Above 90%   94.60  -0.51235
+> 
+> ## Look at the public debt / GDP series
+> ## p <- ggplot(RR, aes(x=Year,y=debtgdp,color=Country)) + geom_point() +  facet_grid(. ~ Country) + opts(legend.position="bottom")
+> ## print(p)
+> 
+> 
+> ## Average growth by debtgdp for more recent samples
+> ## country-year weights
+> with(subset(RR, Year>=1950), tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    4.135     2.981     3.101     2.122 
+> ## country weights
+> apply(with(subset(RR, Year>=1950), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    3.955     2.904     2.492     2.070 
+> 
+> ## country-year weights
+> with(subset(RR, Year>=1960), tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    3.896     2.910     2.780     2.074 
+> ## country weights
+> apply(with(subset(RR, Year>=1960), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    3.854     2.877     2.210     2.133 
+> 
+> ## country-year weights
+> with(subset(RR, Year>=1970), tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    3.145     2.645     2.559     1.959 
+> ## country weights
+> apply(with(subset(RR, Year>=1970), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    3.159     2.744     2.037     1.819 
+> 
+> ## country-year weights
+> with(subset(RR, Year>=1980), tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    2.541     2.451     2.436     1.959 
+> ## country weights
+> apply(with(subset(RR, Year>=1980), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    2.025     2.539     2.022     1.819 
+> 
+> ## country-year weights
+> with(subset(RR, Year>=1990), tapply( dRGDP, dgcat, mean, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    2.669     2.404     2.458     1.823 
+> ## country weights
+> apply(with(subset(RR, Year>=1990), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    2.347     2.617     1.913     1.609 
+> 
+> ## Post-2000
+> ## NYT Appendix Table 4 Line 1
+> (mean2000 <- with(RR2000, tapply( dRGDP, dgcat, mean, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    2.748     1.882     1.291     1.745 
+> (sd2000 <- with(RR2000, tapply( dRGDP, dgcat, sd, na.rm=TRUE )))
+    0-30%    30-60%    60-90% Above 90% 
+    2.031     2.544     2.058     2.647 
+> (length2000 <- with(RR2000, tapply( dRGDP, dgcat, length )))
+    0-30%    30-60%    60-90% Above 90% 
+       42       100        27        31 
+> 
+> ## NYT Appendix Table 4 Line 1 Standard errors
+> sd2000 / sqrt(length2000)
+    0-30%    30-60%    60-90% Above 90% 
+   0.3134    0.2544    0.3960    0.4754 
+> 
+> ## country-year weights
+> (RR2000.equalwt.mean <- with(RR2000, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )))
+            0-30% 30-60%  60-90% Above 90%
+Australia   2.931     NA      NA        NA
+Austria        NA 2.2977 -3.8240        NA
+Belgium        NA     NA  2.8070    1.2261
+Canada      2.516 1.7794      NA        NA
+Denmark     1.647 1.0593      NA        NA
+Finland     1.041 2.2644      NA        NA
+France         NA 2.4332  0.9903        NA
+Germany        NA 0.7702      NA        NA
+Greece         NA     NA      NA    3.6222
+Ireland     4.300 2.5333      NA        NA
+Italy          NA     NA  0.7407    0.1220
+Japan          NA     NA      NA    0.7701
+Netherlands    NA 1.5392      NA        NA
+New Zealand 2.466 3.8300      NA        NA
+Norway      2.000     NA      NA        NA
+Portugal       NA 2.2486  1.8939        NA
+Spain       3.565 2.4986      NA        NA
+Sweden         NA 1.9029      NA        NA
+UK             NA 1.8274      NA        NA
+US             NA 2.3442  1.6629        NA
+> 
+> with(RR2000, table(Country,dgcat))
+             dgcat
+Country       0-30% 30-60% 60-90% Above 90%
+  Australia      10      0      0         0
+  Austria         0      9      1         0
+  Belgium         0      0      2         8
+  Canada          3      7      0         0
+  Denmark         1      9      0         0
+  Finland         1      9      0         0
+  France          0      7      3         0
+  Germany         0     10      0         0
+  Greece          0      0      0        10
+  Ireland         7      3      0         0
+  Italy           0      0      7         3
+  Japan           0      0      0        10
+  Netherlands     0     10      0         0
+  New Zealand     9      1      0         0
+  Norway         10      0      0         0
+  Portugal        0      3      7         0
+  Spain           1      9      0         0
+  Sweden          0     10      0         0
+  UK              0     10      0         0
+  US              0      3      7         0
+> 
+> ## Regression analysis of categories
+> summary(dgcat.lm <- lm(dRGDP ~ dgcat.lm, data=RR2000))
+
+Call:
+lm(formula = dRGDP ~ dgcat.lm, data = RR2000)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-9.382 -0.808  0.386  1.425  7.518 
+
+Coefficients:
+                 Estimate Std. Error t value        Pr(>|t|)    
+(Intercept)         2.748      0.371    7.42 0.0000000000036 ***
+dgcat.lm(30,60]    -0.866      0.442   -1.96           0.051 .  
+dgcat.lm(60,90]    -1.457      0.592   -2.46           0.015 *  
+dgcat.lm(90,Inf]   -1.003      0.569   -1.76           0.079 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.4 on 196 degrees of freedom
+Multiple R-squared: 0.0343,	Adjusted R-squared: 0.0196 
+F-statistic: 2.32 on 3 and 196 DF,  p-value: 0.0762 
+
+> 
+> ## country weights
+> apply(RR2000.equalwt.mean,2,mean,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+   2.5581    2.0949    0.7118    1.4351 
+> apply(RR2000.equalwt.mean,2,sd,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+   1.0448    0.7327    2.3385    1.5268 
+> apply(with(RR2000,table( Country,dgcat)),2,sum)
+    0-30%    30-60%    60-90% Above 90% 
+       42       100        27        31 
+> 
+> 
+> 
+> ## Median analysis of two periods ## Mean has problems because of very high value for Belgium in 1947
+> ## country-year weights
+> with(subset(RR, Year<1980), tapply( dRGDP, dgcat, median, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    5.081     4.121     4.054     2.924 
+> ## country weights  ## Beware ridiculous value for Belgian GDP growth in 1947
+> apply(with(subset(RR, Year<1980), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,median,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    4.735     4.184     4.388     2.766 
+> 
+> ## country-year weights
+> with(subset(RR, Year>=1980), tapply( dRGDP, dgcat, median, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    2.620     2.704     2.599     2.102 
+> ## country weights
+> apply(with(subset(RR, Year>=1980), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,median,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    2.223     2.430     2.391     2.040 
+> 
+> ## country-year weights
+> with(RR, tapply( dRGDP, dgcat, median, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    4.145     3.105     2.898     2.335 
+> ## country weights
+> apply(with(RR, tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,median,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    3.874     3.094     3.020     2.498 
+> 
+> ## Median analysis of two periods ## Mean has problems because of very high value for Belgium in 1947
+> ## 1955-1980 has only Britain in the highest public debt category!!
+> ## country-year weights
+> with(subset(RR, Year>=1955 & Year<1980), tapply( dRGDP, dgcat, median, na.rm=TRUE ))
+    0-30%    30-60%    60-90% Above 90% 
+    5.054     4.207     3.678     2.896 
+> ## country weights  ## Beware ridiculous value for Belgian GDP growth in 1947
+> apply(with(subset(RR, Year>=1955 & Year<1980), tapply( dRGDP, list(Country,dgcat), mean, na.rm=TRUE )),2,median,na.rm=TRUE)
+    0-30%    30-60%    60-90% Above 90% 
+    4.494     4.088     3.766     2.917 
+> 
+> 
+> 
+> write.xlsx2(subset(RR,Year>=1990 & debtgdp>90,select=c(Country,Year,debtgdp,dgcat,dRGDP)),"RR-post1990.xlsx",row.names=FALSE)
+> 
+> 
+> subset(RR,dRGDP>10,select=c(Country,Year,dRGDP,dgcat,debtgdp))
+         Country Year dRGDP     dgcat debtgdp
+290      Austria 1948 27.33    30-60%  35.202
+291      Austria 1949 18.90     0-30%  26.448
+292      Austria 1950 12.41     0-30%  22.144
+296      Austria 1954 10.22     0-30%  14.268
+297      Austria 1955 11.05     0-30%  11.895
+469      Belgium 1947 15.22 Above 90%  98.642
+470      Belgium 1948 11.44    60-90%  74.241
+1262     Germany 1955 11.00     0-30%  11.142
+1457      Greece 1972 12.44     0-30%  20.120
+1572     Ireland 1997 11.50    30-60%  58.166
+1574     Ireland 1999 10.70    30-60%  43.979
+1806       Japan 1960 11.26     0-30%   8.372
+1813       Japan 1967 10.46     0-30%   8.536
+1814       Japan 1968 10.53     0-30%   9.034
+1815       Japan 1969 11.78     0-30%   8.805
+1816       Japan 1970 10.13     0-30%   8.489
+2138 New Zealand 1947 11.93 Above 90% 120.430
+2140 New Zealand 1949 10.79 Above 90% 111.486
+2141 New Zealand 1950 14.68    60-90%  87.653
+2145 New Zealand 1954 13.77    60-90%  75.276
+2160 New Zealand 1969 10.32    30-60%  54.080
+2318      Norway 1946 10.20    60-90%  64.994
+2319      Norway 1947 13.56    30-60%  53.109
+2491    Portugal 1973 11.20     0-30%  11.802
+2835      Sweden 1946 11.40    30-60%  47.243
+> subset(RR,dRGDP< -7,select=c(Country,Year,dRGDP,dgcat,debtgdp))
+         Country Year   dRGDP     dgcat debtgdp
+1584     Ireland 2009  -7.500    30-60%   44.37
+2139 New Zealand 1948  -9.922 Above 90%  117.21
+2142 New Zealand 1951  -7.635 Above 90%   91.75
+3237          US 1946 -10.942 Above 90%  121.25
+> 
+> rm(list = ls())
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 11.996   0.328  11.983 
