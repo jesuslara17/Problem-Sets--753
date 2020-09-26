@@ -11,8 +11,12 @@ library("rio")
 library("xlsx")
 library(matlib)
 library(gdata)
-#### Problem 1
-### Pure replication part
+
+
+#### ################################Problem 1
+### ############################A Pure replication part
+####################################################################
+########################################################################
 
 #Set my working directory
 setwd("C:/Users/User/Documents/Fall 2020 UMass/753/Problem Sets/Problem Set 1") 
@@ -107,9 +111,9 @@ EM_T_2<-EM_T_1 %>% add_row(slice(tdir_emp,1))
 EM_T_3<-EM_T_2 %>% add_row(slice(EM_T_2,1)-slice(EM_T_2,2))
 
 
-
-
-### Import weights
+######################################################################
+######################################################################
+### Import weights########################################################
 
 ### weight given to each industry within the different ENERGY sectors
 weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program") 
@@ -207,6 +211,225 @@ Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy To
 T11_3<-T11_2 %>% select(-1) %>% 
   mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
 
-#### PART B
 
+
+############################ #####
+#### PART B Alternative weights###
+##################################
+
+######################################################
+### Alternative Weights 1: at the (sub)sectoral level
+############################################################
+
+######################################################################
+######################################################################
+### Import weights########################################################
+
+### weight given to each industry within the different ENERGY sectors
+weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program AW1") 
+
+weights_2<-weights_1 %>% slice(-c(1:9,20:42))
+
+res<-weights_2$`(industry-by-industry)`
+
+weights_3<-weights_2 %>% select(-c(1:3))
+
+weights_3[is.na(weights_3)]=0
+
+weights_4<-as.matrix(weights_3 %>% mutate_if(is.character,as.numeric))
+
+EM_T_4<-as.matrix(EM_T_3 %>% mutate_if(is.character,as.numeric))
+
+#w4 (10x35)  ||  t(w4) (35x10)
+#EM_T_4(3x35)
+
+EBEnergy_1<-EM_T_4 %*% t(weights_4) #Employment by energy sector matrix
+
+####
+Sweights_1<-weights_1 %>% slice(c(28:30)) %>% select(c(4:13))
+
+Sweights_1[is.na(Sweights_1)]=0
+
+Sweights_2<-as.matrix(Sweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBSector_1<-EBEnergy_1%*%t(Sweights_2) #### Employment by Sector
+
+##############
+GFweights_1<-weights_1 %>% slice(c(36,37)) %>% select(c(4:6))
+
+GFweights_1[is.na(GFweights_1)]=0
+
+GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBgf_1<-EBSector_1%*%t(GFweights_2)
+
+
+rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
+
+
+
+
+
+### 3 main objects: EBEnergy_1 EBgf_1 EBSector_1 and weights
+### Replicate table 10
+
+jobs<-c("Direct + Indirect Jobs", "Direct Jobs", "Indirect Jobs" ) 
+
+
+EBEnergy_2<-t(EBEnergy_1)
+
+
+energy_names<-t(as.matrix(weights_1 %>% slice(22) %>% select(4:13)))
+
+EBEnergy_3<-data.frame(EBEnergy_2)
+
+colnames(EBEnergy_3)<-jobs
+
+EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
+  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+############# Include weighted averages
+
+EB_sector_2<-t(EBSector_1)
+
+wav<-c("Weighted Average for Renewables","Weighted Average for Efficiency", "Weighted Average for Fossil Fuels")
+
+
+
+
+EBsector_3<-data.frame(EB_sector_2) 
+
+
+EBsector_4<-EBsector_3%>% mutate(energy_names=wav) 
+colnames(EBsector_4)<-c(jobs, "energy_names")
+
+EBsector_5<-EBsector_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+#################Table 10 final
+
+T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
+T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
+T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
+
+A1T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
+
+############## Table 11
+T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
+T11_2<-T11 %>% pivot_longer(1:5)
+Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
+
+A1T11_3<-T11_2 %>% select(-1) %>% 
+  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+
+
+######################################################################
+######################################################################
+### ALTERNATIVE wEIGHTS 2########################################################
+
+### weight given to each industry within the different ENERGY sectors
+weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program AW2") 
+
+weights_2<-weights_1 %>% slice(-c(1:9,20:42))
+
+res<-weights_2$`(industry-by-industry)`
+
+weights_3<-weights_2 %>% select(-c(1:3))
+
+weights_3[is.na(weights_3)]=0
+
+weights_4<-as.matrix(weights_3 %>% mutate_if(is.character,as.numeric))
+
+EM_T_4<-as.matrix(EM_T_3 %>% mutate_if(is.character,as.numeric))
+
+#w4 (10x35)  ||  t(w4) (35x10)
+#EM_T_4(3x35)
+
+EBEnergy_1<-EM_T_4 %*% t(weights_4) #Employment by energy sector matrix
+
+####
+Sweights_1<-weights_1 %>% slice(c(28:30)) %>% select(c(4:13))
+
+Sweights_1[is.na(Sweights_1)]=0
+
+Sweights_2<-as.matrix(Sweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBSector_1<-EBEnergy_1%*%t(Sweights_2) #### Employment by Sector
+
+##############
+GFweights_1<-weights_1 %>% slice(c(36,37)) %>% select(c(4:6))
+
+GFweights_1[is.na(GFweights_1)]=0
+
+GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
+
+EBgf_1<-EBSector_1%*%t(GFweights_2)
+
+
+rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
+
+
+
+
+
+### 3 main objects: EBEnergy_1 EBgf_1 EBSector_1 and weights
+### Replicate table 10
+
+jobs<-c("Direct + Indirect Jobs", "Direct Jobs", "Indirect Jobs" ) 
+
+
+EBEnergy_2<-t(EBEnergy_1)
+
+
+energy_names<-t(as.matrix(weights_1 %>% slice(22) %>% select(4:13)))
+
+EBEnergy_3<-data.frame(EBEnergy_2)
+
+colnames(EBEnergy_3)<-jobs
+
+EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
+  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+############# Include weighted averages
+
+EB_sector_2<-t(EBSector_1)
+
+wav<-c("Weighted Average for Renewables","Weighted Average for Efficiency", "Weighted Average for Fossil Fuels")
+
+
+
+
+EBsector_3<-data.frame(EB_sector_2) 
+
+
+EBsector_4<-EBsector_3%>% mutate(energy_names=wav) 
+colnames(EBsector_4)<-c(jobs, "energy_names")
+
+EBsector_5<-EBsector_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+
+#################Table 10 final
+
+T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
+T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
+T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
+
+A2T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
+
+############## Table 11
+T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
+T11_2<-T11 %>% pivot_longer(1:5)
+Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
+
+A2T11_3<-T11_2 %>% select(-1) %>% 
+  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+
+rm(list= ls()[!(ls() %in% c('T10','T11_3','A1T10','A1T11_3','A2T10','A2T11_3'))])
+
+
+
+
+
+#############################################################################
+######################## PROBLEM 2 ##########################################
+#############################################################################
+#############################################################################
 
