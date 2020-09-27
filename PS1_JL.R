@@ -14,7 +14,7 @@ library(plyr)
 library(ggplot2)
 library(car)
 library(foreign)
-library(xlsx)
+library(rmarkdown)
 options(scipen=10000)
 options(digits=4)
 
@@ -25,7 +25,8 @@ options(digits=4)
 ########################################################################
 
 #Set my working directory
-setwd("C:/Users/User/Documents/Fall 2020 UMass/753/Problem Sets/Problem Set 1") 
+setwd("C:/Users/User/Documents/GitHub/Problem-Sets--753") 
+
 
 #import the IO dataset, year 2009
 IO_1<-import("IND_NIOT_row_sep12.xlsx",sheet="2009") 
@@ -86,8 +87,8 @@ colnames(L_1)<-names_1
 
 emp_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="EO Matrix") 
 emp_2<-emp_1 %>% select(`Industries (corresponding to I-O sector)`,`All workers (PS+SS)`) %>% slice(-c(1,37:77))
-
-emp_3<-emp_2 %>% rename("industry"="Industries (corresponding to I-O sector)","all_workers"="All workers (PS+SS)") %>% 
+colnames(emp_2)<-c("industry","all_workers")
+emp_3<-emp_2 %>% 
   slice(-36)
 
 emp_4<-emp_3 %>% mutate(total_output=total_output$`Total output`) %>% 
@@ -160,7 +161,6 @@ GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
 EBgf_1<-EBSector_1%*%t(GFweights_2)
 
 
-rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
 
 
 
@@ -181,8 +181,11 @@ EBEnergy_3<-data.frame(EBEnergy_2)
 
 colnames(EBEnergy_3)<-jobs
 
-EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
-  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+EBEnergy_4<-data.frame(EBEnergy_3,energy_names) 
+
+colnames(EBEnergy_4)<-c(jobs,"energy_names")
+ 
+EBEnergy_4<-EBEnergy_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
 
 ############# Include weighted averages
 
@@ -207,16 +210,22 @@ T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
 T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
 T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
 
-T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
-
+T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) 
+rownames(T10)<-c()
+T10
 ############## Table 11
 T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
 T11_2<-T11 %>% pivot_longer(1:5)
 Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
 
-T11_3<-T11_2 %>% select(-1) %>% 
-  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+T11_3<-T11_2 %>% select(-1) 
 
+T11_3<-data.frame(T11_3, Source) 
+
+T11_4<-T11_3 %>%relocate(Source,value)
+
+
+colnames(T11_4)=c("Source", "Jobs per million USD")
 
 
 ############################ #####
@@ -270,7 +279,6 @@ GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
 EBgf_1<-EBSector_1%*%t(GFweights_2)
 
 
-rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
 
 
 
@@ -291,8 +299,11 @@ EBEnergy_3<-data.frame(EBEnergy_2)
 
 colnames(EBEnergy_3)<-jobs
 
-EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
-  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+EBEnergy_4<-data.frame(EBEnergy_3,energy_names) 
+
+colnames(EBEnergy_4)<-c(jobs,"energy_names")
+
+EBEnergy_4<-EBEnergy_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
 
 ############# Include weighted averages
 
@@ -317,20 +328,28 @@ T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
 T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
 T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
 
-A1T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
+A1_T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) 
+rownames(A1_T10)<-c()
 
 ############## Table 11
 T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
 T11_2<-T11 %>% pivot_longer(1:5)
 Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
 
-A1T11_3<-T11_2 %>% select(-1) %>% 
-  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+T11_3<-T11_2 %>% select(-1) 
+
+T11_3<-data.frame(T11_3, Source) 
+
+A1_T11_4<-T11_3 %>%relocate(Source,value)
+
+
+colnames(A1_T11_4)=c("Source", "Jobs per million USD")
+
 
 
 ######################################################################
 ######################################################################
-### ALTERNATIVE wEIGHTS 2########################################################
+### ALTERNATIVE WEIGHTS 2########################################################
 
 ### weight given to each industry within the different ENERGY sectors
 weights_1<-import("India-Input-Output Analysis--Employment Estimates--09132019.xlsx", sheet="Green Energy Program AW2") 
@@ -371,7 +390,6 @@ GFweights_2<-as.matrix(GFweights_1 %>% mutate_if(is.character,as.numeric))
 EBgf_1<-EBSector_1%*%t(GFweights_2)
 
 
-rm(list=setdiff(ls(), EBEnergy_1,EBgf_1,EBSector_1))
 
 
 
@@ -392,8 +410,11 @@ EBEnergy_3<-data.frame(EBEnergy_2)
 
 colnames(EBEnergy_3)<-jobs
 
-EBEnergy_4<-EBEnergy_3 %>% mutate(energy_names) %>% 
-  relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
+EBEnergy_4<-data.frame(EBEnergy_3,energy_names) 
+
+colnames(EBEnergy_4)<-c(jobs,"energy_names")
+
+EBEnergy_4<-EBEnergy_4 %>%   relocate(energy_names, `Direct Jobs`, `Indirect Jobs`, `Direct + Indirect Jobs`)
 
 ############# Include weighted averages
 
@@ -418,18 +439,29 @@ T10_renew<-EBEnergy_4 %>%  slice(1:5) %>% add_row(slice(EBsector_5,1))
 T10_effic<-EBEnergy_4 %>%  slice(6:8) %>% add_row(slice(EBsector_5,2))
 T10_fossil<-EBEnergy_4 %>% slice(9:10)%>% add_row(slice(EBsector_5,3))
 
-A2T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) %>% rename()
+A2_T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil) 
+rownames(A2_T10)<-c()
 
 ############## Table 11
 T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
 T11_2<-T11 %>% pivot_longer(1:5)
 Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
 
-A2T11_3<-T11_2 %>% select(-1) %>% 
-  mutate(Source) %>% relocate(Source,value) %>% rename("Jobs per million USD"=value ) #Final version of Table 11
+T11_3<-T11_2 %>% select(-1) 
 
-rm(list= ls()[!(ls() %in% c('T10','T11_3','A1T10','A1T11_3','A2T10','A2T11_3'))])
+T11_3<-data.frame(T11_3, Source) 
 
+A2_T11_4<-T11_3 %>%relocate(Source,value)
+
+
+colnames(A2_T11_4)=c("Source", "Jobs per million USD")
+
+rm(list= ls()[!(ls() %in% c('T10','T11_4','A1_T10','A1_T11_4','A2_T10','A2_T11_4'))])
+
+#####################################
+#####################################
+
+#Save my objects for rmarkdown
 
 
 
@@ -743,7 +775,7 @@ print(o)
 
 ############## End of figure 2       #####
 
-#Figure 2
+#Figure 4
 
 library(mgcv)
 RR.gam <- gam(dRGDP ~ s(debtgdp, bs="cs"),data=RR)
