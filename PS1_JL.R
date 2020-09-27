@@ -18,6 +18,7 @@ library(rmarkdown)
 options(scipen=10000)
 options(digits=4)
 
+rm(list=ls())
 
 #### ################################Problem 1
 ### ############################A Pure replication part
@@ -463,9 +464,15 @@ rm(list= ls()[!(ls() %in% c('T10','T11_4','A1_T10','A1_T11_4','A2_T10','A2_T11_4
 
 #Save my objects for rmarkdown
 
+save(T10, file = "Table_10_Replication.RData")
+save(T11_4, file = "Table_11_Replication.RData")
+
+save(A1_T10, file="Table_10_A1.RData")
+save(A1_T11_4, file = "Table_11_A1.RData")
 
 
-
+save(A2_T10, file="Table_10_A2.RData")
+save(A2_T11_4, file = "Table_11_A2.RData")
 
 
 #############################################################################
@@ -717,13 +724,26 @@ figure2<-figure2 %>% pivot_longer(c(2,3), names_to="central",values_to="GDP grow
 
 
 F2<- figure2 %>% ggplot(aes(x=Debt_GDP_cat, y=`GDP growth`, fill=central)) + geom_bar(stat="identity",width=0.5, position=position_dodge())
-
+print(F2)
+ggsave("F2.png")
 
 ############### PREVALENCE OF PUBLIC-DEBT CATEGORIES
+######################################################
+
 
 ## Counts of years
-with(RR, table(Country,dgcat))
-apply(with(RR,table( Country,dgcat)),2,sum)
+prev_1<-data.frame(with(RR, table(Country,dgcat)))
+save(prev_1,file="prev_1.Rdata")
+
+
+prev_2<-data.frame(apply(with(RR,table( Country,dgcat)),2,sum))
+debt_categories<-rownames(prev_2)
+rownames(prev_2)<-c()
+prev_2<- data.frame(debt_categories, prev_2)
+colnames(prev_2)<-c("Debt Categories", "Frecuency")
+
+save(prev_2,file="prev_2.Rdata")
+
 
 with(RR.selective,table( Country,dgcat))
 apply(with(RR.selective,table( Country,dgcat)),2,sum)
@@ -731,8 +751,19 @@ apply(with(RR.selective,table( Country,dgcat)),2,sum)
 with(RR.selective.spreadsheet,table( Country,dgcat))
 apply(with(RR.selective.spreadsheet,table( Country,dgcat)),2,sum)
 
+
+
+#### Prevalence of GDP growth by debt categories
+
+
+
+
+
+
+
+
 ################################
-########Figure 1 Henderson
+########Figure 1 Herndon
 ################################
 
 
@@ -751,6 +782,7 @@ n <- n + geom_point(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP), shape=0, si
 n <- n + geom_text(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP,label=paste(round(dRGDP,1))), hjust=-0.7,size=3,color='darkgray')
 n <- n + geom_text(RR.newzealand.1951,mapping=aes(x=dgcat,y=dRGDP,label=paste("NZ",Year)), hjust=1.2,size=3,color='darkgray')
 print(n)
+ggsave("Figure_1_Herndon.png")
 
 ########### End Figure 1 Herndon et al.
 
@@ -772,6 +804,7 @@ o <- ggplot(RR, aes(x=dgcat2,y=dRGDP)) + geom_point(shape=3,color='darkgray') + 
 o <- o + geom_point(RR.correct.mean.2.df,  mapping=aes(x=dgcat,y=RR.correct.mean.2), shape=16, size=4 )  + theme_bw()
 o <- o + geom_text(RR.correct.mean.2.df, mapping=aes(x=dgcat,y=RR.correct.mean.2,label=round(RR.correct.mean.2,1)), hjust=1.7, size=3,color='darkgray')
 print(o)
+ggsave("Figure_2_Herndon.png")
 
 ############## End of figure 2       #####
 
@@ -786,9 +819,44 @@ m <- RR %>% ggplot(aes(x=debtgdp,y=dRGDP))
 m1 <- m + geom_vline(xintercept=90,color='lightgray',size=1.5)
 m1 <- m1 + geom_point(color='darkgray') + ylab("Real GDP Growth") + xlab("Public Debt/GDP Ratio") + scale_x_continuous(breaks=seq(0,240,30)) + theme_bw()
 ## m1 <- m1 + geom_smooth(method='loess',span=1.0,color='black') + geom_smooth(method='loess',span=0.2,color='black')
-m1 <- m1 + geom_smooth(method=gam, color='black',formula= y ~ s(x, bs = "cs"))
+m1 <- m1 + geom_smooth(method=gam, color='black',formula= y ~ s(x, bs = "cs"))  + coord_cartesian(ylim=c(-0,7), xlim=c(0,150))
 ## m1 <- m1 + geom_smooth(method='auto', color='black')
 print(m1)
+
+ggsave("Figure_4_Herndon.png")
+
+
+###########
+###########
+###########
+################Data reorganization: Lagged GDP per Capita
+
+RR<-RR %>% mutate(L1.dRGDP=lag(dRGDP),L2.dRGDP=lag(L1.dRGDP),neoliberal=ifelse(Year>1979,1,0)) 
+RR<-RR %>% mutate(neoliberal=as.character(neoliberal))
+
+
+gn<-RR%>% ggplot(aes(x=debtgdp,y=dRGDP,color=neoliberal))+geom_point()+geom_smooth(method="lm",se=FALSE)
+
+print(gn)
+ggsave("gn.png")
+
+
+gn<-RR%>% ggplot(aes(x=debtgdp,y=dRGDP,color=neoliberal))+geom_point()+geom_smooth(method="lm",se=FALSE)
+
+print(gn)
+ggsave("gn.png")
+
+gnL1<-RR%>% ggplot(aes(x=debtgdp,y=L1.dRGDP,color=neoliberal))+geom_point()+geom_smooth(method="lm",se=FALSE)
+
+print(gn)
+ggsave("gnL1.png")
+
+
+gnL2<-RR%>% ggplot(aes(x=debtgdp,y=L2.dRGDP,color=neoliberal))+geom_point()+geom_smooth(method="lm",se=FALSE)
+
+print(gn)
+ggsave("gnL2.png")
+
 
 
 
