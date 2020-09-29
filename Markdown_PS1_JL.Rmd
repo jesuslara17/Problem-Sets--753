@@ -3,8 +3,8 @@ title: "ECON 753 Problem Set 1"
 author: "Jesús Lara Jáuregui"
 date: "9/27/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 df_print: paged
 ---
 
@@ -28,20 +28,30 @@ load("Table_11_A2.Rdata")
 
 load("prev_1.Rdata")
 load("prev_2.Rdata")
+load("prevGDP.Rdata")
+
+load("A1.Rdata")
+```
+
+Replication of Table A1
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(A1)
 ```
 
 Replication of Table 10
 
 ```{r, layout="l-body-outset"}
 library(knitr)
-kable(head(T10))
+kable(T10)
 ```
 
 Replication of Table 11
 
 ```{r, layout="l-body-outset"}
 library(knitr)
-kable(head(T11_4))
+kable(T11_4)
 ```
 
 ## Part B
@@ -50,7 +60,7 @@ Replication of Table 10 with alternative weights at the subsectoral level
 
 ```{r, layout="l-body-outset"}
 library(knitr)
-kable(head(A1_T10))
+kable(A1_T10)
 ```
 
 Replication of Table 10 with alternative weights at the subsectoral level 
@@ -90,6 +100,16 @@ library(knitr)
 kable(prev_2)
 ```
 
+Prevalence of Real GDP Growth
+
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(prevGDP)
+```
+
+
+
 ## 3. Replication of figures 1, 2 and 4 of Herndon et al. 
 
 Figure 1 Herndon
@@ -115,3 +135,6 @@ knitr::include_graphics("Figure_4_Herndon.png")
 knitr::include_graphics("gn.png")
 ```
 
+```{r, echo=FALSE, fig.cap="Before and After 1979", out.width = '75%'}
+knitr::include_graphics("gycat.png")
+```

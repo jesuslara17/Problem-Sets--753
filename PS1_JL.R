@@ -3,6 +3,7 @@
 # Jesús Lara
 #Github version
 
+library(plyr)
 library(dplyr)
 library(tidyr)
 library(data.table)
@@ -10,9 +11,8 @@ library(ggplot2)
 library("rio")
 library(matlib)
 library(gdata)
-library(plyr)
+library(tinytex)
 library(ggplot2)
-library(car)
 library(foreign)
 library(rmarkdown)
 options(scipen=10000)
@@ -457,6 +457,30 @@ A2_T11_4<-T11_3 %>%relocate(Source,value)
 
 colnames(A2_T11_4)=c("Source", "Jobs per million USD")
 
+
+
+####Replicate table A1
+
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+colnames(Sweights_1)<-Category
+sector<-c("Renewable Energy", "Energy Efficiency", "Fossil Fuel")
+Sectors<-Sweights_1 %>% mutate(sector) %>% relocate(sector)
+Sectors<-Sectors %>% pivot_longer(c(2:11),names_to="I-O Industry", values_to="Weights") %>% 
+  group_by(sector) %>% filter(Weights>0) %>% rename(Category=sector) %>% ungroup()
+  
+
+colnames(weights_3)<-names_1
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+A1<-weights_3 %>% mutate(Category) %>% relocate(Category)
+A1<-A1 %>% pivot_longer(c(2:36),names_to="I-O Industry",values_to="Weights")
+A1<-A1 %>% group_by(Category) %>% filter(Weights>0) %>% ungroup()
+
+A1<-A1 %>% add_row(Sectors) %>%mutate(Weights=100*as.numeric(Weights)) %>% mutate_if(is.numeric, round, digits = 2)
+
+save(A1,file="A1.Rdata")
+
 rm(list= ls()[!(ls() %in% c('T10','T11_4','A1_T10','A1_T11_4','A2_T10','A2_T11_4'))])
 
 #####################################
@@ -730,34 +754,40 @@ ggsave("F2.png")
 ############### PREVALENCE OF PUBLIC-DEBT CATEGORIES
 ######################################################
 
-
+options(digits=4)
 ## Counts of years
 prev_1<-data.frame(with(RR, table(Country,dgcat)))
+prev_1<- prev_1%>% pivot_wider(names_from=dgcat, values_from=Freq)
 save(prev_1,file="prev_1.Rdata")
 
 
 prev_2<-data.frame(apply(with(RR,table( Country,dgcat)),2,sum))
+
 debt_categories<-rownames(prev_2)
 rownames(prev_2)<-c()
 prev_2<- data.frame(debt_categories, prev_2)
-colnames(prev_2)<-c("Debt Categories", "Frecuency")
+colnames(prev_2)<-c("Debt Categories", "Frequency")
+
+prev_2<-prev_2 %>% pivot_wider(names_from="Debt Categories", values_from=Frequency)
 
 save(prev_2,file="prev_2.Rdata")
 
 
-with(RR.selective,table( Country,dgcat))
-apply(with(RR.selective,table( Country,dgcat)),2,sum)
-
-with(RR.selective.spreadsheet,table( Country,dgcat))
-apply(with(RR.selective.spreadsheet,table( Country,dgcat)),2,sum)
 
 
 
-#### Prevalence of GDP growth by debt categories
+#### Prevalence of GDP growth by years
 
 
+RR$yearcat.lm <- cut(RR$Year, breaks=c(1945,1950,1960,1970,1980,1990,2000,2010))
+RR$yearcat <- factor(RR$yearcat.lm, labels = c("1946-1950","1951-1960","1961-1970","1971-1980",
+                                               "1981-1990","1991-2000","2000-2010"),ordered=TRUE)
 
+prevGDP<-RR %>% select(Country, yearcat, dRGDP) 
 
+prevGDP<-prevGDP%>% group_by(Country,yearcat) %>% summarise_if(is.numeric,mean)
+prevGDP<-prevGDP %>% pivot_wider(names_from="yearcat",values_from=dRGDP)
+save(prevGDP,file="prevGDP.Rdata")
 
 
 
@@ -857,6 +887,9 @@ gnL2<-RR%>% ggplot(aes(x=debtgdp,y=L2.dRGDP,color=neoliberal))+geom_point()+geom
 print(gn)
 ggsave("gnL2.png")
 
+gycat<-RR%>% ggplot(aes(x=debtgdp,y=dRGDP,color=yearcat))+geom_point()+geom_smooth(method="lm",se=FALSE)
 
+print(gycat)
+ggsave("gycat.png")
 
 
