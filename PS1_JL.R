@@ -229,6 +229,28 @@ T11_4<-T11_3 %>%relocate(Source,value)
 colnames(T11_4)=c("Source", "Jobs per million USD")
 
 
+####Replicate table A1
+
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+colnames(Sweights_1)<-Category
+sector<-c("Renewable Energy", "Energy Efficiency", "Fossil Fuel")
+Sectors<-Sweights_1 %>% mutate(sector) %>% relocate(sector)
+Sectors<-Sectors %>% pivot_longer(c(2:11),names_to="I-O Industry", values_to="Weights") %>% 
+  group_by(sector) %>% filter(Weights>0) %>% rename(Category=sector) %>% ungroup()
+
+
+colnames(weights_3)<-names_1
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+A1<-weights_3 %>% mutate(Category) %>% relocate(Category)
+A1<-A1 %>% pivot_longer(c(2:36),names_to="I-O Industry",values_to="Weights")
+A1<-A1 %>% group_by(Category) %>% filter(Weights>0) %>% ungroup()
+
+A1<-A1 %>% add_row(Sectors) %>%mutate(Weights=100*as.numeric(Weights)) %>% mutate_if(is.numeric, round, digits = 2)
+
+save(A1,file="A1.Rdata")
+
 ############################ #####
 #### PART B Alternative weights###
 ##################################
@@ -346,7 +368,27 @@ A1_T11_4<-T11_3 %>%relocate(Source,value)
 
 colnames(A1_T11_4)=c("Source", "Jobs per million USD")
 
+####Replicate table A1
 
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+colnames(Sweights_1)<-Category
+sector<-c("Renewable Energy", "Energy Efficiency", "Fossil Fuel")
+Sectors<-Sweights_1 %>% mutate(sector) %>% relocate(sector)
+Sectors<-Sectors %>% pivot_longer(c(2:11),names_to="I-O Industry", values_to="Weights") %>% 
+  group_by(sector) %>% filter(Weights>0) %>% rename(Category=sector) %>% ungroup()
+
+
+colnames(weights_3)<-names_1
+Category<-c("Bioenergy","Solar","Wind","Geothermal","Hydro","Weatherization and
+Building Retrofits","Industrial Energy Efficiency","Grid Upgrades", "Coal", "Oil and Gas")
+A1<-weights_3 %>% mutate(Category) %>% relocate(Category)
+A1<-A1 %>% pivot_longer(c(2:36),names_to="I-O Industry",values_to="Weights")
+A1<-A1 %>% group_by(Category) %>% filter(Weights>0) %>% ungroup()
+
+A1_A1<-A1 %>% add_row(Sectors) %>%mutate(Weights=100*as.numeric(Weights)) %>% mutate_if(is.numeric, round, digits = 2)
+
+save(A1_A1,file="A1_A1.Rdata")
 
 ######################################################################
 ######################################################################
@@ -444,6 +486,7 @@ A2_T10<-T10_renew %>% add_row(T10_effic) %>% add_row(T10_fossil)
 rownames(A2_T10)<-c()
 
 ############## Table 11
+
 T11<-data.frame(t(EBSector_1[1,])) %>% mutate(X4= GFweights_2[1,1]*X1+ GFweights_2[1,2]*X2,X5=100*(X4-X3)/X3)
 T11_2<-T11 %>% pivot_longer(1:5)
 Source<-c("Renewable Energy","Energy Efficiency","Fossil Fuels","Clean Energy Total", "Clean Energy relative to Fossil Fuels")
@@ -477,9 +520,9 @@ A1<-weights_3 %>% mutate(Category) %>% relocate(Category)
 A1<-A1 %>% pivot_longer(c(2:36),names_to="I-O Industry",values_to="Weights")
 A1<-A1 %>% group_by(Category) %>% filter(Weights>0) %>% ungroup()
 
-A1<-A1 %>% add_row(Sectors) %>%mutate(Weights=100*as.numeric(Weights)) %>% mutate_if(is.numeric, round, digits = 2)
+A2_A1<-A1 %>% add_row(Sectors) %>%mutate(Weights=100*as.numeric(Weights)) %>% mutate_if(is.numeric, round, digits = 2)
 
-save(A1,file="A1.Rdata")
+save(A2_A1,file="A2_A1.Rdata")
 
 rm(list= ls()[!(ls() %in% c('T10','T11_4','A1_T10','A1_T11_4','A2_T10','A2_T11_4'))])
 
@@ -497,6 +540,9 @@ save(A1_T11_4, file = "Table_11_A1.RData")
 
 save(A2_T10, file="Table_10_A2.RData")
 save(A2_T11_4, file = "Table_11_A2.RData")
+
+
+
 
 
 #############################################################################
@@ -761,6 +807,7 @@ prev_1<- prev_1%>% pivot_wider(names_from=dgcat, values_from=Freq)
 save(prev_1,file="prev_1.Rdata")
 
 
+
 prev_2<-data.frame(apply(with(RR,table( Country,dgcat)),2,sum))
 
 debt_categories<-rownames(prev_2)
@@ -791,6 +838,9 @@ save(prevGDP,file="prevGDP.Rdata")
 
 
 
+### Debt cat by year
+prev_A<-data.frame(with(RR, table(yearcat,dgcat))) %>% pivot_wider(names_from=dgcat, values_from=Freq)
+save(prev_A,file="prev_A.Rdata")
 
 ################################
 ########Figure 1 Herndon
@@ -859,7 +909,7 @@ ggsave("Figure_4_Herndon.png")
 ###########
 ###########
 ###########
-################Data reorganization: Lagged GDP per Capita
+################Data reorganization: Lagged GDP per Capita and year categories 
 
 RR<-RR %>% mutate(L1.dRGDP=lag(dRGDP),L2.dRGDP=lag(L1.dRGDP),neoliberal=ifelse(Year>1979,1,0)) 
 RR<-RR %>% mutate(neoliberal=as.character(neoliberal))
