@@ -12,6 +12,7 @@ library("rio")
 library(matlib)
 library(gdata)
 library(tinytex)
+library(scales)
 library(ggplot2)
 library(foreign)
 library(rmarkdown)
@@ -541,6 +542,12 @@ save(A1_T11_4, file = "Table_11_A1.RData")
 save(A2_T10, file="Table_10_A2.RData")
 save(A2_T11_4, file = "Table_11_A2.RData")
 
+load("A1.Rdata")
+load("A1_A1.Rdata")
+load("A2_A1.Rdata")
+
+A1_F<-A1 %>% mutate("My Weights 1"=A1_A1$Weights, "My Weights 2"=A2_A1$Weights)
+save(A1_F,file="A1_F.Rdata")
 
 
 
@@ -942,4 +949,14 @@ gycat<-RR%>% ggplot(aes(x=debtgdp,y=dRGDP,color=yearcat))+geom_point()+geom_smoo
 print(gycat)
 ggsave("gycat.png")
 
+### Now I wil focus just on the richest economies
+
+coeff=0.1
+myplot<-RR %>% filter(Country=="US"| Country=="Japan") %>% 
+  ggplot(aes(x=Year, y=dRGDP, color=Country))+ scale_y_continuous(sec.axis=sec_axis( trans=~./
+                                                                            coeff, name="Debt/GDP"))
+
+myplot<-myplot+ geom_line(aes(y=dRGDP),size=1)+geom_point(aes(y=debtgdp*coeff))     
+myplot
+ggsave("myplot.png")
 

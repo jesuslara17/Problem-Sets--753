@@ -1,10 +1,10 @@
 ---
-title: "ECON 753 Problem Set 1"
+title: "ECON 753 Homeweork 1"
 author: "Jesús Lara Jáuregui"
 date: "9/27/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 df_print: paged
 ---
 
@@ -32,6 +32,7 @@ load("prevGDP.Rdata")
 load("A1.Rdata")
 load("A1_A1.Rdata")
 load("A2_A1.Rdata")
+load("A1_F.Rdata")
 load("prev_A.Rdata")
 ```
 
@@ -40,19 +41,19 @@ load("prev_A.Rdata")
 
 
 
-In this part I replicate in R tables 10, 11 and A1 from Pollin and Chakraborty. I take the employment data and original weights from the file "India-Input-Output Analysis--Employment Estimates--09132019.xlsx". Input-Output comes from the file "IND_NIOT_row_09132019.xlsx" that I took from the official WIOD page
+In this part I replicate in R tables 10, 11 and A1 from Pollin and Chakraborty. I take the employment data and original weights from the file "India-Input-Output Analysis--Employment Estimates--09132019.xlsx". The Input-Output data comes from the file "IND_NIOT_row_09132019.xlsx" that I took from the official WIOD page.
 
 
-Below is a replication of Table A1 which summarizes the weighting system used in the original paper. 
+Below is a replication of Table A1 which summarizes the weighting system used in the original paper. The last two columns present my alternative weighting system. 
 
 ```{r, layout="l-body-outset"}
 library(knitr)
-kable(A1)
+kable(A1_F)
 ```
 
-Each of the 35 I-O industries belongs to at last a sub-sectoral energy category (10 in total) and each of those can be classified in 3 broad energy categories: renewable, efficiency and fossil fuels. 
+Each of the 35 I-O industries belongs to at least a sub-sectoral energy category (10 in total) and each of those can be classified in 3 broad energy categories: renewable, efficiency and fossil fuels. 
 
-By getting the "Leontieff" inverse matrix we can also get the direct labor that goes into the production of one unit of each "good". The following table is a replication of Table 10 of the paper that shows how many jobs would each energy sub-sebctor generate given a million USD increase in the final demand of the industries that form them.  
+By getting the "Leontieff" inverse matrix and the labor-output ratio, we can also get the direct and indirect labor that goes into the production of one unit of each "good". The following table is a replication of Table 10 of the paper that shows how many jobs would each energy sub-sector generate given a million USD increase in the final demand of the industries that integrate them.  
 
 
 Replication of Table 10
@@ -62,7 +63,7 @@ library(knitr)
 kable(T10)
 ```
 
-Table 11 below is a summary of table 10 as it only includes the weighted averages of each sub-sector classified in the broader sectors of renewable energy, energy efficiency and fossil fuels. The sum of the first two gives the row "Clean Energy Total". Whereas the las row is obtained by the formula $\frac{Clean EnergyTotal-FossilFuels}{FossilFuels}*100\%$ Note: the value of this row is different than in the paper because there they used the weights 67% and 33% to renewables and efficiency respectively, whereas here I kept the 50-50% of the original table. I keep those final weights for the rest of the analysis
+Table 11 below is a summary of table 10 as it only includes the weighted averages of each sub-sector classified in the broader sectors of renewable energy, energy efficiency and fossil fuels. The sum of the first two gives the row "Clean Energy Total". Whereas the last row is obtained by the formula $\frac{Clean EnergyTotal-FossilFuels}{FossilFuels}*100\%$ Note: the value of this row is different than in the paper because there they used the weights 67% and 33% to renewables and efficiency, respectively, whereas here I kept the 50-50% of the original table. I keep those final weights for the rest of the analysis
 
 
 Replication of Table 11
@@ -72,74 +73,63 @@ library(knitr)
 kable(T11_4)
 ```
 
-The most salient fact is that an investment of 1 USD for both fossil fuels and clean energy would result in more than twice (102.82%) more jobs generated in the latter than in the former. 
+The most salient fact is that an investment of 1 USD for both fossil fuels and clean energy would result in more than double (102.82%) more generated in the latter than in the former. 
  
 ## Part B
 
-In this part I conduct the same analysis but changing the weights at the I-O industry level. I show these new weights in my table below
+In this part I conduct the same analysis but changing the weights at the I-O industry level. These new weights are in the column "My Weights 1" in the first table.  
 
-```{r, layout="l-body-outset"}
-library(knitr)
-kable(A1_A1)
-```
-
-Although not making the analysis very formal, in these new weihgts I tried to punish a little those industries that intuitively are more labor-intensive, such as education or construction, and increasing the weight of capital intensive industries such as mining and construction.
+Although not making the analysis very formal, in these new weights I tried to punish a little those industries that intuitively are more labor-intensive, such as education or construction, and to increa the weight of capital intensive industries such as mining and construction.
 
 The new results are shown in the below.
-
-Replication of Table 10 with alternative weights at the sub-sectoral level: 
 
 ```{r, layout="l-body-outset"}
 library(knitr)
 kable(A1_T10)
 ```
 
-Replication of Table 11 with alternative weights at the sub-sectoral level 
+The summary at the sectoral level is in the next table. 
 
 ```{r, layout="l-body-outset"}
 library(knitr)
 kable(head(A1_T11_4))
 ```
 
-Maybe not very surprisingly, the new weights didn't alter the basic result: that clean energies would generate more than twice the jobs of fossil fuels (111.02% in this case). I think a large part of this result comes from the fact that I left unchanged the weight of agriculture (that belongs to the wub-bioenergy sector), which is by far the "industry" that generates more jobs in India. 
+Maybe not very surprisingly, the new weights didn't alter the basic result: that clean energies would generate more than twice the jobs of fossil fuels (111.02% in this case). I think a large part of this result comes from the fact that I left unchanged the weight of agriculture (that belongs to the bioenergy sub-sector), which is by far the "industry" that generates more jobs in India. 
 
-Now I keep the original weights of each industry but change the wieghts of each subsector. This summarized in the table below
-Table A1
+Now I keep the original weights of each industry but change the weights of each sub-sector. This summarized in the column "My Weights 2" of the first table.
 
-```{r, layout="l-body-outset"}
-library(knitr)
-kable(A2_A1)
-```
 
-The new results are found in the next two tables. Obviously, the amount of indirect and direct jobs generated by each energy subsector are the same as in the original paper, since the weights of industries remained unchanged. The changes come in the weighted averages of each broad sector. But that is better summarized in table 11
 
-Table 10 
+
 
 ```{r, layout="l-body-outset"}
 library(knitr)
 kable(A2_T10)
 ```
 
-Table 11
+The new results are found in the next two tables. Obviously, the amount of indirect and direct jobs generated by each energy subsector are the same as in the original paper, since the weights of industries remained unchanged. The changes come in the weighted averages of each broad sector. But that is better summarized in the table below
 
 ```{r, layout="l-body-outset"}
 library(knitr)
 kable(A2_T11_4)
 ```
 
-There we can see that, although with some composition effects, the basic result of the original paper remains, since with this alternative system clean energies generate 116.33% more jobs than fossil fuel energies. 
+There we can see that, although with some composition effects, the basic result of the original paper remains, since with this alternative system clean energies generate 116.33% more jobs than fossil fuel energies. This analysis suggests that the results obtained in Pollin and Chakraborty are robust to different weights at different levels. 
 
 # Poblem 2
 
+
 ## 1 Replication of figure 2 RR
+
 
 Below I present a replication of figure 2 in RR paper
 
-```{r pressure, echo=FALSE, fig.cap="Figure 2 RR", out.width = '75%'}
+```{r pressure, fig.cap="Figure 2 RR", out.width = '75%', fig.align = 'center'}
 knitr::include_graphics("F2.png")
 ```
 
-There are two main facts: average and median gdp growth is the highest in the lowest debt/GDP category. But the most important is that once the ratio is above 90%, economic growth is "not viable". We know that this is largely due to the mistakes of the authors. (Note: in the original figure the first two bars are slightly below 4 and here are above. This was replicated using the code provided by the professor.)
+There are two main facts: average and median GDP growth is the highest in the lowest debt/GDP category. But the most important is that once the ratio is above 90%, economic growth is "not viable". We know that this is largely due to the mistakes of the authors. (Note: in the original figure the first two bars are slightly below 4 and here are above. This was replicated using the code provided by the professor.)
 
 ## 2. Show the prevalence of the four public-debt categories for the sample of countries over time.Show the real GDP growth rate for the sample of countries over time. Discuss any patterns thatyou observe. 
 
@@ -177,7 +167,7 @@ It is clear that economic growth is highest in the first 3 columns, whereas in t
 ## 3. Replication of figures 1, 2 and 4 of Herndon et al. 
 
 
-```{r, echo=FALSE, fig.cap="Figure 1 Herndon et al.", out.width = '75%'}
+```{r,  fig.cap="Figure 1 Herndon et al.", out.width = '75%',fig.align = 'center'}
 knitr::include_graphics("Figure_1_Herndon.png")
 ```
 
@@ -185,14 +175,14 @@ Figure 1 of Herndon et al. shows the very weak relationship between debt/GDP and
 
 
 
-```{r, echo=FALSE, fig.cap="Figure 2 Herndon et al.", out.width = '75%'}
+```{r,  fig.cap="Figure 2 Herndon et al.", out.width = '75%',fig.align = 'center'}
 knitr::include_graphics("Figure_2_Herndon.png")
 ```
 
-Figure 2 expands the debt categories by including "above 120%". This figure shows how the average GDP growth in eposides of debt/GDP above 120% is very low, so that could be driving the very negative effect of high debt on GDP growth
+Figure 2 of Herndon et al. (Figure 3 in this report) expands the debt categories by including "above 120%". This figure shows how the average GDP growth in episodes of debt/GDP above 120% is very low. Hence, this illustrates the consequences of choosing different thresholds: they can change substantially the results. For instance, this points to the fact that a debt-GDP ratio only becomes very pervasive to economic growth once it passes a very high threshold. An interesting direction to expand this research, I think, is to make us of regressions that determine endogenously the thresholds, such as Panel Transition Regression or Panel Smooth Transition Regression models. 
 
 
-```{r, echo=FALSE, fig.cap="Figure 4 Herndon et al.", out.width = '75%'}
+```{r,  fig.cap="Figure 4 Herndon et al.", out.width = '75%',fig.align = 'center'}
 knitr::include_graphics("Figure_4_Herndon.png")
 ```
 
@@ -205,13 +195,27 @@ Figure 4 shows the relationship between these two variables and better illustrat
 
 In this part I focus on different year categories. I create a dummy variable that takes value 1 if year is greater than 1979 and 0 otherwise. Then I plot the relationship between debt/GDP and real GDP growth and add two linear regressions.
 
-```{r, echo=FALSE, fig.cap="Before and After 1979", out.width = '75%'}
+```{r,  fig.cap="Before and After 1979", out.width = '75%',fig.align = 'center',fig.align = 'center'}
+
 knitr::include_graphics("gn.png")
+
 ```
 
 Just as we expected, the relationship is more negative for the blue points (after 1979), since those were the years of the highest debt/GDP (just after the immediate postwar).
 
-```{r, echo=FALSE, fig.cap="Before and After 1979", out.width = '75%'}
+In figure 6 I plot the relationship between the two variables for the different decades
+
+```{r,  fig.cap="By year categories", out.width = '75%',fig.align = 'center'}
+
 knitr::include_graphics("gycat.png")
 ```
 
+Very interestingly, the slope of the regression line is the greatest in absolute value for the first 15 years of the period analyzed. Then it becomes almost flat and then big again for the period 2000-2010.
+
+Finally, I look at the evolution of these two variables over time for the US and Japan.
+
+```{r, fig.cap="Real GDP Growth vs Debt/GDP for US and Japan", out.width = '75%',fig.align = 'center'}
+knitr::include_graphics("myplot.png")
+```
+
+This is shown in Figure 7. The dots represent the Debt-GDP ratio and the line the rate of GDP growth. We can see that, around 1985, the two lines start to diverge: the tendency is towards a greater public debt and lower GDP growth. In my opinion, All these results point to the already discussed complex relationship between public debt and GDP growth, where the direction of causality is not easy to determine (assuming, in the very first place, that it exists).
