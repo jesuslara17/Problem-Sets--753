@@ -49,9 +49,7 @@ cor_chow_65<-cor(cor_chow %>% filter(YEAR>=60) %>% select(-YEAR))
 lm4_1<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,filter(chow, YEAR>=60))
 summary(lm4_1)
 
-coefficients<-data.frame(coef(lm4_1))
-
-%>% slice(-c(1:4))
+coefficients<-data.frame(coef(lm4_1))%>% slice(-c(1:4))
 
 coefficients<-coefficients %>% rename("Coefficient"="coef.lm4_1.") %>% 
   mutate("Price Index"=exp(Coefficient))
