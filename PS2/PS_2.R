@@ -136,14 +136,29 @@ all_index<-merge(cpiu,ccpiu, by=c("year","month"),all=TRUE)
 
 all_index<-merge(all_index,cpiurs, by=c("year","month"),all=TRUE) 
 
-all_index <- all_index %>% mutate(across(where(is.character),as.numeric))
+all_index <- all_index %>%
+  mutate(across(where(is.character),as.numeric))
 
-inflation<-all_index %>% group_by(year) %>% 
+###Take averages and then calculation inflation
+
+inflation<-all_index %>% 
+  group_by(year) %>% 
   summarise(across(c(cpiu,ccpiu,cpiurs), mean))
   
   
-inflation<-inflation %>% mutate(across(c(cpiu,ccpiu,cpiurs), list(l=lag), .names="{fn}.{col}")) %>% 
+inflation<-inflation %>% 
+  mutate(across(c(cpiu,ccpiu,cpiurs), list(l=lag), .names="{fn}.{col}")) %>% 
   mutate(infl_cpiu=100*(cpiu-l.cpiu)/l.cpiu,
          infl_ccpiu=100*(cpiu-l.cpiu)/l.ccpiu,
          infl_cpiurs=100*(cpiurs-l.cpiurs)/l.cpiurs)
+
+inflation_plot<-inflation %>% select(year,infl_cpiu,infl_ccpiu) %>% 
+  pivot_longer(c(infl_cpiu,infl_ccpiu),names_to="index",values_to="inflation")
   
+### ggplotting inflation :O
+
+
+plot1<-inflation_plot %>% 
+  ggplot(aes(x=year, y=inflation, color=index))+geom_line(size=1.5) + 
+  theme_bw() +ylab("Inflation")+xlab("Date")
+plot1
