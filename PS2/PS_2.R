@@ -12,6 +12,7 @@ library(foreign)
 library(rmarkdown)
 library(fastDummies)
 library(stargazer)
+library(naniar)
 
 
 options(scipen=10000)
@@ -101,7 +102,7 @@ xpooled.lm <- lm(LNRENT ~ LNMULT + LNACCESS + LNMEM + factor(YEAR), data =chow)
 rm(list=ls())
 
 
-#Import CPI-U
+#Import and clean CPI-U 
 cpiu<-import("CPI_U.xls",sheet="Monthly") 
 cpiu<-cpiu %>% mutate(year=c(rep(1968:2019,each=12),rep(2020, each=8)),
                       month=c(rep(1:12,length(c(1968:2019))),1:8)) %>% 
@@ -116,49 +117,78 @@ ccpiu<-ccpiu %>% mutate(year=c(1999, rep(2000:2019,each=12),rep(2020, each=8)),
        month=c(12,rep(1:12,length(c(2000:2019))),1:8)) %>% select(-observation_date) %>%
   rename("ccpiu"="SUUR0000SA0")
 
-
-
-
 #Import and clean CPI-U-RS
-
 cpiurs<-import("r-cpi-u-rs-allitems.xlsx") 
 colnames(cpiurs)<-cpiurs %>% slice(5)
 cpiurs<-cpiurs %>% slice(-c(1:5))
 colnames(cpiurs)<-c("year",1:12,"AVG")
-
 cpiurs<-cpiurs %>% select(-AVG)%>% 
   pivot_longer(cols=c("1":"12"),names_to="month",values_to="cpiurs") 
 
+#Import and clean CPI-U-X1
+cpiux1<-import("ERP-2012-table62.xls")
+cpiux1<-cpiux1 %>% select(1,10:12)  
+cpiux1<-cpiux1 %>% slice(-c(1:3))
+colnames(cpiux1) <-c("year","cpiux1","cpiurs","ccpiu")
+cpiux1<-cpiux1 %>% slice(-c(45:73))
+cpiux1<-cpiux1 %>% replace_with_na(replace=list(cpiurs= "......",ccpiu="......")) %>% 
+  mutate(across(where(is.character),as.numeric))
 
-### Merging the 3 indexes
+cpiux1<-cpiux1 %>% mutate(lcpiux1=lag(cpiux1)) %>% 
+  mutate(inf_cpiux1=100*(cpiux1-lcpiux1)/lcpiux1) #Rate of change (inflation) of CPI-U-X1
+
+
+
+# Import and clean Minimum Wage Data
+min_wage<-import("Min_wage.xlsx",sheet=2)
+min_wage<-min_wage %>% slice(-c(1:5)) %>% select(c(1,2))
+colnames(min_wage)<-c("year","mwage")
+min_wage<-min_wage %>% mutate(across(where(is.character),as.numeric))
+
+
+
+
+
+# Merging the 3 indexes
 all_index<-merge(cpiu,ccpiu, by=c("year","month"),all=TRUE) 
-
-
 all_index<-merge(all_index,cpiurs, by=c("year","month"),all=TRUE) 
-
 all_index <- all_index %>%
   mutate(across(where(is.character),as.numeric))
 
-###Take averages and then calculation inflation
 
+#Take averages and then calculation inflation
 inflation<-all_index %>% 
   group_by(year) %>% 
   summarise(across(c(cpiu,ccpiu,cpiurs), mean))
+
+#Base year=2000
+cpiu2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(cpiu))[1,1]
+ccpiu2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(ccpiu))[1,1]
+cpiurs2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(cpiurs))[1,1]
+
   
-  
-inflation<-inflation %>% 
+
+inflation<-inflation %>% mutate(cpiu=cpiu/(0.01*cpiu2000),
+                                ccpiu=ccpiu/(0.01*ccpiu2000),
+                                cpiurs=cpiurs/(0.01*cpiurs2000)) %>% 
   mutate(across(c(cpiu,ccpiu,cpiurs), list(l=lag), .names="{fn}.{col}")) %>% 
   mutate(infl_cpiu=100*(cpiu-l.cpiu)/l.cpiu,
          infl_ccpiu=100*(cpiu-l.cpiu)/l.ccpiu,
-         infl_cpiurs=100*(cpiurs-l.cpiurs)/l.cpiurs)
+         infl_cpiurs=100*(cpiurs-l.cpiurs)/l.cpiurs) 
 
-inflation_plot<-inflation %>% select(year,infl_cpiu,infl_ccpiu) %>% 
-  pivot_longer(c(infl_cpiu,infl_ccpiu),names_to="index",values_to="inflation")
+
+#Add cpiux1 for the first years
+
+
+inflation<-inflation %>% mutate(infl_cpiurs=ifelse(year<1979,cpiux1$inf_cpiux1, infl_cpiurs))
+
+#re-arrange the data from for ggplot purposes
+inflation_plot<-inflation %>%  
+  pivot_longer(c(infl_cpiu,infl_ccpiu,infl_cpiurs),names_to="index",values_to="inflation")
   
+
 ### ggplotting inflation :O
-
-
 plot1<-inflation_plot %>% 
-  ggplot(aes(x=year, y=inflation, color=index))+geom_line(size=1.5) + 
+  ggplot(aes(x=year, y=inflation, color=index))+geom_line(size=1.2) + 
   theme_bw() +ylab("Inflation")+xlab("Date")
 plot1
