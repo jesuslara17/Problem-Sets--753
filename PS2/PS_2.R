@@ -99,21 +99,51 @@ xpooled.lm <- lm(LNRENT ~ LNMULT + LNACCESS + LNMEM + factor(YEAR), data =chow)
 ###############################
 ####### PART 2 ##############
 rm(list=ls())
-dev.off()
+
 
 #Import CPI-U
 cpiu<-import("CPI_U.xls",sheet="Monthly") 
+cpiu<-cpiu %>% mutate(year=c(rep(1968:2019,each=12),rep(2020, each=8)),
+                      month=c(rep(1:12,length(c(1968:2019))),1:8)) %>% 
+                      select(-DATE) %>% rename("cpiu"=CPIAUCSL)
 
 # Import and clean C-CPI-U
 ccpiu<-import("C_CPI_U.xls") 
 colnames(ccpiu)<- ccpiu %>% slice(10)
 ccpiu<-ccpiu %>% slice(-c(1:10))
 
+ccpiu<-ccpiu %>% mutate(year=c(1999, rep(2000:2019,each=12),rep(2020, each=8)),
+       month=c(12,rep(1:12,length(c(2000:2019))),1:8)) %>% select(-observation_date) %>%
+  rename("ccpiu"="SUUR0000SA0")
+
+
+
+
 #Import and clean CPI-U-RS
+
 cpiurs<-import("r-cpi-u-rs-allitems.xlsx") 
 colnames(cpiurs)<-cpiurs %>% slice(5)
 cpiurs<-cpiurs %>% slice(-c(1:5))
+colnames(cpiurs)<-c("year",1:12,"AVG")
+
+cpiurs<-cpiurs %>% select(-AVG)%>% 
+  pivot_longer(cols=c("1":"12"),names_to="month",values_to="cpiurs") 
 
 
+### Merging the 3 indexes
+all_index<-merge(cpiu,ccpiu, by=c("year","month"),all=TRUE) 
 
 
+all_index<-merge(all_index,cpiurs, by=c("year","month"),all=TRUE) 
+
+all_index <- all_index %>% mutate(across(where(is.character),as.numeric))
+
+inflation<-all_index %>% group_by(year) %>% 
+  summarise(across(c(cpiu,ccpiu,cpiurs), mean))
+  
+  
+inflation<-inflation %>% mutate(across(c(cpiu,ccpiu,cpiurs), list(l=lag), .names="{fn}.{col}")) %>% 
+  mutate(infl_cpiu=100*(cpiu-l.cpiu)/l.cpiu,
+         infl_ccpiu=100*(cpiu-l.cpiu)/l.ccpiu,
+         infl_cpiurs=100*(cpiurs-l.cpiurs)/l.cpiurs)
+  
