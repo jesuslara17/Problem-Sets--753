@@ -102,13 +102,39 @@ for(YEAR in 54:64) {
   beta[YEAR-52] <- print(coef(get(paste("CHOWModel",YEAR,YEAR+1,".lm",SEP="")))[5])
 } 
 
-beta<-data.frame(beta)
+beta<-c(0.00000000, -0.06745630, -0.13118744, -0.12639924, -0.25751042, -0.20202314, -0.50355965, -0.08546431, -0.28575199, -0.12956105, -0.31576839,-0.21823508)
 
-xpooled.lm <- lm(LNRENT ~ LNMULT + LNACCESS + LNMEM + factor(YEAR), data =chow)
+
+###Pooled regression
+xpooled.lm <- lm(LNRENT ~ D55+ D56+D57+D58+D59+D60+D61+D62+D63+D64+D65+LNMULT + LNACCESS + LNMEM, data =chow3)
+
+reg_index2<-data.frame(Year=1954:1965, Pooled=c(0,coef(xpooled.lm)[2:12]))
+
+reg_index2<-reg_index2 %>% mutate(Pooled_Dif=Pooled-lag(Pooled), chained_coef=beta)
+
+colnames(reg_index2) <- c("Year", "Pooled Cooefficients", "Changes in Pooled Coefficients",
+                                "Adjacent Year Coefficients")
+rownames(reg_index2) <- c()
+priceIndexTable2 <- format(reg_index2, digits=3)
+save(reg_index2, file="reg_index2.Rdata")
+
+### Problem 6
+
+sixBtable <-format(mutate(data.frame(pooled_Coef=coef(xpooled.lm)[2:12],coef_Summed=cumsum(priceIndexTable2[,4][2:12])),
+                          pooled_Indices=exp(pooled_Coef), summed_Indices=exp(coef_Summed)),digits=2, scientific=8)
+
+
+sixBtable <- rbind(c(0,0,1,1),sixBtable)
+rownames(sixBtable) <- c()
+reg_index3 <- data.frame(year=1954:1965, pooled_Indices=sixBtable$pooled_Indices,
+                               summed_Indices=sixBtable$summed_Indices)
+colnames(reg_index3) <- c("Year", "Pooled CPI Indices", "Chained CPI Indices")
+save(reg_index3,file="reg_index3")
 
 
 ###############################
-####### PART 2 ##############
+###############################
+####### PART 2 ################
 rm(list=ls())
 
 

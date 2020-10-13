@@ -19,7 +19,8 @@ load("cor65.Rdata")
 load("lmb.Rdata")
 load("reg_index.Rdata")
 load("st_problem3.tex")
-
+load("reg_index2.Rdata")
+load("reg_index3.Rdata")
 ```
 
 # Part 1
@@ -59,10 +60,20 @@ kable(reg_index, caption="Replicated Price Indices")
 
 
 # Question 6a
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(reg_index2, caption="Replicated Price Indices")
+```
 
 
 
 # Question 6b
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(reg_index3, caption="Replicated Price Indices")
+```
+
 
 # Part 2
 
