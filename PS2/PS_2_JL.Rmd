@@ -1,0 +1,34 @@
+---
+title: "ECON 753 Homeweork 1"
+author: "Jesús Lara Jáuregui"
+date: "9/27/2020"
+output:
+  html_document: default
+  pdf_document: default
+df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Part 1
+
+# Question 3a 
+
+# Question 3b
+
+# Question 3e
+
+# Question 6a
+
+# Question 6b
+
+# Part 2
+
+Plot 1: Inflation
+
+Plot 2: Minimum wage in 2018 CPI-U dollars
+
+Plot 3: Statutory vs hypothetical COLA with CPI inflation 

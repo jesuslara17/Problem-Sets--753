@@ -161,33 +161,46 @@ inflation<-all_index %>%
   group_by(year) %>% 
   summarise(across(c(cpiu,ccpiu,cpiurs), mean))
 
-#Base year=2000
-cpiu2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(cpiu))[1,1]
-ccpiu2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(ccpiu))[1,1]
-cpiurs2000<-as.matrix(inflation  %>% filter(year==2000)%>% select(cpiurs))[1,1]
+
+cpiu2018<-as.matrix(inflation  %>% filter(year==2018)%>% select(cpiu))[1,1] #Base year=2018
+ccpiu2018<-as.matrix(inflation  %>% filter(year==2018)%>% select(ccpiu))[1,1]
+cpiurs2018<-as.matrix(inflation  %>% filter(year==2018)%>% select(cpiurs))[1,1]
 
   
 
-inflation<-inflation %>% mutate(cpiu=cpiu/(0.01*cpiu2000),
-                                ccpiu=ccpiu/(0.01*ccpiu2000),
-                                cpiurs=cpiurs/(0.01*cpiurs2000)) %>% 
+inflation<-inflation %>% mutate(cpiu=cpiu/(0.01*cpiu2018),
+                                ccpiu=ccpiu/(0.01*ccpiu2018),
+                                cpiurs=cpiurs/(0.01*cpiurs2018)) %>% 
   mutate(across(c(cpiu,ccpiu,cpiurs), list(l=lag), .names="{fn}.{col}")) %>% 
   mutate(infl_cpiu=100*(cpiu-l.cpiu)/l.cpiu,
          infl_ccpiu=100*(cpiu-l.cpiu)/l.ccpiu,
          infl_cpiurs=100*(cpiurs-l.cpiurs)/l.cpiurs) 
 
 
-#Add cpiux1 for the first years
 
-
-inflation<-inflation %>% mutate(infl_cpiurs=ifelse(year<1979,cpiux1$inf_cpiux1, infl_cpiurs))
+inflation<-inflation %>% 
+  mutate(infl_cpiurs=ifelse(year<1979,cpiux1$inf_cpiux1, infl_cpiurs)) #Add cpiux1 for the first years
 
 #re-arrange the data from for ggplot purposes
 inflation_plot<-inflation %>%  
   pivot_longer(c(infl_cpiu,infl_ccpiu,infl_cpiurs),names_to="index",values_to="inflation")
   
 
-### ggplotting inflation :O
+#For plots 2 and 3:
+
+
+#plot 2
+
+
+
+min_wage_infl<- min_wage %>%mutate(inflation %>% filter(year<2020) %>%  select(infl_cpiu)*0.01)
+
+
+#min_wage_infl<-min_wage_infl %>% mutate(hypoth_mwage=ifelse(year==1968, 1.60, (1+infl_cpiu)*(mwage))
+
+####PLOTS
+
+# Plot 1: inflation with CPI-U, C-CPI-U and C-CPI-U-RS
 plot1<-inflation_plot %>% 
   ggplot(aes(x=year, y=inflation, color=index))+geom_line(size=1.2) + 
   theme_bw() +ylab("Inflation")+xlab("Date")
