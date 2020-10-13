@@ -13,15 +13,54 @@ df_print: paged
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+``` {r}
+load("cor59.Rdata")
+load("cor65.Rdata")
+load("lmb.Rdata")
+load("reg_index.Rdata")
+load("st_problem3.tex")
+
+```
+
 # Part 1
 
 # Question 3a 
 
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(cor_chow_59, caption="Correlation Matrix for 1954-1959")
+kable(cor_chow_65, caption="Correlation Matrix for 1960-1965")
+```
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(cor_chow_59)
+```
+
 # Question 3b
+```{r, layout="l-body-outset"}
+library(pander)
+library(knitr)
+library(broom)
+panderOptions("table.caption.prefix","Quality-Controlled Regression of lnrent on Quality-Variables")
+##pander(summary(chow.lm65), caption="Quality-Controlled Regression of lnrent on Quality-Variables")
+##pander(summary(chow.lm65))
+kable(tidy(lmb), caption="Quality-Controlled Regression of lnrent on Quality-Variables")
+```
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(reg_index, caption="Replicated Price Indices")
+```
 
 # Question 3e
 
+
+
+
 # Question 6a
+
+
 
 # Question 6b
 

@@ -42,28 +42,36 @@ chow<-chow %>%   mutate(across(where(is.integer), as.numeric))%>%
 
 cor_chow<-chow %>% select(c(YEAR,LNRENT:LNMEM)) %>% select(-MEM)
 
-cor_chow_59<-cor(cor_chow %>% filter(YEAR<60) %>% select(-YEAR))
 
+#Correlation data
+cor_chow_59<-cor(cor_chow %>% filter(YEAR<60) %>% select(-YEAR))
+save(cor_chow_59,file="cor59.Rdata")
 
 cor_chow_65<-cor(cor_chow %>% filter(YEAR>=60) %>% select(-YEAR))     
+save(cor_chow_65,file="cor65.Rdata")
 
 
 #(b)
 
 lmb<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,filter(chow, YEAR>=60))
-summary(lm4_1)
+save(lmb,file="lmb.Rdata")
 
-coefficients<-data.frame(coef(lmb))%>% slice(-c(1:4)) 
+lmb_reg<-stargazer(lmb, type = "text", style = "default", intercept.bottom = FALSE, column.labels = c("OLS"))
 
-coefficients<-coefficients %>% rename("Coefficient"="coef.lmb.") %>% 
-  mutate("Price Index"=exp(Coefficient))
+reg_index<-data.frame(Year=c(1960:1965),Coefficients=c(NA,coef(lmb)[5:9]))
+reg_index<-reg_index %>% mutate(Price_Index=ifelse(Year==1960,1,exp(Coefficients)))
+
+
+rownames(reg_index)<-c()
+save(reg_index,file="reg_index.Rdata")
 
 #(e) Dealing with heteroscedasticity 
+
 
 ### Dividing all variables by sqrt of volume
 chow2<-chow %>% 
   mutate(across(c(LNRENT, LNMULT, LNACCESS, LNADD, LNMEM,D61, D62, D63, D64, D65),
-                list(w=~./sqrt(VOLUME)),.names="{col}"))
+                list(w=~.*sqrt(VOLUME)),.names="{col}"))
 
 lme<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,filter(chow2, YEAR>=60))
 summary(lme)
@@ -73,7 +81,7 @@ summary(lme)
 lmew<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,weights=VOLUME,data=filter(chow, YEAR>=60))
 
 
-stargazer(lmb, lme,lmew, type = "text", style = "default", intercept.bottom = FALSE, column.labels = c("OLS", "WLS Manual","WLS Auto"))
+stargazer(lmb, lme,lmew , style = "default", intercept.bottom = FALSE, column.labels = c("OLS", "WLS Manual","WLS Auto"))
 
 ## Problem 6
 
@@ -93,6 +101,8 @@ for(YEAR in 54:64) {
   assign(paste("CHOWModel",YEAR,YEAR+1,".lm",SEP=""), lm( paste("LNRENT ~ LNMULT + LNACCESS + LNMEM + D", YEAR+1,sep =""), data = chow3 %>% filter(YEAR==YEAR | YEAR==YEAR+1)))
   beta[YEAR-52] <- print(coef(get(paste("CHOWModel",YEAR,YEAR+1,".lm",SEP="")))[5])
 } 
+
+beta<-data.frame(beta)
 
 xpooled.lm <- lm(LNRENT ~ LNMULT + LNACCESS + LNMEM + factor(YEAR), data =chow)
 
