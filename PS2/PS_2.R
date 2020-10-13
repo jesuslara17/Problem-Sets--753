@@ -24,7 +24,7 @@ rm(list=ls())
 ########################################################################
 
 #Set my working directory
-#setwd("C:/Users/User/Documents/GitHub/Problem-Sets--753/PS2")
+setwd("C:/Users/User/Documents/GitHub/Problem-Sets--753/PS2")
 
 chow <- fread('https://courses.umass.edu/econ753/berndt/chap4.dat/chow')
 
@@ -78,10 +78,11 @@ summary(lme)
 
 ###Using the embedded weighted least squares command in R
 
-lmew<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,weights=VOLUME,data=filter(chow, YEAR>=60))
+lmew<-lm(LNRENT~ LNMULT+LNMEM+LNACCESS+D61+D62+D63+D64+D65,weights=sqrt(VOLUME),data=filter(chow, YEAR>=60))
 
 
-stargazer(lmb, lme,lmew , style = "default", intercept.bottom = FALSE, column.labels = c("OLS", "WLS Manual","WLS Auto"))
+p3<-stargazer(lmb, lme,lmew , type = "latex", style = "default", intercept.bottom = FALSE, column.labels = c("OLS", "WLS Manual","WLS Auto"))
+save(p3,file="p3.tex")
 
 ## Problem 6
 
@@ -129,13 +130,14 @@ rownames(sixBtable) <- c()
 reg_index3 <- data.frame(year=1954:1965, pooled_Indices=sixBtable$pooled_Indices,
                                summed_Indices=sixBtable$summed_Indices)
 colnames(reg_index3) <- c("Year", "Pooled CPI Indices", "Chained CPI Indices")
-save(reg_index3,file="reg_index3")
+save(reg_index3,file="reg_index3.Rdata")
 
 
 ###############################
 ###############################
 ####### PART 2 ################
 rm(list=ls())
+options(digits=5)
 
 
 #Import and clean CPI-U 
@@ -181,16 +183,11 @@ min_wage<-min_wage %>% slice(-c(1:5)) %>% select(c(1,2))
 colnames(min_wage)<-c("year","mwage")
 min_wage<-min_wage %>% mutate(across(where(is.character),as.numeric))
 
-
-
-
-
 # Merging the 3 indexes
 all_index<-merge(cpiu,ccpiu, by=c("year","month"),all=TRUE) 
 all_index<-merge(all_index,cpiurs, by=c("year","month"),all=TRUE) 
 all_index <- all_index %>%
   mutate(across(where(is.character),as.numeric))
-
 
 #Take averages and then calculation inflation
 inflation<-all_index %>% 
@@ -222,22 +219,44 @@ inflation_plot<-inflation %>%
   pivot_longer(c(infl_cpiu,infl_ccpiu,infl_cpiurs),names_to="index",values_to="inflation")
   
 
-#For plots 2 and 3:
-
-
-#plot 2
-
-
-
-min_wage_infl<- min_wage %>%mutate(inflation %>% filter(year<2020) %>%  select(infl_cpiu)*0.01)
-
-
-#min_wage_infl<-min_wage_infl %>% mutate(hypoth_mwage=ifelse(year==1968, 1.60, (1+infl_cpiu)*(mwage))
-
-####PLOTS
-
 # Plot 1: inflation with CPI-U, C-CPI-U and C-CPI-U-RS
 plot1<-inflation_plot %>% 
   ggplot(aes(x=year, y=inflation, color=index))+geom_line(size=1.2) + 
-  theme_bw() +ylab("Inflation")+xlab("Date")
+  theme_bw() +ylab("Inflation")+xlab("Date")+
+  scale_color_discrete(name="Index", labels=c("C-CPI-U", "CPI-U","C-CPI-URS"))
 plot1
+ggsave("plot1.png")
+
+
+#MINIMUM WAGE 
+#For plots 2 and 3:
+
+
+#Plot 2
+min_wage_infl<- min_wage %>%mutate(inflation %>% filter(year<2020) %>%  select(cpiu)*0.01)
+min_wage_infl<- min_wage_infl %>% mutate(mwage_2018=mwage/cpiu)
+
+plot2<-min_wage_infl %>% ggplot(aes(x=year,y=mwage_2018))+geom_line(color="red",size=1.5) +
+theme_bw()+ylab("Real Wage")+xlab("Year")
+plot2
+ggsave("plot2.png")
+
+#plot3
+
+min_wage_infl<- min_wage %>%mutate(inflation %>% filter(year<2020) %>%  select(infl_cpiurs)*0.01)
+min_wage_infl<- min_wage_infl %>% mutate(hype_Wage=vector(mode="double", length=52))
+min_wage_infl$hype_Wage[1] <- min_wage_infl$mwage[1]
+
+for (val in 2:52){
+  min_wage_infl$hype_Wage[val] <- min_wage_infl$hype_Wage[val-1] * (1 + min_wage_infl$infl_cpiurs[val])
+}
+
+plot3<-min_wage_infl %>% ggplot(aes(x=year))+
+  geom_line(aes(y=mwage,color="blue"),size=1)+
+  geom_line(aes(y=hype_Wage,color="purple"),size=1) +theme_bw()+
+  ylab("Wage")+xlab("Year")+  
+  scale_color_discrete(name="Legend", labels=c("Hypothetical Wage", "Actual Nominal Wage"))
+plot3
+ggsave("plot3.png")
+
+
