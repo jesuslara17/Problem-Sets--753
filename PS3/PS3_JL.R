@@ -37,6 +37,7 @@ fastfood<- fastfood %>% mutate(state=ifelse(state==1,"NJ","PA"))
 
 fastfood_empft<-fastfood %>% select(sheet, state, empft, empft2 ) 
 fastfood_emppt<-fastfood %>% select(sheet, state, emppt, emppt2) 
+
 fastfood_wage<-fastfood %>% select(sheet, state, wage_st, wage_st2) 
 fastfood_wage<-fastfood_wage %>%mutate(wage_cat= ifelse(wage_st==4.25,"L",
                                 ifelse(wage_st<5,"M",
@@ -67,7 +68,6 @@ fastfood_man<-fastfood_man %>% mutate(post=ifelse(post=="nmgrs", 0,1))
 
 
 # merge everything
-
 fastfood2<-merge(merge(fastfood_empft,fastfood_emppt),merge(fastfood_wage,fastfood_man))
 
 
@@ -79,9 +79,6 @@ fte<-fte %>% pivot_wider(names_from=state,values_from=fte2) %>% mutate(NJminusPA
 fte<-fte %>% rbind(fte[2,]-fte[1,])
 
 #Panel 2 Means
-
-
-
 w<-fastfood2 %>% group_by(post, state, wage_cat) %>% summarise(across(fte2, mean, na.rm=TRUE)) %>%
  ungroup() %>% filter(state=="NJ")
 
@@ -93,21 +90,6 @@ w<-w %>% rbind(w[2,]-w[1,])
 #Panel 3 Means
 w.between<-w %>% mutate(LminusH=L-H, MminusH=M-H) 
 w.between<-w.between %>% select(LminusH, MminusH)
-
-
-
-
-#table3<-table3 %>% rename("Variable"="post", 
-#                          "Difference, NJ-PA"="NJminusPA",
-#                          "Wage=$4.25"="L",
-#                          "Wage=$4.26-$4.99"="M",
-#                          "Wage>4.99"="H",
-#                          "Low-high"="LminusH",
-#                          "Midrange-high"="MminusH")
-
-
-
-
 
 
 
@@ -197,9 +179,11 @@ w.std.between<-w.std.between%>% rbind(diff_between_wagecat1,dd_time_wagecat)
 format(fte,digits=2)
 format(fte.std,digits=2)
 
-x1<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[1,i],digits=2)," (",round(fte.std[1,i],digits=2),")"))))
-x2<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[2,i],digits=2)," (",round(fte.std[2,i],digits=2),")"))))
-x3<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[3,i],digits=2)," (",round(fte.std[3,i],digits=2),")"))))
+x1<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[1,i],digits=2), "  (",round(fte.std[1,i],digits=2),")"))))
+x2<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[2,i],digits=2), "  (",round(fte.std[2,i],digits=2),")"))))
+x3<-as.data.frame(do.call(cbind,lapply(1:ncol(fte), function(i) paste0(round(fte[3,i],digits=2), "  (",round(fte.std[3,i],digits=2),")"))))
+
+
 
 panel_1 <-x1 %>% rbind(x2,x3)
 rm(x1,x2,x3)
@@ -233,19 +217,22 @@ rm(z1,z2,z3)
 colnames(panel_1)<-c("Variable","NJ","PA","NJ-PA")
 panel_1<-panel_1 %>% relocate(Variable,PA) %>% mutate(Variable=c("FTE before","FTE after", "Change in mean FTE"))
 
-save(panel_1,file="panel_1.Rdata")
+
 
 #Panel 2 final
-colnames(panel_2)<-c("Wage=$4.25","Wage=$4.26-$4.99","Wage>$4.99")
+colnames(panel_2)<-c("Wage>$4.99", "Wage=$4.25","Wage=$4.26-$4.99")
 panel_2<-panel_2 %>% mutate(Variable=c("FTE before","FTE after", "Change in mean FTE"))
-panel_2<-panel_2 %>% relocate(Variable)
+panel_2<-panel_2 %>% relocate(Variable, `Wage=$4.25`, `Wage=$4.26-$4.99`, `Wage>$4.99`)
 
-save(panel_2,file="panel_2.Rdata")
+
 
 #Panel 3 final
 colnames(panel_3)<-c("Low-high","Midrange-high")
 panel_3<-panel_3 %>% mutate(Variable=c("FTE before","FTE after", "Change in mean FTE"))
 panel_3<-panel_3 %>% relocate(Variable)
 
+
+save(panel_1,file="panel_1.Rdata")
+save(panel_2,file="panel_2.Rdata")
 save(panel_3,file="panel_3.Rdata")
 

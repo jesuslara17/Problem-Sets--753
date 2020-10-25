@@ -8,6 +8,8 @@ output:
 df_print: paged
 ---
 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -20,17 +22,45 @@ load("panel_3.Rdata")
 
 ```
 
-```{r}
-library(knitr)
-kable(panel_1, caption="Panel 1 of Table 3 Card and Krueger", digits=2)
-```
+# Part 2: Replication of Card & Krueger (1994)
+
+
+
+In this part I replicate the first three rows of Table 3 of Card & Krueger(1994), in which they present the basic Diff-in-Diff results of the effect of the increase in minimum wage in New Jersey in employment in the fast-food sector. I present the results of the three panels in three different tables. The variable analyzed is Full-Time Equivalent employment (FTE), which, at the store level is defined by the equation:
+
+$$FTE_i=FullTimeEmployees_i+Managers_i+\frac{1}{2}PartTimeEmployees_i$$
+
+I create that variable and then group the data by state and period (after en before the treatment) to build Panel 1 of Table 3
 
 ```{r}
 library(knitr)
-kable(panel_2, caption="Panel 2 of Table 3 Card and Krueger", digits=2)
+kable(panel_1, caption="Panel 1 of Table 3 Card and Krueger: Stores by state", digits=2)
 ```
+
+The standard errors are shown in parenthesis. This table shows the main results of the study, where can be seen that:
+
+(1) Before the treatment stores in PA were, on average, bigger in terms of FTE than those of New Jersey
+(2) That difference became smaller after the treatment
+(3) FTE fell in PA after the treatment, while that of NJ remained constant or slightly increased 
+(4) Most importantly, the diff-in-diff estimate, which under the Conditional Independence Assumption (or parallel trends) is a estimation of the causal effect of minimum wage on FTE, is non-negative (2.75 in our results)
+
+In this part, I am getting different standard errors in the first two cells of bottom-row (that compare the mean within each state). In all this exercise I obtained the standard errors of the difference in means by conducting  a t-test (where the null hypothesis is that the means are equal) and then extracting the associated standard errors. The difference may come from the way t.test manages missing values. I conclude that because I get the correct results for the standard errors of FTE for each group and also in mean comparisons between states.
+
+Then I group NJ data by wage category before the treatment: Low (Minimum wage=\$4.25), Midrange (\$4.26-\$4.99), and High (>\$4.99). Below is the replication of Panel 2:
+
 
 ```{r}
 library(knitr)
-kable(panel_3, caption="Panel 3 of Table 3 Card and Krueger", digits=2)
+kable(panel_2, caption="Panel 2 of Table 3 Card and Krueger: Stores in New Jersey", digits=2)
 ```
+
+In the panel we can see that, in general, stores with a high starting wage are bigger in terms of FTE than the rest before the treatment. However, this changes after the increase in minmum wage since stores with a high starting wage before the treatment are the only ones whose average FTE falls after the increase in minmum wage.
+
+Again, my results are different in the standard errors that compare the difference in the means within state and wage category over time. I finally present the results of Panel 3, that compares FTE between wage categories and over time 
+
+```{r}
+library(knitr)
+kable(panel_3, caption="Panel 3 of Table 3 Card and Krueger: Differences within New Jersey", digits=2)
+```
+
+There, in the bottom row, we can see that the difference between Low wage and High wage stores
