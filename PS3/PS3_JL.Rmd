@@ -1,0 +1,36 @@
+---
+title: "ECON 753 Homework 3"
+author: "Jesús Lara Jáuregui"
+date: "10/24/2020"
+output:
+  pdf_document: default
+  html_document: default
+df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+``` {r}
+load("panel_1.Rdata")
+load("panel_2.Rdata")
+load("panel_3.Rdata")
+
+
+```
+
+```{r}
+library(knitr)
+kable(panel_1, caption="Panel 1 of Table 3 Card and Krueger", digits=2)
+```
+
+```{r}
+library(knitr)
+kable(panel_2, caption="Panel 2 of Table 3 Card and Krueger", digits=2)
+```
+
+```{r}
+library(knitr)
+kable(panel_3, caption="Panel 3 of Table 3 Card and Krueger", digits=2)
+```
