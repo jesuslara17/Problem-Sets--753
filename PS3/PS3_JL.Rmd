@@ -11,16 +11,224 @@ df_print: paged
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ``` {r}
+load("cps78.lnwageMeanTable.Rdata")
+load("cps78.edExTable.Rdata")
+load("cps78.demographicsTable.Rdata")
+load("cps78.genderTable.Rdata")
+load("cps78.raceTable.Rdata")
+load("cps85.demographicsTable.Rdata")
+load("cps85.genderTable.Rdata")
+load("cps85.raceTable.Rdata")
+load("cps78.totalTable.Rdata")
+load("cps85.totalTable.Rdata")
+load("cps78.logNormalTable.Rdata")
+load("cps78.normalTable.Rdata")
+load("chiTestTable.Rdata")
+load("cps78.lnwage.lm1.Rdata")
+load("cps78.raceTable6b.Rdata")
+load("cps78.demographicsTable6b.Rdata")
+load("cps78.wh.lnwage.lm1.Rdata")
+load("cps78.nonwh.lnwage.lm1.Rdata")
+load("cps78.hisp.lnwage.lm1.Rdata")
+
+load("table6dRSS.Rdata")
+load("table6dchow.Rdata")
+
 load("panel_1.Rdata")
 load("panel_2.Rdata")
 load("panel_3.Rdata")
 
 
+load("C:/Users/User/Documents/Fall 2020 UMass/753/Replication/data/Table2_rep.Rdata")
 ```
+
+# Part 1: Exercices from Berndt, chapter 5
+
+## Exercise 1
+
+### Part (a)
+
+In this exrecise work with the Current Population Survey for the years 1978 and 1985, that shows demographic, social and economic  information of 550 and 534 individuals respectively. 
+
+In this part I calculate the arithmetic and geometric mean of the the wage rate and annual wages for 1978. The results are shown in Table 1 below. 
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(cps78.lnwageMeanTable, caption="Geometric and Arithmetic Mean for 1978 Wages", digits=2)
+kable(cps78.edExTable, caption="Mean and Standard Deviation of Education and Experience", digits=2)
+```
+
+We have data for the log of the wage rate, so to calculate the arithmetic mean we exponentiate that variable and then get the average of that new variable. To get the mean of the anual wage we just multiply that number by 2000, which are the assumed work hours of a year. In contrast, the geometric mean is calculated by getting the average of the log wage and then exponentiating it. Hence, it is no surprise that the two results are different. The arithmetic mean of the wage rate and annual wages is greater than the geometric mean because the latter reduces large values more than it increases small values (of the wage-rate). Given that logarithm and exponentiation are not linear transformations, the arithmetic and geometric means will, in general, be different.  
+
+In Table 2 we show mean and standard deviation of education and experience. As we would expect, the standard deviation of education is much smaller (2.8) than that of experience (13.4). The former means that we would expect to have a very large share of the population within the range 9.5-15.5 of years of education. This is so, because, in general, almost all workers have a minimum years of education which is greater than zero. In contrast, in the labor market there is always a greater dispersion of experience, which is captured by the standard deviation of 13.4
+
+### Part (b)
+
+In this part we get the frequencies of nonwhites, females and hispanics. The results are shown in Table 3. The share of each category is given by the arithmetic mean, whereas the total count is given by the mean times the sample size or, equivalently, by the sum over each of these dummy variables.
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(cps78.demographicsTable, caption="Means and Number of Individuals in Demographic Groups", digits=2)
+```
+ Our results show that 10% of the individuals in the sample are nonwhite, 7% hispanic and $38 female. 
+ 
+
+### Part (c)
+
+In this part we subdivide the sample by gender and race and analyze the mean and standard deviation of years of education and the wage rate. The results are in Table 4
+
+```{r, layout="l-body-outset", warning=FALSE}
+library(knitr)
+library(kableExtra)
+kbl(rbind(cps78.genderTable,cps78.raceTable), booktabs=T, digits=2,
+    caption = "Years of Education and Mean Wages by Race") %>% 
+  pack_rows(index=c("Gender"=2, "Race"=3)) %>%
+  kable_styling(position = "center") %>%
+  add_header_above(c(" ", "Education" = 2, "lnWage" = 3))
+```
+
+Regarding education and gender, men and women have on average almost the same years of education, although the standard deviation for men is greater. Regarding race, the results show that whites in the subsample have on average one more year of education than nonwhites, and the latter have, on average, one more year of education than hispanics. 
+
+Regarding the wage rate, the average in the sample is greater for men than for women and is greater for whites than for nonwhites and hispanics. The same is true for the mean annual wages. 
+
+### Part (d)
+
+In part d we repeat the comparisons of shares, means and standard deviations of wage and education for 1985. With respect to shares, the results are in Table 5
+
+```{r, layout="l-body-outset"}
+library(knitr)
+library(kableExtra)
+
+kbl(cbind(cps78.demographicsTable, cps85.demographicsTable),
+    caption="Comparison of demographics between 1978 and 1985", 
+    booktabs=T, digits=2) %>%
+  add_header_above(c(" ", "1978" = 2, "1985" = 2))%>%
+  kable_styling(position = "center")
+```
+
+There we can see that share of nonwhites in the sample increased and that of hispanics decreased, although the changes are small. In contrast, the share of females in the sample increased from 38% in 1978 to 46% in 1985
+
+```{r, layout="l-body-outset", warning=FALSE}
+library(knitr)
+library(kableExtra)
+
+table1d <- cbind(rbind(cps78.genderTable,cps78.raceTable,cps78.totalTable),
+          rbind(cps85.genderTable,cps85.raceTable,cps85.totalTable))
+kbl(cbind(table1d[,1:2], table1d[,6:7], "%Change"=table1d[,6]/table1d[,1]-1,
+          table1d[,3:4], table1d[8:9], "%Change"=table1d[,8]/table1d[,3]-1),
+    booktabs=T, digits=2,
+    caption = "Comparison of education and real wages between 1978 and 1985") %>% 
+  pack_rows(index=c("Gender"=2, "Race"=3, "Total"=1)) %>%
+  add_header_above(c(" ", "1978" = 2, "1985" = 2, " ", "1978" = 2, "1985" = 2, " ")) %>%
+  add_header_above(c(" ", "Education" = 5, "lnWage" = 5)) %>%
+  kable_styling(position = "center")
+```
+
+In Table 6 we show the results for Education and Real Wages, incorporating the percentage change that took place from 1978 to 1985. Real wages were calculated with a price index which is equal to one for 1978 and 1.649 for 1985
+
+Just by looking at the signs, we can see the main trends regarding these two variables: the average years of education increased for all groups, whereas the average wage rate fell also for all groups. For the whole sample, the average years of education increased by 4% and the real wage rate fell by 11%. 
+
+However, this trends, although general, are not exactly the same for all groups. The average years of education increased more for men than for women. However, the average real wage rate for men fell by 14% whereas for women the decline was 3%. Regarding race, Hispanics had the greatest increase in the average years of education. However, they also experienced the largest decline in real wage (19%).  
+
+### Part (e)
+
+In this part we want to analyze the distribution of wages and log wages. In particular, we want to test whether they are normally distributed. To do that, we follow two approaches. In the first one, we calculate the proportion of observations that are within 6 different groups defined in terms of the sample mean and sample standard deviation. We compare them with the proportions of a normal distribution for these six groups. The second approach, more formal, consists of chi-squared goodness-of-fit tests for normal distribution.   
+
+```{r, layout="l-body-outset"}
+library(knitr)
+library(kableExtra)
+
+kbl(cbind(cps78.logNormalTable, cps78.normalTable,
+          "Normal Distribution Proportions"=c(pnorm(-2),pnorm(-1)-pnorm(-2),pnorm(0)-pnorm(-1),
+                                              pnorm(1)-pnorm(0),pnorm(2)-pnorm(1),1-pnorm(2))),
+    caption="Counts and Proportions of lnwage and wage Distributions", 
+    booktabs=T, digits=2, align=rep('c', 6)) %>%
+  add_header_above(c(" ", "lnwage" = 2, "wage" = 2, " "))%>%
+  kable_styling(position = "center") %>%
+  column_spec(6,width="10em")
+```
+
+From Table 7 we can observe that the proportions of log wages match almost perfectly with those of the normal distributions, whereas the proportions of Wage for each group are substantially different. Now we conduct the chi-squared test. The null-hypothesis $H_0$ is that wages and log wages are normally distributed. The results of the test are shown below.
+
+```{r, layout="l-body-outset", warning=FALSE}
+library(knitr)
+
+kable(chiTestTable, 
+      caption="Chi-Squared Goodness-of-Fit Tests for Normal Distribution", 
+      booktabs=T, digits=2)
+```
+
+As we would expect, for lnwage the p-value is 0.59 so we failed to reject $H_0$. In contrast, the p-value for wage is close to zero, so we reject the null-hypothesis $H_0$ at the 1% significance that wages are normally distributed. 
+
+## Problem 6
+
+### Part (a)
+
+In this part we make use of a linear regression model to test for the existence of wage premium and penalties associated to gender and race. The results are presented in table 9. The interpretation of the coefficients of our relevant dummy variables is the percentage difference in wage associated to belonging to the group controling for other factors (union, experience and education)
+
+```{r results = "asis", message=FALSE, layout="l-body-outset"}
+library(stargazer)
+stargazer(cps78.lnwage.lm1, type = "latex", style = "default", intercept.bottom = FALSE, header=FALSE,
+          title="Simple Regression of log Wages to Determine Wage Discrimination")
+```
+
+Hence, the results point to a 30% wage penalty for women, a 16% penalty for nonwhites and a 3% penalty for hispanics.   
+
+
+### Part (b)
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(cps78.demographicsTable6b, 
+      caption="Means and Number of Individuals in Demographic Groups", 
+      booktabs=T, digits=2)
+```
+
+
+
+
+```{r, layout="l-body-outset"}
+library(knitr)
+library(kableExtra)
+
+kbl(cps78.raceTable6b,
+    caption="Comparison of Demographics Variables", 
+    booktabs=T, digits=2) %>%
+  add_header_above(c(" ", 
+                     "Education"=2, 
+                     "Experience"=2,
+                     "Female"=2,
+                     "Unionized"=2,
+                     "Wages"=2)) %>%
+  kable_styling(position = "center")
+```
+
+### Part c
+
+```{r results = "asis", message=FALSE, layout="l-body-outset"}
+library(stargazer)
+stargazer(cps78.wh.lnwage.lm1, cps78.nonwh.lnwage.lm1, cps78.hisp.lnwage.lm1,
+          type = "latex", style = "default", intercept.bottom = FALSE, header=FALSE,
+          title="Regressions of lnwage by Racial Category",
+          column.labels = c("Others", "NonWhites", "Hispanics"))
+```
+
+### Part d
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(table6dRSS, caption="RSS comparison", digits=2)
+```
+
+```{r, layout="l-body-outset"}
+library(knitr)
+kable(table6dchow, caption="Chow test information", digits=2)
+```
+
 
 # Part 2: Replication of Card & Krueger (1994)
 
@@ -31,11 +239,6 @@ In this part I replicate the first three rows of Table 3 of Card & Krueger(1994)
 $$FTE_i=FullTimeEmployees_i+Managers_i+\frac{1}{2}PartTimeEmployees_i$$
 
 I create that variable and then group the data by state and period (after en before the treatment) to build Panel 1 of Table 3
-
-```{r}
-library(knitr)
-kable(panel_1, caption="Panel 1 of Table 3 Card and Krueger: Stores by state", digits=2)
-```
 
 The standard errors are shown in parenthesis. This table shows the main results of the study, where can be seen that:
 
@@ -49,18 +252,52 @@ In this part, I am getting different standard errors in the first two cells of b
 Then I group NJ data by wage category before the treatment: Low (Minimum wage=\$4.25), Midrange (\$4.26-\$4.99), and High (>\$4.99). Below is the replication of Panel 2:
 
 
-```{r}
-library(knitr)
-kable(panel_2, caption="Panel 2 of Table 3 Card and Krueger: Stores in New Jersey", digits=2)
-```
 
 In the panel we can see that, in general, stores with a high starting wage are bigger in terms of FTE than the rest before the treatment. However, this changes after the increase in minmum wage since stores with a high starting wage before the treatment are the only ones whose average FTE falls after the increase in minmum wage.
 
 Again, my results are different in the standard errors that compare the difference in the means within state and wage category over time. I finally present the results of Panel 3, that compares FTE between wage categories and over time 
 
-```{r}
-library(knitr)
-kable(panel_3, caption="Panel 3 of Table 3 Card and Krueger: Differences within New Jersey", digits=2)
-```
+
 
 There, in the bottom row, we can see that the difference between Low wage and High wage stores
+
+```{r, layout="l-body-outset", message=FALSE}
+library(knitr)
+library(kableExtra)
+library(dplyr)
+
+cbind(panel_1[,1:4],panel_2[,2:4],panel_3[,2:3]) %>%
+  mutate_all(linebreak,align="c") %>%
+  kable("latex",
+      caption="Replication of Rows 1-3 of Table 1 of Card and Krueger", 
+      booktabs=T, escape=F) %>%
+  add_header_above(c(" ", 
+                     "Stores By State"=3, 
+                     "Stores in NJ"=3,
+                     "Differences in NJ"=2)) %>%
+  kable_styling(position = "center", latex_options="scale_down")
+```
+
+
+# Part 3: Advances in replication
+
+The data consists of four main variables: trade flows, tariffs, rules origin and input-output (IO) information. As I said in problem set 3, IO is used for robustness check and I will make that if I have time. I gathered all the data and am in the cleaning process. Up to this point, I successfully cleaned the data on trade flows, which consists of the imports of Mexico from NAFTA partners and non-NAFTA countries. Below I show a replication of panels 1 and 2 of Table 2 of Conconi et al. (2018) 
+
+
+```{r, layout="l-body-outset"}
+library(knitr)
+library(kableExtra)
+
+kbl(Table2_rep,
+    caption="Trade: Panels 1 and two of Table 2", 
+    booktabs=T, digits=2) %>%
+  add_header_above(c(" ", 
+                     "Mexican imports non-NAFTA "=2, 
+                     "Mexican imports NAFTA"=2)) %>%
+  kable_styling(position = "center")
+```
+
+
+I am almost done with the data of tariffs and rules of origin. Once I have them I will be able to replicate Tables 1 and 2 of decriptive stastics. With that, the replication of the main regressions should be very straightforward. 
+
+
