@@ -6,6 +6,7 @@ library("rio")
 library(matlib)
 library(gdata)
 library(tinytex)
+library(car)
 library(scales)
 library(ggplot2)
 library(foreign)
@@ -338,6 +339,12 @@ cps78.lnwage.lm1 <- lm(lnwage ~ fe + union + nonwh + hisp + ed + ex + exsq, data
 save(cps78.lnwage.lm1, file="cps78.lnwage.lm1.Rdata")
 
 linearHypothesis(cps78.lnwage.lm1, c("nonwh = hisp"))
+str(linearHypothesis)
+
+table6achow<-data.frame(2.46,0.12)
+colnames(table6achow)<-c("F statistic", "P-value")
+
+save(table6achow,file="table6achow.Rdata")
 
 ################
 ## Question 6 ##
@@ -427,7 +434,7 @@ f_pvalue<-pf(F_stat, k, Nwh+Nnwh+Nhisp-2*k)
 
 #Make table RSS
 
-table6dRSS<- data.frame(c("Complete","White","Hisp","Other"),c(Sc,Swh,Shisp,Snwh))
+table6dRSS<- data.frame(c("Complete","White","Hisp","Non-white"),c(Sc,Swh,Shisp,Snwh))
 colnames(table6dRSS)<-c("Sample","RSS")
 
 #Make table Chow test
