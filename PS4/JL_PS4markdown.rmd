@@ -1,0 +1,24 @@
+---
+title: "753 Problem Set 4"
+author: "Jesús Lara"
+date: "11/9/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# PART 2
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+```{r,  fig.cap="Relation between fixed Investment, Internal funds and liabilities", out.width = '50%',fig.align = 'center'}
+knitr::include_graphics("PS4plot1.png")
+```
+
+```{r,  fig.cap="Relation between fixed Investment, Internal funds and liabilities", out.width = '50%',fig.align = 'center'}
+knitr::include_graphics("PS4plot2.png")
+```
