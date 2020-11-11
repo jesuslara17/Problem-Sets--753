@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 load("ADF1.Rdata")
 load("ADF2.Rdata")
+load("granger.table.Rdata")
 
 ```
 
@@ -38,3 +39,25 @@ kbl(ADF2, booktabs=T, digits=3,caption="Augmented Dickey-Fuller Test: First diff
   add_header_above(c(" ", "BAA"=6, "FEDFUNDS"=6)) %>% kable_styling(position="center", latex_options = "scale_down")
 
 ```
+
+
+
+
+Granger causality
+
+
+```{r,  fig.cap="BAA and FED Funds rates time series", out.width = '75%',fig.align = 'center'}
+knitr::include_graphics("BAA.FEDFUNDS.time.series.png")
+```
+
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+kbl(granger.table, booktabs=T, digits=3, caption="Granger Causality Tests: BAA and FEDFUNDS") %>% pack_rows(index = c("BAA Rate Granger causes FED Funds Rate"=3, "FED Funds Rate Granger causes BAA Rate"=3)) %>% 
+  add_header_above(c("","(1961-03)-(2009-06)"=2, "(1961-03)-(1982-01)"=2, "(1982-02)-(2009-06)"=2)) %>% kable_styling(position="center")
+
+```
+
+
