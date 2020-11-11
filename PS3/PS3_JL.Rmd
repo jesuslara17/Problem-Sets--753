@@ -3,8 +3,8 @@ title: "ECON 753 Homework 3"
 author: "Jesús Lara Jáuregui"
 date: "10/27/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 df_print: paged
 ---
 

@@ -1,0 +1,40 @@
+---
+title: "Problem Set 5"
+author: "Jesús Lara"
+date: "11/10/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Part 2
+
+```{r}
+
+load("ADF1.Rdata")
+load("ADF2.Rdata")
+
+```
+
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+kbl(ADF1, booktabs=T, digits=3,caption="Augmented Dickey-Fuller Test") %>% add_header_above(c(" ", "Type 1"=2, "Type 2"=2, "Type 3"=2, "Type 1"=2, "Type 2"=2, "Type 3"=2)) %>% 
+  add_header_above(c(" ", "BAA"=6, "FEDFUNDS"=6)) %>% kable_styling(position="center", latex_options = "scale_down")
+
+```
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+kbl(ADF2, booktabs=T, digits=3,caption="Augmented Dickey-Fuller Test: First difference of rates") %>% add_header_above(c(" ", "Type 1"=2, "Type 2"=2, "Type 3"=2, "Type 1"=2, "Type 2"=2, "Type 3"=2)) %>% 
+  add_header_above(c(" ", "BAA"=6, "FEDFUNDS"=6)) %>% kable_styling(position="center", latex_options = "scale_down")
+
+```
