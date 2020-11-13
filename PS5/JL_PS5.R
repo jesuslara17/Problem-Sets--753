@@ -53,6 +53,8 @@ ggplot(series, aes(x=date))+theme_classic() +
   xlab("Date")+
   ylab("Rate")+
   scale_color_discrete(name="Interest Rate", label=c("BAA","FEDFUNDS"))
+ggsave("BAA.FEDFUNDS.time.series.png")
+
 
 BAA1<-adf.test(series$BAA)
 FEDFUNDS1<-adf.test(series$FEDFUNDS)
