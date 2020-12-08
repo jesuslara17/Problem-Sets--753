@@ -53,8 +53,8 @@ data<-data %>% mutate(Net_increase_liabilities=Net_acquisition_assets-Net_lendin
 data<-data %>% mutate(IF.FI.ratio=Total_internal_funds/FI, NIL.FI.ratio=Net_increase_liabilities/FI)
 
 plot1<-ggplot(data, aes(x=year))+ 
-  geom_line(aes(y=IF.FI.ratio,color="x"),size=1.5)+
-  geom_line(aes(y=NIL.FI.ratio,color="y"),size=1.5) + 
+  geom_line(aes(y=IF.FI.ratio,color="x"),size=1)+
+  geom_line(aes(y=NIL.FI.ratio,color="y"),size=1) + 
   theme_bw() + xlab("Year") +ylab("Ratio") + 
   scale_color_discrete(name="Flow Type",labels=c("Internal Funds/Fixed Investment", "Net Increase in Liabilities/ Fixed Investment"))+
   theme(legend.position = "bottom")
@@ -66,12 +66,19 @@ ggsave("PS4plot1.png")
 
 
 plot2<-ggplot(data, aes(x=year))+ theme_bw()+
-  geom_line(aes(y=Total_internal_funds,color="wheat"),size=1.5)+
-  geom_line(aes(y=Net_increase_liabilities, color="green4"),size=1.5)+
-  geom_line(aes(y=FI, color="green5"),size=1.5)+
+  geom_line(aes(y=Total_internal_funds,color="wheat"),size=1)+
+  geom_line(aes(y=Net_increase_liabilities, color="green4"),size=1)+
+  geom_line(aes(y=FI, color="green5"),size=1)+
   xlab("Year")+ylab("Flow")+
   scale_x_continuous(breaks=c(1950,1960,1970,1980,1990,2000,2010,2020))+
-  scale_color_discrete(name="Flow Type",labels=c("Internal Funds", "Net Increase in Liabilities","Fixed Investment"))+
+  scale_color_discrete(name="Flow Type",labels=c("Net Increase in Liabilities","Fixed Investment", "Internal Funds"))+
   theme(legend.position = "bottom")
 plot2
 ggsave("PS4plot2.png")
+
+ggplot(data, aes(x=year))+ theme_bw()+
+  geom_line(aes(y=Total_internal_funds,color="wheat"),size=1)+
+  scale_x_continuous(breaks=c(1950,1960,1970,1980,1990,2000,2010,2020))+
+  theme(legend.position = "bottom")
+
+

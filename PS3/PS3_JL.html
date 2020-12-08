@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jesús Lara Jáuregui" />
 
-<meta name="date" content="2020-10-24" />
+<meta name="date" content="2020-10-27" />
 
 <title>ECON 753 Homework 3</title>
 
@@ -589,7 +589,7 @@ summary {
 
 <h1 class="title toc-ignore">ECON 753 Homework 3</h1>
 <h4 class="author">Jesús Lara Jáuregui</h4>
-<h4 class="date">10/24/2020</h4>
+<h4 class="date">10/27/2020</h4>
 
 </div>
 
@@ -600,8 +600,8 @@ summary {
 <h2>Exercise 1</h2>
 <div id="part-a" class="section level3">
 <h3>Part (a)</h3>
-<p>In this exrecise work with the Current Population Survey for the years 1978 and 1985, that shows demographic, social and economic information of 550 and 534 individuals respectively.</p>
-<p>In this part I calculate the arithmetic and geometric mean of the the wage rate and annual wages for 1978. The results are shown in Table 1 below.</p>
+<p>In this exercise I work with the Current Population Survey (CPS) for the years 1978 and 1985, that shows demographic, social and economic information of 550 and 534 individuals, respectively.</p>
+<p>In this part I calculate the arithmetic and geometric means of the the wage rate and annual wages for 1978. The results are shown in Table 1.</p>
 <table>
 <caption>Geometric and Arithmetic Mean for 1978 Wages</caption>
 <thead>
@@ -646,11 +646,12 @@ summary {
 </tr>
 </tbody>
 </table>
-<p>We have data for the log of the wage rate, so to calculate the arithmetic mean we exponentiate that variable and then get the average of that new variable. To get the mean of the anual wage we just multiply that number by 2000, which are the assumed work hours of a year. In contrast, the geometric mean is calculated by getting the average of the log wage and then exponentiating it. Hence, it is no surprise that the two results are different. The arithmetic mean of the wage rate and annual wages is greater than the geometric mean because the latter reduces large values more than it increases small values (of the wage-rate). Given that logarithm and exponentiation are not linear transformations, the arithmetic and geometric means will, in general, be different.</p>
-<p>In Table 2 we show mean and standard deviation of education and experience. As we would expect, the standard deviation of education is much smaller (2.8) than that of eperience (13.4). The former means that we would expect to have a very large share of the population within the range 9.5-15.5 of years of education. This is so, because, in general, almost all workers have a minimum years of education which is greater than zero. In contrast, in the labor market there is always a greater dispersion of experience, which is captured by the standard deviation of 13.4</p>
+<p>We have data for the log of the wage rate, so to calculate the arithmetic mean we exponentiate that variable and then get the average. To get the mean of the annual wage we just multiply that number by 2000, which are the assumed work hours of a year. In contrast, the geometric mean is calculated by getting the average of the log wage and then exponentiating it. Hence, it is no surprise that the two results are different. The arithmetic mean of the wage rate and annual wages is greater than the geometric mean because the latter reduces large values more than it increases small values (of the wage-rate). Given that logarithm and exponentiation are not linear transformations, the arithmetic and geometric means will, in general, be different.</p>
+<p>In Table 2 we show the mean and standard deviation of education and experience. As we would expect, the standard deviation of education is much smaller (2.8) than that of experience (13.4). The former means that we will have a very large share of the population within the range 9.5-15.5 of years of education. This is so, because, in general, almost all workers have a minimum years of education which is a number greater than zero. In contrast, in the labor market there is always a greater dispersion of experience (new people join the labor force all the time), which is captured by the standard deviation of 13.4</p>
 </div>
 <div id="part-b" class="section level3">
 <h3>Part (b)</h3>
+<p>In this part we get the frequencies of non-whites, females and hispanics. The results are shown in Table 3. The share of each category is given by the arithmetic mean, whereas the total count is given by the mean times the sample size or, equivalently, by the sum over each of these dummy variables.</p>
 <table>
 <caption>Means and Number of Individuals in Demographic Groups</caption>
 <thead>
@@ -678,9 +679,11 @@ summary {
 </tr>
 </tbody>
 </table>
+<p>Our results show that 10% of the individuals in the sample are nonwhite, 7% hispanic and 38% women.</p>
 </div>
 <div id="part-c" class="section level3">
 <h3>Part (c)</h3>
+<p>In this part we sub-divide the sample by gender and race and analyze the mean and standard deviation of years of education and the wage rate. The results are in Table 4</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
 Years of Education and Mean Wages by Race
@@ -833,9 +836,12 @@ Hispanic
 </tr>
 </tbody>
 </table>
+<p>Regarding education and gender, men and women have on average almost the same years of education, although the standard deviation for men is greater. Regarding race, the results show that whites in the sample have on average one more year of education than non-whites, and the latter have, on average, one more year of education than hispanics.</p>
+<p>Regarding the wage rate, the average in the sample is greater for men than for women and it is greater for whites than for nonwhites and hispanics. The same is true for the mean annual wages.</p>
 </div>
 <div id="part-d" class="section level3">
 <h3>Part (d)</h3>
+<p>In part d we repeat the comparisons of shares, means and standard deviations of wage and education but for 1985. With respect to shares, the results are in Table 5</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
 Comparison of demographics between 1978 and 1985
@@ -926,6 +932,8 @@ fe
 </tr>
 </tbody>
 </table>
+<p>There we can see that share of non-whites in the sample increased and that of hispanics decreased, although the changes are small. In contrast, the share of females in the sample increased from 38% in 1978 to 46% in 1985</p>
+<p>In Table 6 we show the results for Education and Real Wages, incorporating the percentage change that took place from 1978 to 1985. Real wages were calculated with a price index which is equal to one for 1978 and 1.649 for 1985</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
 Comparison of education and real wages between 1978 and 1985
@@ -1236,9 +1244,177 @@ Whole Sample
 </tr>
 </tbody>
 </table>
+<p>Just by looking at the signs, we can see the main trends regarding these two variables: the average years of education increased for all groups, whereas the average wage rate fell also for all groups. For the whole sample, the average years of education increased by 4% and the real wage rate fell by 11%.</p>
+<p>However, this trends, although general, are not exactly the same for all groups. The average years of education increased more for men than for women. But the average real wage rate for men fell by 14% whereas for women the decline was 3%. Regarding race, hispanics had the greatest increase in the average years of education. However, they also experienced the largest decline in real wage (19%).</p>
 </div>
 <div id="part-e" class="section level3">
 <h3>Part (e)</h3>
+<p>In this part we want to analyze the distribution of wages and log wages. In particular, we want to test whether they are normally distributed. To do that, we follow two approaches. In the first one, we calculate the proportion of observations that are within 6 different groups defined in terms of the sample mean and sample standard deviation. We compare them with the proportions of a normal distribution for these six groups. The second approach, more formal, consists of chi-squared goodness-of-fit tests for normal distribution.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Counts and Proportions of lnwage and wage Distributions
+</caption>
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+lnwage
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+wage
+</div>
+</th>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Counts
+</th>
+<th style="text-align:center;">
+Proportion
+</th>
+<th style="text-align:center;">
+Counts
+</th>
+<th style="text-align:center;">
+Proportion
+</th>
+<th style="text-align:center;">
+Normal Distribution Proportions
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+wi&lt;=w-2s
+</td>
+<td style="text-align:center;">
+9
+</td>
+<td style="text-align:center;">
+0.02
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+<td style="text-align:center;width: 10em; ">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+w-2s&lt;wi&lt;=w-s
+</td>
+<td style="text-align:center;">
+80
+</td>
+<td style="text-align:center;">
+0.15
+</td>
+<td style="text-align:center;">
+45
+</td>
+<td style="text-align:center;">
+0.08
+</td>
+<td style="text-align:center;width: 10em; ">
+0.14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+w-s&lt;wi&lt;=w
+</td>
+<td style="text-align:center;">
+194
+</td>
+<td style="text-align:center;">
+0.35
+</td>
+<td style="text-align:center;">
+278
+</td>
+<td style="text-align:center;">
+0.51
+</td>
+<td style="text-align:center;width: 10em; ">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+w&lt;wi&lt;=w+s
+</td>
+<td style="text-align:center;">
+193
+</td>
+<td style="text-align:center;">
+0.35
+</td>
+<td style="text-align:center;">
+164
+</td>
+<td style="text-align:center;">
+0.30
+</td>
+<td style="text-align:center;width: 10em; ">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+w+s&lt;wi&lt;=w+2s
+</td>
+<td style="text-align:center;">
+63
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+<td style="text-align:center;">
+45
+</td>
+<td style="text-align:center;">
+0.08
+</td>
+<td style="text-align:center;width: 10em; ">
+0.14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+w+2s&lt;wi
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+0.02
+</td>
+<td style="text-align:center;">
+18
+</td>
+<td style="text-align:center;">
+0.03
+</td>
+<td style="text-align:center;width: 10em; ">
+0.02
+</td>
+</tr>
+</tbody>
+</table>
+<p>From Table 7 we can observe that the proportions of log wages match almost perfectly with those of the normal distributions, whereas the proportions of Wage for each group are substantially different. Now we conduct the chi-squared test. The null-hypothesis <span class="math inline">\(H_0\)</span> is that wages and log wages are normally distributed. The results of the test are shown below.</p>
 <table>
 <caption>
 Chi-Squared Goodness-of-Fit Tests for Normal Distribution
@@ -1280,16 +1456,46 @@ wage
 </tr>
 </tbody>
 </table>
+<p>As we would expect, for log wages the p-value is 0.59 so we failed to reject <span class="math inline">\(H_0\)</span>. In contrast, the p-value for wage is close to zero, so we reject the null-hypothesis <span class="math inline">\(H_0\)</span> at the 1% significance that wages are normally distributed.</p>
 </div>
 </div>
 <div id="problem-6" class="section level2">
 <h2>Problem 6</h2>
 <div id="part-a-1" class="section level3">
 <h3>Part (a)</h3>
+<p>In this part we make use of a linear regression model to test for the existence of wage premiums and penalties associated to gender and race. The results are presented in table 9. The interpretation of the coefficients of our relevant dummy variables is the percentage difference in wage associated to belonging to a race/gender group, controlling for other factors (union, experience and education)</p>
 
+<p>The results point to a 30% wage penalty for women, a 16% penalty for nonwhites and a 3% penalty for hispanics, although the latter is not statistically significant at any reasonable level.</p>
+<p>We are asked to test the hypothesis that the coefficients of nonwh and hisp are the same, that is that both groups experience the same wage penalty. That is done with a Chow test where <span class="math inline">\(H_0: \beta_{hisp}-\beta_{nonwh}=0\)</span>. The results of the test are provided in table 10. The F-statistic is 2.46 and the associated p-value is 0.12. Hence we do not have statistical evidence to reject the hypothesis that the wage penalty for hispanics is equal to that of nonwhites.</p>
+<table>
+<caption>
+Chow test
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+F statistic
+</th>
+<th style="text-align:right;">
+P-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2.46
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="part-b-1" class="section level3">
 <h3>Part (b)</h3>
+<p>For this part we will analyze our data by race (non-whites, hispanics and others). We first analyze shares and frequencies, which are shown in Table 11. The most salient fact is that 83% of the individuals in the sample belong to the category “others”, which are mainly whites, whereas hispanics and nonwhites have almost the same share.</p>
 <table>
 <caption>
 Means and Number of Individuals in Demographic Groups
@@ -1342,6 +1548,7 @@ hisp
 </tr>
 </tbody>
 </table>
+<p>We then analyze education, experience, gender, unionization and wages by race and conduct a comparison with whites. The results are shown in Table 12.</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
 Comparison of Demographics Variables
@@ -1519,13 +1726,17 @@ Hispanic
 </tr>
 </tbody>
 </table>
+<p>The most important aspects from Table 12 are that whites have 1 and 2 and a half years more of education than non-whites and hispanics, respectively. Whites have a wage rate approximately 20% higher than hispanics and non-whites. In contrast, on average, non-whites and hispanics have more years of experience and, very interestingly for me, non-whites are more likely to belong to a union than whites.</p>
 </div>
 <div id="part-c-1" class="section level3">
-<h3>Part c</h3>
+<h3>Part (c)</h3>
+<p>In this part we split the sample by race to run three separate linear regressions with log wage as the dependent variable. This allow us to see the effect that experience, education, unionization and gender exert on wages across race.</p>
 
+<p>The results are shown in Table 13. Among the most interesting things, we can see that the wage penalty for women is greater within whites, (it is close to 40% and is statistically significant). In contrast, the coefficient of female is not statistically significant for non-whites. Regarding union, it is positive and significant for whites and hispanics but not for non-whites. The coefficient of education is positive and significant, whereas that of experience is only significant for whites (positive in its linear form and negative in quadratic form). These last facts may reflect the characteristics of the the jobs of non-whites and hispanics, where education and experience may not be very relevant.</p>
 </div>
 <div id="part-d-1" class="section level3">
-<h3>Part d</h3>
+<h3>Part (d)</h3>
+<p>In this part we are asked to test whether the coefficients of the 3 models that we estimated in part c are in reality the same. To do so, we first estimate the same equation than in part (c) but with the complete sample (results not shown here), and perform a Chow test in which we make use of the Sum of Squares Residuals (RSS). These are shown in Table 14.</p>
 <table>
 <caption>
 RSS comparison
@@ -1567,7 +1778,7 @@ Hisp
 </tr>
 <tr>
 <td style="text-align:left;">
-Other
+Non-white
 </td>
 <td style="text-align:right;">
 11.94
@@ -1575,6 +1786,7 @@ Other
 </tr>
 </tbody>
 </table>
+<p>What I see from this table is that, we are getting a low RSS for the models with a very few number of observations. We use this information and the number of variables (<span class="math inline">\(k=5\)</span>) to construct our F-statistic and evaluate it in the F-distribution function with the correct degrees of freedom. The results are shown in Table 15</p>
 <table>
 <caption>
 Chow test information
@@ -1612,217 +1824,33 @@ P-Value
 </tr>
 </tbody>
 </table>
+<p>The P-value associated to this test is 0.24. Hence, we fail to reject the null hypothesis that the coefficients are the same for the 3 models estimated in part c. </p>
 </div>
 </div>
 </div>
 <div id="part-2-replication-of-card-krueger-1994" class="section level1">
 <h1>Part 2: Replication of Card &amp; Krueger (1994)</h1>
-<p>In this part I replicate the first three rows of Table 3 of Card &amp; Krueger(1994), in which they present the basic Diff-in-Diff results of the effect of the increase in minimum wage in New Jersey in employment in the fast-food sector. I present the results of the three panels in three different tables. The variable analyzed is Full-Time Equivalent employment (FTE), which, at the store level is defined by the equation:</p>
+<p>In this part I replicate the first three rows of Table 3 of Card &amp; Krueger(1994), in which they present the basic Diff-in-Diff results of the effect of the increase in minimum wage in New Jersey on employment in the fast-food sector. My replication is Table 16 (Evan and I spent so many hours figuring out how to put standard errors below means in parenthesis and feel very proud about how nice that table is).</p>
+<p>The variable analyzed in all columns is Full-Time Equivalent employment (FTE), which, at the store level is defined by the equation:</p>
 <p><span class="math display">\[FTE_i=FullTimeEmployees_i+Managers_i+\frac{1}{2}PartTimeEmployees_i\]</span></p>
-<p>I create that variable and then group the data by state and period (after en before the treatment) to build Panel 1 of Table 3</p>
-<table>
-<caption>
-Panel 1 of Table 3 Card and Krueger: Stores by state
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Variable
-</th>
-<th style="text-align:left;">
-PA
-</th>
-<th style="text-align:left;">
-NJ
-</th>
-<th style="text-align:left;">
-NJ-PA
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-FTE before
-</td>
-<td style="text-align:left;">
-23.33 (1.35)
-</td>
-<td style="text-align:left;">
-20.44 (0.51)
-</td>
-<td style="text-align:left;">
--2.89 (1.44)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FTE after
-</td>
-<td style="text-align:left;">
-21.17 (0.94)
-</td>
-<td style="text-align:left;">
-21.03 (0.52)
-</td>
-<td style="text-align:left;">
--0.14 (1.08)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Change in mean FTE
-</td>
-<td style="text-align:left;">
--2.17 (0.73)
-</td>
-<td style="text-align:left;">
-0.59 (1.65)
-</td>
-<td style="text-align:left;">
-2.75 (1.34)
-</td>
-</tr>
-</tbody>
-</table>
-<p>The standard errors are shown in parenthesis. This table shows the main results of the study, where can be seen that:</p>
+<p>I create that variable and then group the data by state and period (after and before the treatment, that happened in 1992) to build Panel 1 (Stores by state) of Table 3.</p>
+<p>That panel shows the main results of the study, where can be seen that:</p>
 <ol style="list-style-type: decimal">
-<li>Before the treatment stores in PA were, on average, bigger in terms of FTE than those of New Jersey</li>
-<li>That difference became smaller after the treatment</li>
-<li>FTE fell in PA after the treatment, while that of NJ remained constant or slightly increased</li>
+<li>Before the treatment, stores in PA were, on average, bigger in terms of FTE than those of New Jersey</li>
+<li>The difference became smaller after the treatment</li>
+<li>FTE fell in PA after the treatment, while in NJ it remained constant or slightly increased</li>
 <li>Most importantly, the diff-in-diff estimate, which under the Conditional Independence Assumption (or parallel trends) is a estimation of the causal effect of minimum wage on FTE, is non-negative (2.75 in our results)</li>
 </ol>
-<p>In this part, I am getting different standard errors in the first two cells of bottom-row (that compare the mean within each state). In all this exercise I obtained the standard errors of the difference in means by conducting a t-test (where the null hypothesis is that the means are equal) and then extracting the associated standard errors. The difference may come from the way t.test manages missing values. I conclude that because I get the correct results for the standard errors of FTE for each group and also in mean comparisons between states.</p>
-<p>Then I group NJ data by wage category before the treatment: Low (Minimum wage=$4.25), Midrange ($4.26-$4.99), and High (&gt;$4.99). Below is the replication of Panel 2:</p>
-<table>
-<caption>
-Panel 2 of Table 3 Card and Krueger: Stores in New Jersey
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Variable
-</th>
-<th style="text-align:left;">
-Wage=4.25
-</th>
-<th style="text-align:left;">
-Wage=4.26-4.99
-</th>
-<th style="text-align:left;">
-Wage&gt;4.99
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-FTE before
-</td>
-<td style="text-align:left;">
-19.56 (0.77)
-</td>
-<td style="text-align:left;">
-20.08 (0.84)
-</td>
-<td style="text-align:left;">
-22.25 (1.14)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FTE after
-</td>
-<td style="text-align:left;">
-20.88 (1.01)
-</td>
-<td style="text-align:left;">
-20.96 (0.76)
-</td>
-<td style="text-align:left;">
-20.21 (1.03)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Change in mean FTE
-</td>
-<td style="text-align:left;">
-1.32 (1.13)
-</td>
-<td style="text-align:left;">
-0.87 (1.53)
-</td>
-<td style="text-align:left;">
--2.04 (1.27)
-</td>
-</tr>
-</tbody>
-</table>
-<p>In the panel we can see that, in general, stores with a high starting wage are bigger in terms of FTE than the rest before the treatment. However, this changes after the increase in minmum wage since stores with a high starting wage before the treatment are the only ones whose average FTE falls after the increase in minmum wage.</p>
-<p>Again, my results are different in the standard errors that compare the difference in the means within state and wage category over time. I finally present the results of Panel 3, that compares FTE between wage categories and over time</p>
-<table>
-<caption>
-Panel 3 of Table 3 Card and Krueger: Differences within New Jersey
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Variable
-</th>
-<th style="text-align:left;">
-Low-high
-</th>
-<th style="text-align:left;">
-Midrange-high
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-FTE before
-</td>
-<td style="text-align:left;">
--2.69 (1.37)
-</td>
-<td style="text-align:left;">
--2.17 (1.41)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FTE after
-</td>
-<td style="text-align:left;">
-0.66 (1.44)
-</td>
-<td style="text-align:left;">
-0.74 (1.27)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Change in mean FTE
-</td>
-<td style="text-align:left;">
-3.36 (1.3)
-</td>
-<td style="text-align:left;">
-2.91 (1.22)
-</td>
-</tr>
-</tbody>
-</table>
-<p>There, in the bottom row, we can see that the difference between Low wage and High wage stores</p>
+<p>Then I group the NJ data by wage category before the treatment: Low (Minimum wage=$4.25), Midrange ($4.26-$4.99), and High (&gt;$4.99). I use this categories to replicate panel 2 (Stores in NJ) and panel 3 (Differences in NJ) of Table 3</p>
+<p>In these panels we can see that, in general, stores with a high starting wage are bigger in terms of FTE than the rest before the treatment (that is seen in the negative numbers of panel 3). However, this changes after the increase in minimum wage since stores with a high starting wage before the treatment are the only ones whose average FTE falls after the increase in minimum wage (this can be seen in the positive numbers of panel 3). In row 3 of panel two we can see that average FTE did not fall neither for Low nor for Midrange wage stores, and only did for high-starting wage stores, (although the difference is not statistically significant).</p>
+<p>By comparing with the original, you can see that both means and standard errors match except by the standard errors in the bottom row. These are the standard errors of the difference in means within each state. I got them by extracting the standard error associated to the t-test that the difference in means is equal to zero. The fact that I get different standard errors for that row is surprising as I am getting the correct ones for column 3 of Panel 1, which tests the difference in FTE means between NJ and PA. In any case, the standard errors don’t change the main results, which are that both the difference in means within and between state and our diff-in-diff estimate are not significantly different zero, which is empirical evidence against the claim of Walrasian economics that an increase in minimum wage necessarily reduces employment.</p>
 
 </div>
 <div id="part-3-advances-in-replication" class="section level1">
 <h1>Part 3: Advances in replication</h1>
-<p>The data consists of four main variables: trade flows, tariffs, rules origin and input-output (IO) information. As I said in problem set 3, IO is used for robustness check and I will make that if I have time. I gathered all the data and am in the cleaning process. Up to this point, I successfully cleaned the data on trade flows, which consists of the imports of Mexico from NAFTA partners and non-NAFTA countries. Below I show a replication of panels 1 and 2 of Table 2 of Conconi et al. (2018)</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
-Trade: Panels 1 and two of Table 2
+Trade: Panels 1 and 2 of Table 2 of Conconi et al. (2018)
 </caption>
 <thead>
 <tr>
@@ -2115,7 +2143,878 @@ HS Code and Description
 </tr>
 </tbody>
 </table>
-<p>I am almost done with the data of tariffs and rules of origin. Once I have them I will be able to replicate Tables 1 and 2 of decriptive stastics. With that, the replication of the main regressions should be very straightforward.</p>
+<p>The data consists of four main variables: trade flows, tariffs, rules origin and input-output (IO) information. As I said in problem set 2, IO is only used for robustness checks and I will replicate that part if I time allows me. I already gathered all the data and am in the cleaning process. Up to this point, I successfully cleaned the data on trade flows, which consists of the imports of Mexico from NAFTA partners and non-NAFTA countries. Below I show a replication of panels 1 and 2 of Table 2 of Conconi et al. (2018)</p>
+<p>There we see some very well-known facts about the Mexican economy in the last decades, which are that since trade liberalization started un the 80s, trade volumes increased substantially in general but exponentially with NAFTA partners, specially with the US.</p>
+<p>I am almost done with the cleaning of data on tariffs and rules of origin. Once I have them I will be able to replicate Tables 1 and 2 of descriptive statistics. With that, the replication of the main regressions should be very straightforward.</p>
+<div id="r-code" class="section level2">
+<h2>R code</h2>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+library(data.table)
+library(ggplot2)
+library(&quot;rio&quot;)
+library(matlib)
+library(gdata)
+library(tinytex)
+library(car)
+library(scales)
+library(ggplot2)
+library(foreign)
+library(rmarkdown)
+library(fastDummies)
+library(haven)
+library(pmdplyr)
+library(plotrix)
+library(foreign)
+
+options(scipen=10000)
+options(digits=4)
+
+rm(list=ls())
+
+setwd(&quot;C:/Users/User/Documents/GitHub/Problem-Sets--753/PS3&quot;)
+
+
+##############################################################################
+################################ PART 1 ######################################
+
+
+
+################
+## Question 1 ##
+##   PART a   ##
+################
+
+## Extract data
+cps &lt;- read.dta(&quot;http://courses.umass.edu/econ753/berndt/stata/chap5-cps.dta&quot;)
+
+## Filter for years 1978 and 1985
+cps78 &lt;- filter(cps, year==1978)
+cps85 &lt;- filter(cps, year==1985)
+
+## Exponentiate wage 
+cps78 &lt;- mutate(cps78, wage=exp(lnwage))
+
+## Get geometric and arithmetic mean
+cps78.geometricMeanlnwage &lt;- exp(mean(cps78$lnwage))
+cps78.arithmeticMeanlnwage &lt;- mean(cps78$wage)
+
+## Annual means
+cps78.annualGeometricMeanlnwage &lt;- 2000 * cps78.geometricMeanlnwage
+cps78.annualArithmeticMeanlnwage &lt;- 2000 * cps78.arithmeticMeanlnwage
+
+## Mean and standard deviation of ED and EX
+cps78.meanEd &lt;- mean(cps78$ed)
+cps78.sdEd &lt;- sd(cps78$ed)
+cps78.meanEx &lt;- mean(cps78$ex)
+cps78.sdEx &lt;- sd(cps78$ex)
+
+## Make tables with info
+cps78.lnwageMeanTable &lt;- data.frame(&quot;Geometric Mean&quot; = c(cps78.geometricMeanlnwage, cps78.annualGeometricMeanlnwage),
+                                    &quot;Arithmetic Mean&quot; = c(cps78.arithmeticMeanlnwage, cps78.annualArithmeticMeanlnwage))
+rownames(cps78.lnwageMeanTable) &lt;- c(&quot;Hourly&quot;, &quot;Annual&quot;)
+colnames(cps78.lnwageMeanTable) &lt;- c(&quot;Geometric Mean&quot;, &quot;Arithmetic Mean&quot;)
+save(cps78.lnwageMeanTable, file=&quot;cps78.lnwageMeanTable.Rdata&quot;)
+
+cps78.edExTable &lt;- data.frame(Mean = c(cps78.meanEd, cps78.meanEx),
+                              &quot;Standard Deviation&quot; = c(cps78.sdEd, cps78.sdEx))
+rownames(cps78.edExTable) &lt;- c(&quot;Education&quot;, &quot;Experience&quot;)
+colnames(cps78.edExTable) &lt;- c(&quot;Mean&quot;, &quot;Standard Deviation&quot;)
+save(cps78.edExTable, file=&quot;cps78.edExTable.Rdata&quot;)
+
+################
+## Question 1 ##
+##   PART b   ##
+################
+
+## Sample size
+cps78.sampleSize &lt;- 550
+
+## Means for demographic dummy variables
+cps78.nonwh.mean &lt;- mean(cps78$nonwh)
+cps78.hisp.mean &lt;- mean(cps78$hisp)
+cps78.fe.mean &lt;- mean(cps78$fe)
+
+## Counts for demographic dummy variables
+cps78.nonwh.count &lt;- cps78.sampleSize * cps78.nonwh.mean
+cps78.hisp.count &lt;- cps78.sampleSize * cps78.hisp.mean
+cps78.fe.count &lt;- cps78.sampleSize * cps78.fe.mean
+
+## Make table with info
+cps78.demographicsTable &lt;- data.frame(Mean = c(cps78.nonwh.mean, cps78.hisp.mean, cps78.fe.mean),
+                                      Count = c(cps78.nonwh.count, cps78.hisp.count, cps78.fe.count))
+rownames(cps78.demographicsTable) &lt;- c(&quot;nonwh&quot;, &quot;hisp&quot;, &quot;fe&quot;)
+save(cps78.demographicsTable, file=&quot;cps78.demographicsTable.Rdata&quot;)
+
+################
+## Question 1 ##
+##   PART c   ##
+################
+
+## Filter to subgroups
+cps78.male &lt;- filter(cps78, fe==0)
+cps78.female &lt;- filter(cps78, fe==1)
+cps78.wh &lt;- filter(cps78, nonwh==0 &amp; hisp==0)
+cps78.nonwh &lt;- filter(cps78, nonwh==1)
+cps78.hisp &lt;- filter(cps78, hisp==1)
+
+## Table for Gender 
+cps78.genderTable &lt;- data.frame(&quot;Mean ed&quot; = c(mean(cps78.male$ed), mean(cps78.female$ed)),
+                                &quot;sd ed&quot; = c(sd(cps78.male$ed), sd(cps78.female$ed)),
+                                &quot;Mean Hourly Wage&quot; = c(exp(mean(cps78.male$lnwage)), exp(mean(cps78.female$lnwage))),
+                                &quot;sd Wage&quot; = c(sd(cps78.male$wage), sd(cps78.female$wage)),
+                                &quot;Mean Annual Wage&quot; = c(2000*exp(mean(cps78.male$lnwage)), 
+                                                       2000*exp(mean(cps78.female$lnwage))))
+rownames(cps78.genderTable) &lt;- c(&quot;Male&quot;, &quot;Female&quot;)
+colnames(cps78.genderTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps78.genderTable, file=&quot;cps78.genderTable.Rdata&quot;)
+
+## Table for Race
+cps78.raceTable &lt;- data.frame(&quot;Mean ed&quot; = c(mean(cps78.wh$ed), mean(cps78.nonwh$ed), mean(cps78.hisp$ed)),
+                              &quot;sd ed&quot; = c(sd(cps78.wh$ed), sd(cps78.nonwh$ed), sd(cps78.hisp$ed)),
+                              &quot;Mean Hourly Wage&quot; = c(exp(mean(cps78.wh$lnwage)), exp(mean(cps78.nonwh$lnwage)),
+                                                     exp(mean(cps78.hisp$lnwage))),
+                              &quot;sd Wage&quot; = c(sd(cps78.wh$wage), sd(cps78.nonwh$wage), sd(cps78.hisp$wage)),
+                              &quot;Mean Annual Wage&quot; = c(2000*exp(mean(cps78.wh$lnwage)), 
+                                                     2000*exp(mean(cps78.nonwh$lnwage)),
+                                                     2000*exp(mean(cps78.hisp$lnwage))))
+rownames(cps78.raceTable) &lt;- c(&quot;Whites&quot;, &quot;NonWhites&quot;, &quot;Hispanic&quot;)
+colnames(cps78.raceTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps78.raceTable, file=&quot;cps78.raceTable.Rdata&quot;)
+
+################
+## Question 1 ##
+##   PART d   ##
+################
+
+## Exponentiate wage 
+cps85 &lt;- mutate(cps85, wage=exp(lnwage))
+
+## Deflate wages by deflator
+cps85.deflator &lt;- 1.649
+cps85 &lt;- mutate(cps85, wage=wage/cps85.deflator)
+cps85 &lt;- mutate(cps85, lnwage=log(wage))
+
+## Get geometric mean and standard deviation
+cps85.geometricMeanlnwage &lt;- exp(mean(cps85$lnwage))
+cps85.sdwage &lt;- sd(cps85$wage)
+
+## Annual mean
+cps85.annualGeometricMeanlnwage &lt;- 2000 * cps85.geometricMeanlnwage
+
+## Mean and standard deviation of ED
+cps85.meanEd &lt;- mean(cps85$ed)
+cps85.sdEd &lt;- sd(cps85$ed)
+
+## Sample size
+cps85.sampleSize &lt;- 534
+
+## Means for demographic dummy variables
+cps85.nonwh.mean &lt;- mean(cps85$nonwh)
+cps85.hisp.mean &lt;- mean(cps85$hisp)
+cps85.fe.mean &lt;- mean(cps85$fe)
+
+## Counts for demographic dummy variables
+cps85.nonwh.count &lt;- cps85.sampleSize * cps85.nonwh.mean
+cps85.hisp.count &lt;- cps85.sampleSize * cps85.hisp.mean
+cps85.fe.count &lt;- cps85.sampleSize * cps85.fe.mean
+
+## Make table with info
+cps85.demographicsTable &lt;- data.frame(Mean = c(cps85.nonwh.mean, cps85.hisp.mean, cps85.fe.mean),
+                                      Count = c(cps85.nonwh.count, cps85.hisp.count, cps85.fe.count))
+rownames(cps85.demographicsTable) &lt;- c(&quot;nonwh&quot;, &quot;hisp&quot;, &quot;fe&quot;)
+save(cps85.demographicsTable, file=&quot;cps85.demographicsTable.Rdata&quot;)
+
+## Filter to subgroups
+cps85.male &lt;- filter(cps85, fe==0)
+cps85.female &lt;- filter(cps85, fe==1)
+cps85.wh &lt;- filter(cps85, nonwh==0 &amp; hisp==0)
+cps85.nonwh &lt;- filter(cps85, nonwh==1)
+cps85.hisp &lt;- filter(cps85, hisp==1)
+
+## Table for Gender 
+cps85.genderTable &lt;- data.frame(&quot;Mean ed&quot; = c(mean(cps85.male$ed), mean(cps85.female$ed)),
+                                &quot;sd ed&quot; = c(sd(cps85.male$ed), sd(cps85.female$ed)),
+                                &quot;Mean Hourly Wage&quot; = c(exp(mean(cps85.male$lnwage)), exp(mean(cps85.female$lnwage))),
+                                &quot;sd Wage&quot; = c(sd(cps85.male$wage), sd(cps85.female$wage)),
+                                &quot;Mean Annual Wage&quot; = c(2000*exp(mean(cps85.male$lnwage)), 
+                                                       2000*exp(mean(cps85.female$lnwage))))
+rownames(cps85.genderTable) &lt;- c(&quot;Male&quot;, &quot;Female&quot;)
+colnames(cps85.genderTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps85.genderTable, file=&quot;cps85.genderTable.Rdata&quot;)
+
+## Table for Race
+cps85.raceTable &lt;- data.frame(&quot;Mean ed&quot; = c(mean(cps85.wh$ed), mean(cps85.nonwh$ed), mean(cps85.hisp$ed)),
+                              &quot;sd ed&quot; = c(sd(cps85.wh$ed), sd(cps85.nonwh$ed), sd(cps85.hisp$ed)),
+                              &quot;Mean Hourly Wage&quot; = c(exp(mean(cps85.wh$lnwage)), exp(mean(cps85.nonwh$lnwage)),
+                                                     exp(mean(cps85.hisp$lnwage))),
+                              &quot;sd Wage&quot; = c(sd(cps85.wh$wage), sd(cps85.nonwh$wage), sd(cps85.hisp$wage)),
+                              &quot;Mean Annual Wage&quot; = c(2000*exp(mean(cps85.wh$lnwage)), 
+                                                     2000*exp(mean(cps85.nonwh$lnwage)),
+                                                     2000*exp(mean(cps85.hisp$lnwage))))
+rownames(cps85.raceTable) &lt;- c(&quot;Whites&quot;, &quot;NonWhites&quot;, &quot;Hispanic&quot;)
+colnames(cps85.raceTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps85.raceTable, file=&quot;cps85.raceTable.Rdata&quot;)
+
+## Table with totals for both years
+cps78.totalTable &lt;- data.frame(&quot;Mean ed&quot; = cps78.meanEd,
+                               &quot;sd ed&quot; = cps78.sdEd,
+                               &quot;Mean Hourly Wage&quot; = cps78.geometricMeanlnwage,
+                               &quot;sd Wage&quot; = sd(cps78$wage),
+                               &quot;Mean Annual Wage&quot; = cps78.annualGeometricMeanlnwage)
+rownames(cps78.totalTable) &lt;- &quot;Whole Sample&quot;
+colnames(cps78.totalTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps78.totalTable, file=&quot;cps78.totalTable.Rdata&quot;)
+cps85.totalTable &lt;- data.frame(&quot;Mean ed&quot; = cps85.meanEd,
+                               &quot;sd ed&quot; = cps85.sdEd,
+                               &quot;Mean Hourly Wage&quot; = cps85.geometricMeanlnwage,
+                               &quot;sd Wage&quot; = cps85.sdwage,
+                               &quot;Mean Annual Wage&quot; = cps85.annualGeometricMeanlnwage)
+rownames(cps85.totalTable) &lt;- &quot;Whole Sample&quot;
+colnames(cps85.totalTable) &lt;- c(&quot;Mean&quot;, &quot;SD&quot;, &quot;Mean Hourly&quot;, &quot;SD&quot;, &quot;Mean Annual&quot;)
+save(cps85.totalTable, file=&quot;cps85.totalTable.Rdata&quot;)
+
+################
+## Question 1 ##
+##   PART e   ##
+################
+
+##################################################
+##            First for lnwage                  ##
+
+## Calculate mean and standard deviation of lnwage
+cps78.w &lt;- mean(cps78$lnwage)
+cps78.s &lt;- sd(cps78$lnwage)
+
+## Separate wage data into categories
+cps78$lnwagecat.subgroup &lt;- cut(cps78$lnwage,
+                                breaks = c(-Inf, 
+                                           cps78.w - 2 * cps78.s,
+                                           cps78.w - cps78.s,
+                                           cps78.w,
+                                           cps78.w + cps78.s,
+                                           cps78.w + 2 * cps78.s,
+                                           Inf))
+cps78$lnwagecat &lt;- factor(cps78$lnwagecat.subgroup,
+                          labels = c(&quot;wi&lt;=w-2s&quot;,
+                                     &quot;w-2s&lt;wi&lt;=w-s&quot;,
+                                     &quot;w-s&lt;wi&lt;=w&quot;,
+                                     &quot;w&lt;wi&lt;=w+s&quot;,
+                                     &quot;w+s&lt;wi&lt;=w+2s&quot;,
+                                     &quot;w+2s&lt;wi&quot;))
+
+## Create table with counts and proportion of sample size
+cps78.logNormalTable &lt;- t(rbind(with(cps78, table(lnwagecat)),
+                                with(cps78, table(lnwagecat))/cps78.sampleSize))
+colnames(cps78.logNormalTable) &lt;- c(&quot;Counts&quot;, &quot;Proportion&quot;)
+save(cps78.logNormalTable, file=&quot;cps78.logNormalTable.Rdata&quot;)
+
+##################################################
+##            Next for wage                     ##
+
+## Calculate mean and standard deviation of wage
+cps78.w &lt;- mean(cps78$wage)
+cps78.s &lt;- sd(cps78$wage)
+
+## Separate wage data into categories
+cps78$wagecat.subgroup &lt;- cut(cps78$wage,
+                              breaks = c(-Inf, 
+                                         cps78.w - 2 * cps78.s,
+                                         cps78.w - cps78.s,
+                                         cps78.w,
+                                         cps78.w + cps78.s,
+                                         cps78.w + 2 * cps78.s,
+                                         Inf))
+cps78$wagecat &lt;- factor(cps78$wagecat.subgroup,
+                        levels = c(&quot;(-Inf,2.8]&quot;,
+                                   &quot;(-0.453,2.8]&quot;,
+                                   &quot;(2.8,6.06]&quot;,
+                                   &quot;(6.06,9.32]&quot;,
+                                   &quot;(9.32,12.6]&quot;,
+                                   &quot;(12.6, Inf]&quot;),
+                        labels = c(&quot;wi&lt;=w-2s&quot;,
+                                   &quot;w-2s&lt;wi&lt;=w-s&quot;,
+                                   &quot;w-s&lt;wi&lt;=w&quot;,
+                                   &quot;w&lt;wi&lt;=w+s&quot;,
+                                   &quot;w+s&lt;wi&lt;=w+2s&quot;,
+                                   &quot;w+2s&lt;wi&quot;))
+
+## Create table with counts and proportion of sample size
+cps78.normalTable &lt;- t(rbind(with(cps78, table(wagecat)),
+                             with(cps78, table(wagecat))/cps78.sampleSize))
+colnames(cps78.normalTable) &lt;- c(&quot;Counts&quot;, &quot;Proportion&quot;)
+save(cps78.normalTable, file=&quot;cps78.normalTable.Rdata&quot;)
+
+## Chi-squared tests
+testlnwage &lt;- chisq.test(cps78.logNormalTable[,1],
+                         p=c(pnorm(-2),pnorm(-1)-pnorm(-2),pnorm(0)-pnorm(-1),
+                             pnorm(1)-pnorm(0),pnorm(2)-pnorm(1),1-pnorm(2)))
+
+testwage &lt;- chisq.test(cps78.normalTable[,1],
+                       p=c(pnorm(-2),pnorm(-1)-pnorm(-2),pnorm(0)-pnorm(-1),
+                           pnorm(1)-pnorm(0),pnorm(2)-pnorm(1),1-pnorm(2)))
+
+chiTestTable &lt;- data.frame(Statistic=c(testlnwage$statistic,testwage$statistic),
+                           pValue=c(testlnwage$p.value,testwage$p.value))
+rownames(chiTestTable) &lt;- c(&quot;lnwage&quot;, &quot;wage&quot;)
+save(chiTestTable, file=&quot;chiTestTable.Rdata&quot;)
+
+## Below is just stuff I was practicing with that I want to keep
+
+# dnorm(0)
+# 
+# pnorm(0)-pnorm(-1)
+# 
+# seq(cps78.w-3*cps78.s,cps78.w+3*cps78.s, by=0.01),
+# dnorm(seq(cps78.w-3*cps78.s,cps78.w+3*cps78.s, by=0.01),
+#       mean=cps78.w,sd=cps78.s)
+# 
+# 
+# 
+# plot(seq(cps78.w-3*cps78.s,cps78.w+3*cps78.s, by=0.01),
+#      dnorm(seq(cps78.w-3*cps78.s,cps78.w+3*cps78.s, by=0.01),
+#            mean=cps78.w,sd=cps78.s))
+# 
+# ggplot(cps78, aes(x=lnwage)) + geom_density()
+# 
+# 
+# , y=densityPlot(lnwage)
+
+################
+## Question 6 ##
+##   PART a   ##
+################
+
+cps78.lnwage.lm1 &lt;- lm(lnwage ~ fe + union + nonwh + hisp + ed + ex + exsq, data=cps78)
+save(cps78.lnwage.lm1, file=&quot;cps78.lnwage.lm1.Rdata&quot;)
+
+linearHypothesis(cps78.lnwage.lm1, c(&quot;nonwh = hisp&quot;))
+str(linearHypothesis)
+
+table6achow&lt;-data.frame(2.46,0.12)
+colnames(table6achow)&lt;-c(&quot;F statistic&quot;, &quot;P-value&quot;)
+
+save(table6achow,file=&quot;table6achow.Rdata&quot;)
+
+################
+## Question 6 ##
+##   PART b   ##
+################
+
+## Counts table
+cps78.demographicsTable6b &lt;- data.frame(Mean = c(1-cps78.nonwh.mean-cps78.hisp.mean, 
+                                                 cps78.nonwh.mean, 
+                                                 cps78.hisp.mean),
+                                        Count = c((1-cps78.nonwh.mean-cps78.hisp.mean)*cps78.sampleSize,
+                                                  cps78.nonwh.count, 
+                                                  cps78.hisp.count))
+rownames(cps78.demographicsTable6b) &lt;- c(&quot;other&quot;, &quot;nonwh&quot;, &quot;hisp&quot;)
+save(cps78.demographicsTable6b, file=&quot;cps78.demographicsTable6b.Rdata&quot;)
+
+
+cps78.raceTable6b &lt;- rbind(with(cps78.wh, data.frame(ed=mean(ed),
+                                                     diff=mean(ed)-mean(cps78.wh$ed),
+                                                     ex=mean(ex),
+                                                     diff=mean(ex)-mean(cps78.wh$ex),
+                                                     fe=mean(fe),
+                                                     diff=mean(fe)-mean(cps78.wh$fe),
+                                                     union=mean(union),
+                                                     diff=mean(union)-mean(cps78.wh$union),
+                                                     lnwage=mean(lnwage),
+                                                     diff=mean(lnwage)-mean(cps78.wh$lnwage))),
+                           with(cps78.nonwh, data.frame(ed=mean(ed),
+                                                        diff=mean(ed)-mean(cps78.wh$ed),
+                                                        ex=mean(ex),
+                                                        diff=mean(ex)-mean(cps78.wh$ex),
+                                                        fe=mean(fe),
+                                                        diff=mean(fe)-mean(cps78.wh$fe),
+                                                        union=mean(union),
+                                                        diff=mean(union)-mean(cps78.wh$union),
+                                                        lnwage=mean(lnwage),
+                                                        diff=mean(lnwage)-mean(cps78.wh$lnwage))),
+                           with(cps78.hisp, data.frame(ed=mean(ed),
+                                                       diff=mean(ed)-mean(cps78.wh$ed),
+                                                       ex=mean(ex),
+                                                       diff=mean(ex)-mean(cps78.wh$ex),
+                                                       fe=mean(fe),
+                                                       diff=mean(fe)-mean(cps78.wh$fe),
+                                                       union=mean(union),
+                                                       diff=mean(union)-mean(cps78.wh$union),
+                                                       lnwage=mean(lnwage),
+                                                       diff=mean(lnwage)-mean(cps78.wh$lnwage))))
+rownames(cps78.raceTable6b) &lt;- c(&quot;Others&quot;, &quot;NonWhites&quot;, &quot;Hispanic&quot;)
+save(cps78.raceTable6b, file=&quot;cps78.raceTable6b.Rdata&quot;)
+
+################
+## Question 6 ##
+##   PART c   ##
+################
+
+cps78.wh.lnwage.lm1 &lt;- lm(lnwage ~ fe + union + ed + ex + exsq, data=cps78.wh)
+cps78.nonwh.lnwage.lm1 &lt;- lm(lnwage ~ fe + union + ed + ex + exsq, data=cps78.nonwh)
+cps78.hisp.lnwage.lm1 &lt;- lm(lnwage ~ fe + union + ed + ex + exsq, data=cps78.hisp)
+save(cps78.wh.lnwage.lm1, file=&quot;cps78.wh.lnwage.lm1.Rdata&quot;)
+save(cps78.nonwh.lnwage.lm1, file=&quot;cps78.nonwh.lnwage.lm1.Rdata&quot;)
+save(cps78.hisp.lnwage.lm1, file=&quot;cps78.hisp.lnwage.lm1.Rdata&quot;)
+
+
+################
+## Question 6 ##
+##   PART d   ##
+################
+
+
+cps78.lm1 &lt;- lm(lnwage ~ fe + union + ed + ex + exsq, data=cps78)
+str(cps78.lm1)
+
+Sc&lt;-deviance(cps78.lm1)
+
+Swh&lt;-deviance(cps78.wh.lnwage.lm1)
+Snwh&lt;-deviance(cps78.nonwh.lnwage.lm1)
+Shisp&lt;-deviance(cps78.hisp.lnwage.lm1)
+k&lt;-5
+
+Nwh&lt;-length(cps78.wh)
+Nnwh&lt;-length(cps78.nonwh)
+Nhisp&lt;-length(cps78.hisp)
+  
+F_stat&lt;-((Sc-(Swh+Snwh+Shisp))/k)/((Swh+Snwh+Shisp)/(Nwh+Nnwh+Nhisp-2*k))
+
+f_pvalue&lt;-pf(F_stat, k, Nwh+Nnwh+Nhisp-2*k)
+
+#Make table RSS
+
+table6dRSS&lt;- data.frame(c(&quot;Complete&quot;,&quot;White&quot;,&quot;Hisp&quot;,&quot;Non-white&quot;),c(Sc,Swh,Shisp,Snwh))
+colnames(table6dRSS)&lt;-c(&quot;Sample&quot;,&quot;RSS&quot;)
+
+#Make table Chow test
+
+table6dchow&lt;-data.frame(k,Nwh+Nnwh+Nhisp-2*k,F_stat,f_pvalue)
+colnames(table6dchow)&lt;-c(&quot;DF 1&quot;,&quot;DF 2&quot;,&quot;F statistic&quot;, &quot;P-Value&quot;)
+
+save(table6dRSS,file=&quot;table6dRSS.Rdata&quot;)
+save(table6dchow,file=&quot;table6dchow.Rdata&quot;)
+
+
+########################################################################
+########################################################################
+########################################################################
+
+################### PART2  #############################################
+
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+
+rm(list=ls())
+
+
+#Replicate rows 1-3 of the panel &quot;Stores by State&quot; of Table 3 in Card and Krueger, &quot;Minimum Wages and Employment: 
+#A Case Study of the Fast-Food Industry in New Jersey and Pennsylvania&quot; (AER 84(4) 1994). The material for Lab 07 via 
+#git provides the Card and Krueger data in several formats. Discuss your method and findings in relation to the original.
+
+fastfood&lt;-read_dta(&quot;fastfood.dta&quot;)
+fastfood&lt;- fastfood %&gt;% mutate(state=ifelse(state==1,&quot;NJ&quot;,&quot;PA&quot;))
+
+fastfood_empft&lt;-fastfood %&gt;% select(sheet, state, empft, empft2 ) 
+fastfood_emppt&lt;-fastfood %&gt;% select(sheet, state, emppt, emppt2) 
+
+fastfood_wage&lt;-fastfood %&gt;% select(sheet, state, wage_st, wage_st2) 
+fastfood_wage&lt;-fastfood_wage %&gt;%mutate(wage_cat= ifelse(wage_st==4.25,&quot;L&quot;,
+                                ifelse(wage_st&lt;5,&quot;M&quot;,
+                                ifelse(wage_st&gt;=5,&quot;H&quot;,NA))))
+
+fastfood_man&lt;-fastfood %&gt;% select(sheet, state, nmgrs, nmgrs2) 
+
+
+#Pivot Longer empft
+
+fastfood_empft&lt;-fastfood_empft %&gt;% pivot_longer(c(empft,empft2), values_to= &quot;empft&quot;, names_to=&quot;post&quot;)
+fastfood_empft&lt;-fastfood_empft %&gt;% mutate(post=ifelse(post==&quot;empft&quot;, 0,1))
+
+#Pivot Longer emppt
+fastfood_emppt&lt;-fastfood_emppt %&gt;% pivot_longer(c(emppt,emppt2), values_to= &quot;emppt&quot;, names_to=&quot;post&quot;)
+fastfood_emppt&lt;-fastfood_emppt %&gt;% mutate(post=ifelse(post==&quot;emppt&quot;, 0,1))
+
+#Pivot Longer wage
+
+fastfood_wage&lt;-fastfood_wage %&gt;% pivot_longer(c(wage_st,wage_st2), values_to= &quot;wage_st&quot;, names_to=&quot;post&quot;)
+fastfood_wage&lt;-fastfood_wage %&gt;% mutate(post=ifelse(post==&quot;wage_st&quot;, 0,1))
+
+#Pivot Longer managers and assistants
+
+fastfood_man&lt;-fastfood_man %&gt;% pivot_longer(c(nmgrs,nmgrs2), values_to= &quot;nmgrs&quot;, names_to=&quot;post&quot;)
+fastfood_man&lt;-fastfood_man %&gt;% mutate(post=ifelse(post==&quot;nmgrs&quot;, 0,1))
+
+
+
+# merge everything
+fastfood2&lt;-merge(merge(fastfood_empft,fastfood_emppt),merge(fastfood_wage,fastfood_man))
+
+
+#Panel Means 1
+fastfood2&lt;-fastfood2 %&gt;% mutate(fte1=empft+0.5*emppt,
+                                fte2=empft+nmgrs+0.5*emppt)
+fte&lt;-fastfood2 %&gt;% group_by(post,state) %&gt;% summarise(across(fte2, mean ,na.rm=TRUE)) %&gt;% ungroup()
+fte&lt;-fte %&gt;% pivot_wider(names_from=state,values_from=fte2) %&gt;% mutate(NJminusPA=NJ-PA)
+fte&lt;-fte %&gt;% rbind(fte[2,]-fte[1,])
+
+#Panel 2 Means
+w&lt;-fastfood2 %&gt;% group_by(post, state, wage_cat) %&gt;% summarise(across(fte2, mean, na.rm=TRUE)) %&gt;%
+ ungroup() %&gt;% filter(state==&quot;NJ&quot;)
+
+w&lt;-w %&gt;% pivot_wider(names_from=wage_cat, values_from=fte2)
+w&lt;-w %&gt;% select(-c(post,state,&quot;NA&quot;))
+w&lt;-w %&gt;% rbind(w[2,]-w[1,])
+
+
+#Panel 3 Means
+w.between&lt;-w %&gt;% mutate(LminusH=L-H, MminusH=M-H) 
+w.between&lt;-w.between %&gt;% select(LminusH, MminusH)
+
+
+
+#### Standard errors!
+### Generate individual variables
+
+fteNJ0&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==0)$fte2
+fteNJ1&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==1)$fte2
+ftePA0&lt;-filter(fastfood2, state==&quot;PA&quot;,post==0)$fte2
+ftePA1&lt;-filter(fastfood2, state==&quot;PA&quot;,post==1)$fte2
+
+fteNJ0L&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==0, wage_cat==&quot;L&quot;)$fte2
+fteNJ1L&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==1, wage_cat==&quot;L&quot;)$fte2
+
+fteNJ0M&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==0, wage_cat==&quot;M&quot;)$fte2
+fteNJ1M=filter(fastfood2, state==&quot;NJ&quot;,post==1, wage_cat==&quot;M&quot;)$fte2
+
+fteNJ0H&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==0, wage_cat==&quot;H&quot;)$fte2
+fteNJ1H&lt;-filter(fastfood2, state==&quot;NJ&quot;,post==1, wage_cat==&quot;H&quot;)$fte2
+
+
+
+fte.std&lt;-fastfood2 %&gt;% group_by(state,post) %&gt;% summarise(across(fte2, .fns=list(std=std.error),.names=&quot;{fn}.{col}&quot;, na.rm=TRUE))
+
+w.std&lt;-fastfood2 %&gt;% group_by(post, state, wage_cat) %&gt;% 
+  summarise(across(fte2, .fns=list(std=std.error),.names=&quot;{fn}.{col}&quot;, na.rm=TRUE)) %&gt;% 
+  ungroup() %&gt;% filter(state==&quot;NJ&quot;)
+
+fte.std&lt;-fte.std %&gt;% pivot_wider(names_from=state,values_from=std.fte2) 
+w.std&lt;-w.std%&gt;% pivot_wider(names_from=wage_cat, values_from=std.fte2)
+
+
+### Add the standard error of the differences
+
+#Panel 1 differences standard errors
+diff_within_state&lt;-c(1,  t.test(fteNJ0,fteNJ1)$stderr,t.test(ftePA0,ftePA1)$stderr, t.test(fteNJ0-fteNJ1,ftePA0-ftePA1)$stderr)
+diff_between_state&lt;-c(t.test(fteNJ0,ftePA0)$stderr,t.test(fteNJ1,ftePA1)$stderr)
+
+
+#Panel 2 differences standard errors
+
+diff_within_wagecat&lt;-c(t.test(fteNJ0L,fteNJ1L)$stderr,t.test(fteNJ0M,fteNJ1M)$stderr,t.test(fteNJ0H,fteNJ1H)$stderr)
+
+
+
+#colnames(diff_within_state)&lt;-colnames(fte.std)
+#fte.std&lt;-fte.std %&gt;% mutate(NJminusPA=diff_between_state)
+#fte.std&lt;-fte.std %&gt;% rbind(diff_within_state)
+
+
+#Panel 3 standard errors
+
+
+diff_between_wagecat0&lt;-c(t.test(fteNJ0L,fteNJ0H)$stderr,t.test(fteNJ0M,fteNJ0H)$stderr)
+diff_between_wagecat1&lt;-c(t.test(fteNJ1L,fteNJ1H)$stderr,t.test(fteNJ1M,fteNJ1H)$stderr)
+dd_time_wagecat&lt;-c(t.test(fteNJ1L-fteNJ0L,fteNJ1H-fteNJ0H)$stderr, t.test(fteNJ1M-fteNJ0M,fteNJ1H-fteNJ0H)$stderr)
+  
+### Putting everything together
+#Panel1
+fte.std&lt;-fastfood2 %&gt;% group_by(state,post) %&gt;% summarise(across(fte2, .fns=list(std=std.error),.names=&quot;{fn}.{col}&quot;, na.rm=TRUE))
+fte.std&lt;-fte.std %&gt;% pivot_wider(names_from=state,values_from=std.fte2) 
+
+fte.std&lt;-fte.std %&gt;% mutate(NJminusPA=diff_between_state)
+fte.std&lt;-fte.std %&gt;% rbind(diff_within_state)
+
+###Panel 2
+
+w.std&lt;-fastfood2 %&gt;% group_by(post, state, wage_cat) %&gt;% 
+  summarise(across(fte2, .fns=list(std=std.error),.names=&quot;{fn}.{col}&quot;, na.rm=TRUE)) %&gt;% 
+  ungroup() %&gt;% filter(state==&quot;NJ&quot;)
+
+w.std&lt;-w.std %&gt;% pivot_wider(names_from=wage_cat, values_from=std.fte2)
+w.std&lt;-w.std %&gt;% select(-c(post, state,&quot;NA&quot;))
+w.std&lt;-w.std %&gt;% rbind(diff_within_wagecat)
+
+
+###Panel 3
+
+w.std.between&lt;-data.frame(t(diff_between_wagecat0)) 
+w.std.between&lt;-w.std.between%&gt;% rbind(diff_between_wagecat1,dd_time_wagecat)
+
+
+## Putting everything together
+
+## Format Panel 1
+## Pasting \n in between means and standard deviations for LaTex
+x1&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(fte), 
+                                       function(i) paste0(round(fte[1,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(fte.std[1,i],digits=2),
+                                                          &quot;)&quot;))))
+x2&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(fte), 
+                                       function(i) paste0(round(fte[2,i],digits=2), 
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(fte.std[2,i],digits=2),
+                                                          &quot;)&quot;))))
+x3&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(fte), 
+                                       function(i) paste0(round(fte[3,i],digits=2), 
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(fte.std[3,i],digits=2),
+                                                          &quot;)&quot;))))
+panel_1 &lt;-x1 %&gt;% rbind(x2,x3)
+rm(x1,x2,x3)
+
+## Format panel2
+## Pasting \n in between means and standard deviations for LaTex
+y1&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w), 
+                                       function(i) paste0(round(w[1,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std[1,i],digits=2),
+                                                          &quot;)&quot;))))
+y2&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w), 
+                                       function(i) paste0(round(w[2,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std[2,i],digits=2),
+                                                          &quot;)&quot;))))
+y3&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w), 
+                                       function(i) paste0(round(w[3,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std[3,i],digits=2),
+                                                          &quot;)&quot;))))
+
+panel_2&lt;-y1 %&gt;% rbind(y2,y3)
+rm(y1,y2,y3)
+
+## Format panel 3
+## Pasting \n in between means and standard deviations for LaTex
+z1&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w.between), 
+                                       function(i) paste0(round(w.between[1,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std.between[1,i],
+                                                                digits=2),
+                                                          &quot;)&quot;))))
+z2&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w.between), 
+                                       function(i) paste0(round(w.between[2,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std.between[2,i],digits=2),
+                                                          &quot;)&quot;))))
+z3&lt;-as.data.frame(do.call(cbind,lapply(1:ncol(w.between), 
+                                       function(i) paste0(round(w.between[3,i],digits=2),
+                                                          &quot;\n&quot;,
+                                                          &quot;(&quot;,
+                                                          round(w.std.between[3,i],digits=2),
+                                                          &quot;)&quot;))))
+
+panel_3&lt;-z1 %&gt;% rbind(z2,z3) 
+rm(z1,z2,z3)
+
+## Panel 1 final
+colnames(panel_1)&lt;-c(&quot;Variable&quot;,&quot;NJ&quot;,&quot;PA&quot;,&quot;NJ-PA&quot;)
+panel_1&lt;-panel_1 %&gt;% relocate(Variable,PA) %&gt;% mutate(Variable=c(&quot;FTE before&quot;,&quot;FTE after&quot;, &quot;Change in mean FTE&quot;))
+
+## Panel 2 final
+colnames(panel_2)&lt;-c(&quot;Wage&gt;4.99&quot;, &quot;Wage=4.25&quot;,&quot;Wage=4.26-4.99&quot;)
+panel_2&lt;-panel_2 %&gt;% mutate(Variable=c(&quot;FTE before&quot;,&quot;FTE after&quot;, &quot;Change in mean FTE&quot;))
+panel_2&lt;-panel_2 %&gt;% relocate(Variable, `Wage=4.25`, `Wage=4.26-4.99`, `Wage&gt;4.99`)
+
+## Panel 3 final
+colnames(panel_3)&lt;-c(&quot;Low-high&quot;,&quot;Midrange-high&quot;)
+panel_3&lt;-panel_3 %&gt;% mutate(Variable=c(&quot;FTE before&quot;,&quot;FTE after&quot;, &quot;Change in mean FTE&quot;))
+panel_3&lt;-panel_3 %&gt;% relocate(Variable)
+
+
+
+#######################################
+######### REPLICATION  ################
+
+
+#Jesús Lara
+#Critical Replication of Conconi et al (2018)
+
+#Trade: IMPORTS
+library(dplyr)
+library(tidyr)
+library(data.table)
+library(ggplot2)
+library(&quot;rio&quot;)
+library(matlib)
+library(gdata)
+library(tinytex)
+library(scales)
+library(ggplot2)
+library(foreign)
+library(rmarkdown)
+library(fastDummies)
+library(haven)
+library(pmdplyr)
+
+memory.limit(size=10000)
+options(scipen=10000)
+options(digits=3)
+
+rm(list=ls())
+
+setwd(&quot;C:/Users/User/Documents/Fall 2020 UMass/753/Replication/data&quot;)
+
+Mex_imports&lt;-read_dta(&quot;./trade/raw-data/DTA_Mexico19912003-WTO-countries.dta&quot;)
+HS92conversion&lt;-read_dta(&quot;./trade/raw-data/HS92conversion.dta&quot;)
+
+
+Mex_imports&lt;-Mex_imports %&gt;% filter(PartnerName!=&quot;Switzerland&quot;&amp;
+                                      PartnerName!=&quot;Iceland&quot;&amp;
+                                      PartnerName!=&quot;Norway&quot;&amp;
+                                      PartnerName!=&quot;WTO All members (123) --- WTO-ALL&quot;)
+                                                     
+
+
+
+
+Mex_imports&lt;-Mex_imports %&gt;% 
+  select(-c(SelectedNomen,TradeSource,DutyType,SimpleAverage,
+            WeightedAverage,MinimumRate,MaximumRate,TariffYear,
+            ProductName))
+
+Mex_imports&lt;-Mex_imports %&gt;% 
+  rename(&quot;year&quot;=&quot;TradeYear&quot;,
+         &quot;imports&quot;=&quot;ImportsValuein1000USD&quot;)
+### In the author&#39;s version this is TEMP_regression.dta
+
+#Convert HS2002 to HS1992
+
+Mex_imports2&lt;-Mex_imports %&gt;% 
+  filter(year==2003) %&gt;% 
+  rename(&quot;HS2002&quot;=&quot;Product&quot;)
+
+Mex_imports2&lt;-merge(Mex_imports2,HS92conversion, all.x = TRUE)
+Mex_imports2&lt;-Mex_imports2 %&gt;% 
+  rename(&quot;Product&quot;=&quot;HS1992&quot;)
+
+#Duplicates SUM total import flows
+
+Mex_imports2 &lt;-Mex_imports2 %&gt;% 
+  group_by(Product, PartnerName, Partner, year) %&gt;% 
+  summarise(across(imports,sum)) %&gt;% ungroup()
+
+#Drop 2003 of Mex_imports
+Mex_imports&lt;-Mex_imports %&gt;% filter(year!=2003)  
+
+
+Mex_imports_F&lt;-bind_rows(Mex_imports2,Mex_imports)
+
+Mex_imports_F &lt;- Mex_imports_F %&gt;% mutate(NAFTA=ifelse(PartnerName==&quot;United States&quot;|
+                                                       PartnerName==&quot;Canada&quot;,1,0))
+
+Mex_imports_F &lt;- Mex_imports_F %&gt;% mutate(RTAmex=ifelse(PartnerName==&quot;Chile&quot;|
+                                                        PartnerName==&quot;Israel&quot;|
+                                                        PartnerName==&quot;Austria&quot;|
+                                                        PartnerName==&quot;Belgium&quot;|
+                                                        PartnerName==&quot;Denmark&quot;|
+                                                        PartnerName==&quot;Finland&quot;|
+                                                        PartnerName==&quot;France&quot;|
+                                                        PartnerName==&quot;Germany&quot;|
+                                                        PartnerName==&quot;Ireland&quot;|
+                                                        PartnerName==&quot;Italy&quot;|
+                                                        PartnerName==&quot;Luxembourg&quot;|
+                                                        PartnerName==&quot;Netherlands&quot;|
+                                                        PartnerName==&quot;Portugal&quot;|
+                                                        PartnerName==&quot;Spain&quot;|
+                                                        PartnerName==&quot;Sweden&quot;|
+                                                        PartnerName==&quot;United Kingdom&quot;|
+                                                        PartnerName==&quot;Greece&quot;|
+                                                        PartnerName==&quot;Brazil&quot;|
+                                                        PartnerName==&quot;Argentina&quot;|
+                                                        PartnerName==&quot;Uruguay&quot;|
+                                                        PartnerName==&quot;Paraguay&quot;|
+                                                        PartnerName==&quot;Cuba&quot;|
+                                                        PartnerName==&quot;Bolivia&quot;|
+                                                        PartnerName==&quot;Ecuador&quot;|
+                                                        PartnerName==&quot;Colombia&quot; |
+                                                        PartnerName==&quot;Peru&quot;|
+                                                        PartnerName==&quot;Guatemala&quot;|
+                                                        PartnerName==&quot;Panama&quot;|
+                                                        PartnerName==&quot;Venezuela&quot; 
+                                                                        ,1,0))
+Mex_imports_F&lt;-Mex_imports_F %&gt;% 
+  select(-c(NativeNomen,Reporter,ReporterName)) 
+
+Mex_imports_F&lt;-Mex_imports_F %&gt;% 
+  rename(&quot;product&quot;=&quot;Product&quot;)
+
+rm(Mex_imports,Mex_imports2)
+
+###Make Panel A of Tabe 2
+Mex_imports_F&lt;-Mex_imports_F%&gt;% 
+  mutate(product_2_digits= ifelse(product&lt;60000,&quot;01-05: animal products&quot;,
+                           ifelse(product&lt;160000,&quot;06-15: vegetables&quot;,
+                           ifelse(product&lt;250000,&quot;16-24: foodstuffs&quot;,
+                           ifelse(product&lt;280000,&quot;25-27: mineral products&quot;,
+                           ifelse(product&lt;390000,&quot;28-38: chemicals&quot;,
+                           ifelse(product&lt;410000,&quot;39-40: plastics/rubber&quot;,
+                           ifelse(product&lt;440000,&quot;41-43: raw hides, skins, leathers&quot;,
+                           ifelse(product&lt;500000,&quot;44-49: wood products&quot;,
+                           ifelse(product&lt;640000,&quot;50-63: textiles&quot;,
+                           ifelse(product&lt;680000,&quot;64-67: footwear/headgear&quot;,
+                           ifelse(product&lt;720000,&quot;68-71: stone/glass&quot;,
+                           ifelse(product&lt;840000,&quot;72-84: metals&quot;,
+                           ifelse(product&lt;860000,&quot;84-85: machinery/electrical&quot;,
+                           ifelse(product&lt;900000,&quot;86-89: transportation&quot;,
+                           ifelse(product&lt;990000,&quot;90-97: miscellaneous&quot;,NA))))))        
+                                                                                   ))))))))))
+
+
+### Descriptive Statistics:
+
+# NAFTA COUNTRIES
+
+s_Mex_imports_NAFTA&lt;-Mex_imports_F %&gt;% filter(NAFTA==1) %&gt;% 
+  group_by(year, product_2_digits) %&gt;% 
+  summarise(across(imports, sum))
+
+s_Mex_imports_NAFTA &lt;- s_Mex_imports_NAFTA %&gt;% 
+  pivot_wider(names_from = year, values_from=imports)
+
+
+### No NAFTA COUNTRIES
+s_Mex_imports_NoNAFTA&lt;-Mex_imports_F %&gt;% filter(RTAmex==0 &amp; NAFTA==0) %&gt;% 
+  group_by(year, product_2_digits) %&gt;% 
+  summarise(across(imports, sum))
+
+s_Mex_imports_NoNAFTA &lt;- s_Mex_imports_NoNAFTA %&gt;% 
+  pivot_wider(names_from = year, values_from=imports)
+
+###Preliminary Table 2
+
+Table2_rep&lt;-cbind(s_Mex_imports_NoNAFTA,(select(s_Mex_imports_NAFTA,-product_2_digits)))
+colnames(Table2_rep)&lt;-c(&quot;HS Code and Description&quot;,&quot;1991&quot;,&quot;2003&quot;,&quot;1991&quot;,&quot;2003&quot;)
+
+save(Table2_rep,file=&quot;Table2_rep.Rdata&quot;)
+
+
+## Save all tables
+save(panel_1,file=&quot;panel_1.Rdata&quot;)
+save(panel_2,file=&quot;panel_2.Rdata&quot;)
+save(panel_3,file=&quot;panel_3.Rdata&quot;)</code></pre>
+</div>
 </div>
 
 

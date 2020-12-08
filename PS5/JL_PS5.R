@@ -53,6 +53,7 @@ ggplot(series, aes(x=date))+theme_classic() +
   xlab("Date")+
   ylab("Rate")+
   scale_color_discrete(name="Interest Rate", label=c("BAA","FEDFUNDS"))
+
 ggsave("BAA.FEDFUNDS.time.series.png")
 
 
@@ -62,7 +63,9 @@ FEDFUNDS1<-adf.test(series$FEDFUNDS)
 
 ## Create a Data Frame with results:
 
-ADF1<-data.frame(BAA1$type1,BAA1$type2[,2:3],BAA1$type3[,2:3],FEDFUNDS1$type1[,2:3], FEDFUNDS1$type2[,2:3], FEDFUNDS1$type3[,2:3])
+ADF1<-data.frame(BAA1$type1,BAA1$type2[,2:3],
+                 BAA1$type3[,2:3],FEDFUNDS1$type1[,2:3], 
+                 FEDFUNDS1$type2[,2:3], FEDFUNDS1$type3[,2:3])
 colnames(ADF1)<-c("Lag",rep(c("ADF", "P-Value"),6))
 save(ADF1, file="ADF1.Rdata")
 
@@ -72,15 +75,30 @@ save(ADF1, file="ADF1.Rdata")
 #2 First difference data
 
 
-series<-series %>% mutate(d.BAA=c(NA,diff(BAA)),d.FEDFUNDS=c(NA,diff(FEDFUNDS))) #Chulada
+series<-series %>% mutate(d.BAA=c(NA,diff(BAA)),
+                          d.FEDFUNDS=c(NA,diff(FEDFUNDS))) #Chulada
 
+#Plot of differents
+ggplot(series, aes(x=date), na.rm=TRUE)+theme_classic() + 
+  geom_line(aes(y=d.BAA,color="black"),size=1)+
+  geom_line(aes(y=d.FEDFUNDS,color="blue"),size=1)+
+  xlab("Date")+
+  ylab("Rate")+
+  scale_color_discrete(name="Interest Rate", 
+                       label=c("BAA","FEDFUNDS"))
+
+ggsave("BAA.FEDFUNDS.d.time.series.png")
+
+###
 BAA2<-adf.test(series$d.BAA)
 FEDFUNDS2<-adf.test(series$d.FEDFUNDS)
 
 
 ## Create a Data Frame with results:
 
-ADF2<-data.frame(BAA2$type1,BAA2$type2[,2:3],BAA2$type3[,2:3],FEDFUNDS2$type1[,2:3], FEDFUNDS2$type2[,2:3], FEDFUNDS2$type3[,2:3])
+ADF2<-data.frame(BAA2$type1,BAA2$type2[,2:3],
+                 BAA2$type3[,2:3],FEDFUNDS2$type1[,2:3], 
+                 FEDFUNDS2$type2[,2:3], FEDFUNDS2$type3[,2:3])
 colnames(ADF2)<-c("Lag",rep(c("ADF", "P-Value"),6))
 save(ADF2, file="ADF2.Rdata")
 
@@ -95,12 +113,14 @@ granger2<-data.frame()
 granger3<-data.frame()
 
 for (lag in lags){
-test1<-grangertest(d.FEDFUNDS ~d.BAA, order=lag, na.action=na.omit, data=series)
+test1<-grangertest(d.FEDFUNDS ~d.BAA, 
+                   order=lag, na.action=na.omit, data=series)
 granger1<-rbind(granger1,c(lag, test1[2,3],test1[2,4]))
 }
 
 for (lag in lags){
-  test1<-grangertest(d.BAA~d.FEDFUNDS, order=lag, na.action=na.omit, data=series)
+  test1<-grangertest(d.BAA~d.FEDFUNDS, 
+                     order=lag, na.action=na.omit, data=series)
   granger1<-rbind(granger1,c(lag, test1[2,3],test1[2,4]))
 }
 
@@ -109,12 +129,14 @@ for (lag in lags){
 #Before 1982
 
 for (lag in lags){
-  test1<-grangertest(d.FEDFUNDS ~d.BAA, order=lag, na.action=na.omit, data=filter(series,date<"1982-01-01"))
+  test1<-grangertest(d.FEDFUNDS ~d.BAA, order=lag,
+                     na.action=na.omit, data=filter(series,date<"1982-01-01"))
   granger2<-rbind(granger2,c(test1[2,3],test1[2,4]))
 }
 
 for (lag in lags){
-  test1<-grangertest(d.BAA~d.FEDFUNDS, order=lag, na.action=na.omit, data=filter(series,date<"1982-01-01"))
+  test1<-grangertest(d.BAA~d.FEDFUNDS, order=lag,
+                     na.action=na.omit, data=filter(series,date<"1982-01-01"))
   granger2<-rbind(granger2,c(test1[2,3],test1[2,4]))
 }
 
@@ -122,12 +144,14 @@ for (lag in lags){
 #After 1882
 
 for (lag in lags){
-  test1<-grangertest(d.FEDFUNDS ~d.BAA, order=lag, na.action=na.omit, data=filter(series,date>="1982-01-01"))
+  test1<-grangertest(d.FEDFUNDS ~d.BAA, order=lag,
+                     na.action=na.omit, data=filter(series,date>="1982-01-01"))
   granger3<-rbind(granger3,c(test1[2,3],test1[2,4]))
 }
 
 for (lag in lags){
-  test1<-grangertest(d.BAA~d.FEDFUNDS, order=lag, na.action=na.omit, data=filter(series,date>="1982-01-01"))
+  test1<-grangertest(d.BAA~d.FEDFUNDS, order=lag, 
+                     na.action=na.omit, data=filter(series,date>="1982-01-01"))
   granger3<-rbind(granger3,c(test1[2,3],test1[2,4]))
 }
 
