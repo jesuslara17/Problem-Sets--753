@@ -222,12 +222,12 @@ f1<-f1+ geom_path()
 f1<-f1+scale_x_continuous(name="Unemployment Rate (%)", 
                         breaks=c(2:8),limits=c(2,7.5))
 f1<-f1+scale_y_continuous(name="Inflation (CPI) (%)",limits=c(2,40))
-f1<-f1+ ggtitle("Inflation and Unemployment Rate: 1995-2020")
+f1<-f1+ ggtitle("Figure 1: Inflation and Unemployment Rate: 1995-2020")
 
 plot(f1)
 ```
 
-In figures 1 and 2 I plot a traditional Phillips curve showing the relationship between unemployment and inflation. In the first one I use the normal unemployment rate measure, whereas in the second one I use Rate of Unemployment and Partial Occupation (RUPO). RUPO considers the unemployed and those who worked less than 15 hours in the reference week. The story is the same with any of the two measures. 1995 Is the year of the most severe economic crisis since the Great Depression. The crisis was triggered by a sudden devaluation of the Mexican peso in December of 1994, which was followed by a sharp increase in inflation and unemployment. The years after are characterized by economic recovery and  a very painful process of inflation reduction.  In 1994, the Mexican Central Bank (Banxico hereinafter) acquired its autonomy and embraced an inflation targeting policy. By, 2002 inflation was already at $5/%$ and, what we observe after that is a non-existent relationship between unemployment and inflation. Inflation has remained constant regardless of periods of high unemployment. Monetary policy has focused exclusively in the control of inflation, ignoring problems related to investment, growth and unemployment. 
+In figures 1 and 2 I plot a traditional Phillips curve showing the relationship between unemployment and inflation. In the first one I use the normal unemployment rate measure, whereas in the second one I use Rate of Unemployment and Partial Occupation (RUPO). RUPO considers the unemployed and those who worked less than 15 hours in the reference week. The story is the same with any of the two measures. 1995 Is the year of the most severe economic crisis in Mexico since the Great Depression. The crisis was triggered by a sudden devaluation of the Mexican peso in December of 1994, which was followed by a sharp increase in inflation and unemployment. The years after are characterized by economic recovery and  a very painful process of inflation reduction.  In 1994, the Mexican Central Bank (Banxico hereinafter) acquired its autonomy and embraced an inflation targeting policy. By, 2002 inflation was already at $5/%$ and, what we observe after that is a non-existent relationship between unemployment and inflation. Inflation has remained constant regardless of periods of high unemployment. Monetary policy has focused exclusively on the control of inflation, ignoring problems related to investment, growth and unemployment. 
 
 ```{r, Inflation and TOPD1, warning=FALSE}
 
@@ -242,13 +242,13 @@ f1<-f1+ geom_path()
 f1<-f1+scale_x_continuous(name="Rate of Unemployment and Partial Ocupation (%)", 
                           )
 f1<-f1+scale_y_continuous(name="Inflation (CPI) (%)",limits=c(0,40))
-f1<-f1+ ggtitle("Inflation and RUPO: 1995-2020")
+f1<-f1+ ggtitle("Figure 2: Inflation and RUPO: 1995-2020")
 plot(f1)
 
 ```
 
 
-I then move to the relationship between unemployment and the distribution of income. In figure 3 I plot the relationship between the unemployment rate and the wage share. In figure 2 the dimensions of the recovery period are can be seen clearer. The period 1995-2001/2002 is known as the NAFTA "boom". It is a time of economic recovery based on the increase in exports, which was facilitated by the liberalization and the economy and the depression in real wages that followed the crisis and the devaluation of the peso. Open unemployment fell and there were modest gains for workers regarding income distribution. However, after 2003, the wageand starts to fall again and the unemployment rate increases. The decline in the wage share coincides with the entry of China to the OMS, whose competition resulted in a decrease in the rate of growth of Mexican manufacturing exports. These last 20 years have also been a period of decline of the wage share (and hence, of the Unit Real Costs) in the United States, which makes the decision of MNCs to locate in Mexico less likely. However, we know that in dependent capitalist countries, like Mexico, the traditional unemployment rate hides a large part of the story. In Figure 4 I show the relationship between the RUPO and the wage share. The relationship is very similar to what we saw before but the value of unemployment is much greater.   
+I then move to the relationship between unemployment and the distribution of income. In figure 3 I plot the relationship between the unemployment rate and the wage share. In figure 3 the dimensions of the recovery period can be seen clearer. The period 1995-2001/2002 is known as the NAFTA "boom". It is a time of economic recovery based on the increase in exports, which was facilitated by the liberalization of the economy and the depression of real wages that followed the crisis and the devaluation of the peso. Open unemployment fell and there were modest gains for workers regarding income distribution. However, after 2003, the wage share starts to fall again and the unemployment rate increases. The decline in the wage share coincides with the entry of China to the OMS, whose competition resulted in a decrease in the rate of growth of Mexican manufacturing exports. These last 20 years have also been a period of decline of the wage share (and hence, of the Unit Real Costs) in the United States, which makes the decision of MNCs to locate in Mexico less likely. However, we know that in dependent capitalist countries, like Mexico, the traditional unemployment rate hides a large part of the story. In Figure 4 I show the relationship between the RUPO and the wage share. The relationship is very similar to what we saw before but the value of unemployment is much greater.   
 
 ```{r, Wage Share and Unemployment, warning=FALSE}
 f1<-complete %>% arrange(year) %>% ggplot(aes(x=desocupacion, 
@@ -282,7 +282,7 @@ plot(f1)
 ```
 
 
-In figures 5 and 6 I plot the wage share in Manufacturing both against the unemployment and the general pressure rate (GPR). The GPR considers both the openly unemployed plus workers who are actively looking for an additional job. We can see that the patterns that we identified above are much more marked for manufacturing. Since the 1982 economic crisis, Mexican manufacturing has been dominated by FDI and the development of export platforms to seize upon NAFTA. The negative relationship between the wage share and unemployment (measured either with the unemployment or the general pressure rate is very evident). 
+In figures 5 and 6 I plot the wage share in Manufacturing both against the unemployment and the general pressure rate (GPR). The GPR considers both the openly unemployed plus workers who are actively looking for an additional job. We can see that the patterns that we identified above are much more marked for manufacturing. Since the 1982 economic crisis, Mexican manufacturing has been dominated by FDI and the development of export platforms to seize upon NAFTA. The negative relationship between the wage share and unemployment (measured either with the unemployment or the general pressure) rate is very evident. 
 
 ```{r,Wage Share manufacturing and TOPD1, warning=FALSE}
 
