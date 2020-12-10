@@ -1,5 +1,5 @@
 ---
-title: "753 problem Set 6"
+title: "753 Problem Set 6"
 author: "Jesús Lara"
 date: "12/7/2020"
 output:
@@ -277,7 +277,7 @@ f1<-f1+scale_x_continuous(name="Partial employment and unemploymante rate")
 f1<-f1+scale_y_continuous(name="Wage Share", limits=c(25,31))
 f1<-f1+ ggtitle("Partial employment and unemployment vs Wage Share in Mexico: 1995-2015")
 f1<-f1+geom_path()
-f1<-f1+ggtitle("Figure 4: Wage Share vs Partial employment and unemployment rate in Mexico 1995:2015")
+f1<-f1+ggtitle("Figure 4: Wage Share vs RUPO in Mexico 1995:2015")
 plot(f1)
 ```
 
@@ -295,7 +295,7 @@ f1<-f1+ theme_bw()
 
 f1<-f1+scale_x_continuous(name="Partial Employment and Unemploymante Rate")
 f1<-f1+scale_y_continuous(name="Wage Share", limits=c(17,29))
-f1<-f1+ ggtitle("Figure 5: PEUR vs Wage Share in Manufacturing: Mexico 1995-2015")
+f1<-f1+ ggtitle("Figure 5: RUPO vs Wage Share in Manufacturing: Mexico 1995-2015")
 f1<-f1+geom_path()
 plot(f1)
 ```
