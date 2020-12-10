@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.width=10, fig.height=6)
+knitr::opts_chunk$set(echo = FALSE, fig.width=8, fig.height=4)
 ```
 
 
@@ -206,7 +206,7 @@ complete$years.5<-years.5
 
 # Inflation, Unemployment and Class Struggle in Neoliberal Mexico
 
-In this report I will explore the relationship between inflation, unemployment and distribution of value added in Mexico over the last 10-15 years. The motivation comes from Ibarra & Ros (2018) study about the decline of the Labor Income Share in Mexico during the period 1990-2015, a pattern that contrasts with what happened in most Latin American countries during that period. They link that phenomena to the very slow rate of capital accumulation, which, in a dual-economy framework, implies a slow or non-existent labor absorption of the labor force by the modern sector. 
+In this report I will explore the relationship between inflation, unemployment and distribution of value added in Mexico over the last 10-15 years. The motivation comes from Ibarra & Ros (2018) study about the decline of the Labor Income Share in Mexico during the period 1990-2015, a pattern that contrasts with what happened in most Latin American countries during that period. They link that phenomena to the very slow rate of capital accumulation, which, in a dual-economy framework, implies a slow or non-existent labor absorption of the labor force by the modern sector. The employment data comes from INEGI (the Mexican statistics organism); inflation from Banxico (Mexican Central Bank), and labor and income shares from Ibarra & Ros online appendix. They, in turn, get the data from KLEMS and INEGI. 
 
 
 
@@ -227,7 +227,7 @@ f1<-f1+ ggtitle("Inflation and Unemployment Rate: 1995-2020")
 plot(f1)
 ```
 
-In figures 1 and 2 I plot a traditional Phillips curve showing the relationship between the unemployment and inflation. In the first one I use normal unemployment rate measure, whereas in the second one I use Rate of Unemployment and partial occupation. With both measures the story is the same. 1995 Is the year of the most severe economic crisis since the last recession. A sudden devaluation of peso in December of 1994 triggered inflation and the crisis unemployment. the years after that are characterized by economic recuperation and  a very painful process of inflation reduction. In 1994 Mexican Central Bank (Banxico hereinafter) acquired its autonomy and embraced an inflation targeting policy. By, 2002 inflation was already at 5/% and, what we observe after that is a non-existent relationship between unemployment and inflation. Inflation has remained constant regardless of periods of high unemployment.
+In figures 1 and 2 I plot a traditional Phillips curve showing the relationship between unemployment and inflation. In the first one I use the normal unemployment rate measure, whereas in the second one I use Rate of Unemployment and Partial Occupation (RUPO). RUPO considers the unemployed and those who worked less than 15 hours in the reference week. The story is the same with any of the two measures. 1995 Is the year of the most severe economic crisis since the Great Depression. The crisis was triggered by a sudden devaluation of the Mexican peso in December of 1994, which was followed by a sharp increase in inflation and unemployment. The years after are characterized by economic recovery and  a very painful process of inflation reduction.  In 1994, the Mexican Central Bank (Banxico hereinafter) acquired its autonomy and embraced an inflation targeting policy. By, 2002 inflation was already at $5/%$ and, what we observe after that is a non-existent relationship between unemployment and inflation. Inflation has remained constant regardless of periods of high unemployment. Monetary policy has focused exclusively in the control of inflation, ignoring problems related to investment, growth and unemployment. 
 
 ```{r, Inflation and TOPD1, warning=FALSE}
 
@@ -248,7 +248,7 @@ plot(f1)
 ```
 
 
-I then move to the relationship between unemployment and the distribution of income. In figure 3 I plot the relationship between the unemployment rate and the wage share. First of all, in this graph it the recuperation period becomes evident: 1995-2001/2002 are characterized as the NAFTA boom period. It is a period of economic recuperation and a modest gains by workers regarding value-added. However, after 2003, the wage share and starts to fall again and the unemployment rate increases. The decline in the wage share coincides with the entry of China to the OMS, whose competition resulted in a decrease in the rate of growth of Mexican manufacturing exports. These last 20 years have also been a period of decline of the wage share (and hence, of the Unit Real Costs) in the United States, which makes the decision of MNCs to locate in Mexico less likely. However, we know that in dependent capitalist countries, like Mexico, the traditional unemployment rate hides a large part of the story. Figure 4 uses the PEUR measure of unemployment. The relation is very similar to what we saw before but the value of unemployment is much greater.   
+I then move to the relationship between unemployment and the distribution of income. In figure 3 I plot the relationship between the unemployment rate and the wage share. In figure 2 the dimensions of the recovery period are can be seen clearer. The period 1995-2001/2002 is known as the NAFTA "boom". It is a time of economic recovery based on the increase in exports, which was facilitated by the liberalization and the economy and the depression in real wages that followed the crisis and the devaluation of the peso. Open unemployment fell and there were modest gains for workers regarding income distribution. However, after 2003, the wageand starts to fall again and the unemployment rate increases. The decline in the wage share coincides with the entry of China to the OMS, whose competition resulted in a decrease in the rate of growth of Mexican manufacturing exports. These last 20 years have also been a period of decline of the wage share (and hence, of the Unit Real Costs) in the United States, which makes the decision of MNCs to locate in Mexico less likely. However, we know that in dependent capitalist countries, like Mexico, the traditional unemployment rate hides a large part of the story. In Figure 4 I show the relationship between the RUPO and the wage share. The relationship is very similar to what we saw before but the value of unemployment is much greater.   
 
 ```{r, Wage Share and Unemployment, warning=FALSE}
 f1<-complete %>% arrange(year) %>% ggplot(aes(x=desocupacion, 
@@ -282,7 +282,7 @@ plot(f1)
 ```
 
 
-In figure 5 we focus on manufacturing. I plot it both against the unemployment and the general pressure rate. We can see that the patterns that we identified below are much more marked for manufacturing, which is a sector that since the 1982 economic crisis have been mainly dominated by MNCs. The negative relationship between the wage share and unemployment (measured either with the unemployment or the general pressure rate is very evident). 
+In figures 5 and 6 I plot the wage share in Manufacturing both against the unemployment and the general pressure rate (GPR). The GPR considers both the openly unemployed plus workers who are actively looking for an additional job. We can see that the patterns that we identified above are much more marked for manufacturing. Since the 1982 economic crisis, Mexican manufacturing has been dominated by FDI and the development of export platforms to seize upon NAFTA. The negative relationship between the wage share and unemployment (measured either with the unemployment or the general pressure rate is very evident). 
 
 ```{r,Wage Share manufacturing and TOPD1, warning=FALSE}
 
@@ -319,7 +319,7 @@ plot(f1)
 
 ```
 
-Finally, In Ibarra and Ros, the traditional sector is represented by informal-self employment. I could not gather data on informality for the years 1995-2004. However, there was data available for self-employment. According to the model they present, the larger the traditional sector, the lower real wages in the modern tradables sector. However, what we see in Figure 7 is that, from 1995 to 2015, both self-employment and the wage share in the tradables sector fell.
+Finally, In Ibarra and Ros, the traditional sector is represented by informal/self-employment. I could not gather data on informality for the years 1995-2004. However, there was data available for self-employment as a share of the labor force. According to the model they present, the larger the traditional sector, the lower real wages in the modern tradables sector. However, what we see in Figure 7 is that, from 1995 to 2015, both self-employment and the wage share in the tradables sector fell.
 
 ```{r, Wage share tradables vs self-employed, , warning=FALSE} 
 f1<-complete %>% arrange(year) %>% ggplot(aes(x=cuenta.propia, 
@@ -338,3 +338,10 @@ plot(f1)
 
 
 ``` 
+
+\pagebreak
+
+# References
+
+Ibarra, C. A., & Ros, J. (2018). The Decline of the Labor Income Share in Mexico , 1990 – 2015.
+World Development, 122, 570–584.
